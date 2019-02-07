@@ -41,6 +41,12 @@ namespace AAEmu.Launcher
 
         public Settings Setting = new Settings();
 
+        const string launcherConfigFile = "launcher.config";
+        const string urlGitHub = "https://github.com/atel0/AAEmu";
+        const string urlDiscordInvite = "https://discord.gg/vn8E8E6";
+        const string urlNews = "https://aaemu.pw/updater/";
+        // const string urlNews = "https://cl2.widgetbot.io/channels/479677351618281472/481782245087248400";
+
         public LauncherForm()
         {
             InitializeComponent();
@@ -48,12 +54,21 @@ namespace AAEmu.Launcher
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            if (webBrowser.Visible == false)
+            {
+                webBrowser.Visible = true;
+                //webBrowser.AllowNavigation = true;
+                //webBrowser.Navigate(urlNews);
+                //webBrowser.AllowNavigation = false;
+            }
+            /*
             if (progressBar1.Value >= 100)
                 progressBar1.Value = 0;
             if (progressBar2.Value >= 100)
                 progressBar2.Value = 0;
             progressBar1.Value += 1;
             progressBar2.Value += 2;
+            */
         }
 
         private void pictureBox4_Click(object sender, EventArgs e)
@@ -61,43 +76,13 @@ namespace AAEmu.Launcher
             Application.Exit();
         }
 
-        private void PicButLangChange_Click(object sender, EventArgs e)
+        private void UpdateFormLanguageElements()
         {
-            switch(Setting.Lang)
+
+            switch (Setting.Lang)
             {
-                case "Ru":
-                    PicButLangChange.Image = Properties.Resources.But_Lang_En;
-                    Setting.Lang = "En";
-                    LblLogin.Text = "Login:";
-                    LblPassword.Text = "Password:";
-                    LblIPAddress.Text = "IP Address Server:";
-                    LblPathToGame.Text = "Path to Game client:";
-                    cbSaveLogin.Text = "Save Login & Password";
-                    cbSkipIntro.Text = "Skip Intro";
-                    cbHideSplashLogo.Text = "Hide Splash loading logo";
-                    ButSettingSave.Text = "Save";
-                    ButSettingCancel.Text = "Cancel";
-                    gbSettings.Text = "Settings:";
-                    Console.WriteLine(Setting.Lang);
-                    break;
-                case "En":
-                    PicButLangChange.Image = Properties.Resources.But_Lang_De;
-                    Setting.Lang = "De";
-                    LblLogin.Text = "Login:";
-                    LblPassword.Text = "Passwort:";
-                    LblIPAddress.Text = "IP Address Server:";
-                    LblPathToGame.Text = "Path to Game client:";
-                    cbSaveLogin.Text = "Save Login & Password";
-                    cbSkipIntro.Text = "Skip Intro";
-                    cbHideSplashLogo.Text = "Hide Splash loading logo";
-                    ButSettingSave.Text = "Save";
-                    ButSettingCancel.Text = "Cancel";
-                    gbSettings.Text = "Settings:";
-                    Console.WriteLine(Setting.Lang);
-                    break;
-                case "De":
+                case "ru":
                     PicButLangChange.Image = Properties.Resources.But_Lang_Ru;
-                    Setting.Lang = "Ru";
                     LblLogin.Text = "Логин:";
                     LblPassword.Text = "Пароль:";
                     LblIPAddress.Text = "IP адрес сервера:";
@@ -108,10 +93,57 @@ namespace AAEmu.Launcher
                     ButSettingSave.Text = "Сохранить";
                     ButSettingCancel.Text = "Отмена";
                     gbSettings.Text = "Настройки:";
-                    Console.WriteLine(Setting.Lang);
+                    break;
+                case "de":
+                    PicButLangChange.Image = Properties.Resources.But_Lang_De;
+                    LblLogin.Text = "Benutzername:";
+                    LblPassword.Text = "Passwort:";
+                    LblIPAddress.Text = "Server IP Adresse:";
+                    LblPathToGame.Text = "Pfad zum Game Client:";
+                    cbSaveLogin.Text = "Speichern sie Benutzername und Passwort";
+                    cbSkipIntro.Text = "Intro überspringen";
+                    cbHideSplashLogo.Text = "Begrüßungsbildschirm ausblenden";
+                    ButSettingSave.Text = "Speichern";
+                    ButSettingCancel.Text = "Abbrechen";
+                    gbSettings.Text = "Einstellungen:";
+                    break;
+                case "en":
+                default:
+                    Setting.Lang = "en";
+                    PicButLangChange.Image = Properties.Resources.But_Lang_En;
+                    LblLogin.Text = "Login:";
+                    LblPassword.Text = "Password:";
+                    LblIPAddress.Text = "Server IP Address:";
+                    LblPathToGame.Text = "Path to Game Client:";
+                    cbSaveLogin.Text = "Save Login & Password";
+                    cbSkipIntro.Text = "Skip Intro";
+                    cbHideSplashLogo.Text = "Hide Splash Screen";
+                    ButSettingSave.Text = "Save";
+                    ButSettingCancel.Text = "Cancel";
+                    gbSettings.Text = "Settings:";
                     break;
             }
-            
+
+            PicButLangChange.Refresh();
+
+        }
+
+        private void PicButLangChange_Click(object sender, EventArgs e)
+        {
+            switch(Setting.Lang)
+            {
+                case "ru":
+                    Setting.Lang = "en";
+                    break;
+                case "en":
+                    Setting.Lang = "de";
+                    break;
+                case "de":
+                    Setting.Lang = "ru";
+                    break;
+            }
+            Console.WriteLine("Updating Language: {0}",Setting.Lang);
+            UpdateFormLanguageElements();
             PicButLangChange.Refresh();
         }
 
@@ -147,20 +179,20 @@ namespace AAEmu.Launcher
 
         private void PicButGithub_Click(object sender, EventArgs e)
         {
-
+            Process.Start(urlGitHub);
         }
 
         private void PicButDiscord_Click(object sender, EventArgs e)
         {
-
+            Process.Start(urlDiscordInvite);
         }
 
         private void LauncherForm_Load(object sender, EventArgs e)
         {
-            Console.WriteLine(Application.StartupPath + "\\" + "Launcher.Config");
+            Console.WriteLine(Application.StartupPath + "\\" + launcherConfigFile);
             try
             {
-                StreamReader reader = new StreamReader(Application.StartupPath + "\\" + "Launcher.Config");
+                StreamReader reader = new StreamReader(Application.StartupPath + "\\" + launcherConfigFile);
                 var ConfigFile = reader.ReadToEnd();
                 Console.Write(ConfigFile.ToString());
 
@@ -171,61 +203,14 @@ namespace AAEmu.Launcher
                 // If loading fails, just put in some defaults instead
                 Setting.PathToGame = "";
                 Setting.ServerIpAddress = "127.0.0.1";
-                Setting.Lang = "En";
+                Setting.Lang = "en";
             }
 
 
             txtPathToGame.Text = Setting.PathToGame;
             txtServerIP.Text = Setting.ServerIpAddress;
 
-            switch (Setting.Lang)
-            {
-                case "En":
-                    PicButLangChange.Image = Properties.Resources.But_Lang_En;
-                    Setting.Lang = "En";
-                    LblLogin.Text = "Login:";
-                    LblPassword.Text = "Password:";
-                    LblIPAddress.Text = "IP Address Server:";
-                    LblPathToGame.Text = "Path to Game client:";
-                    cbSaveLogin.Text = "Save Login & Password";
-                    cbSkipIntro.Text = "Skip Intro";
-                    cbHideSplashLogo.Text = "Hide Splash loading logo";
-                    ButSettingSave.Text = "Save";
-                    ButSettingCancel.Text = "Cancel";
-                    gbSettings.Text = "Settings:";
-                    Console.WriteLine(Setting.Lang);
-                    break;
-                case "De":
-                    PicButLangChange.Image = Properties.Resources.But_Lang_De;
-                    Setting.Lang = "De";
-                    LblLogin.Text = "Login:";
-                    LblPassword.Text = "Passwort:";
-                    LblIPAddress.Text = "IP Address Server:";
-                    LblPathToGame.Text = "Path to Game client:";
-                    cbSaveLogin.Text = "Save Login & Password";
-                    cbSkipIntro.Text = "Skip Intro";
-                    cbHideSplashLogo.Text = "Hide Splash loading logo";
-                    ButSettingSave.Text = "Save";
-                    ButSettingCancel.Text = "Cancel";
-                    gbSettings.Text = "Settings:";
-                    Console.WriteLine(Setting.Lang);
-                    break;
-                case "Ru":
-                    PicButLangChange.Image = Properties.Resources.But_Lang_Ru;
-                    Setting.Lang = "Ru";
-                    LblLogin.Text = "Логин:";
-                    LblPassword.Text = "Пароль:";
-                    LblIPAddress.Text = "IP адрес сервера:";
-                    LblPathToGame.Text = "Путь к игровому клиенту:";
-                    cbSaveLogin.Text = "Сохранять учетные данные";
-                    cbSkipIntro.Text = "Пропустить заставку";
-                    cbHideSplashLogo.Text = "Показывать логотип загрузки";
-                    ButSettingSave.Text = "Сохранить";
-                    ButSettingCancel.Text = "Отмена";
-                    gbSettings.Text = "Настройки:";
-                    Console.WriteLine(Setting.Lang);
-                    break;
-            }
+            UpdateFormLanguageElements();
 
             if (Setting.SaveLoginAndPassword == "True")
                 cbSaveLogin.Checked = true;
@@ -276,16 +261,19 @@ namespace AAEmu.Launcher
                         Process.Start(GameClient);
                     }
                     catch {
-                        MessageBox.Show("Ошибка: Проверьте указанный путь до клиента игры!");
+                        MessageBox.Show("Error: Failed to start the game");
+                        // MessageBox.Show("Ошибка: Проверьте указанный путь до клиента игры!");
                     }
 
                     } else
                 {
-                    MessageBox.Show("Логин и пароль должны быть заполнены!");
+                    MessageBox.Show("Please enter a username and password");
+                    // MessageBox.Show("Логин и пароль должны быть заполнены!");
                 }
             } else
             {
-                MessageBox.Show("Не указан путь размещения клиента игры!");
+                MessageBox.Show("Error: No game path set");
+                // MessageBox.Show("Не указан путь размещения клиента игры!");
             }
         }
 
@@ -297,9 +285,9 @@ namespace AAEmu.Launcher
         private void ButPathToGame_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = "c:\\";
-            openFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-            openFileDialog.FilterIndex = 2;
+            openFileDialog.InitialDirectory = "C:\\ArcheAge\\Working\\Bin32";
+            openFileDialog.Filter = "ArcheAge Game|archeage.exe|Executeable|*.exe|All files (*.*)|*.*";
+            openFileDialog.FilterIndex = 1;
             openFileDialog.RestoreDirectory = true;
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
@@ -319,8 +307,9 @@ namespace AAEmu.Launcher
             Setting.SkipIntro = cbSkipIntro.Checked.ToString();
             Setting.HideSplashLogo = cbHideSplashLogo.Checked.ToString();
             var SettingJson = JsonConvert.SerializeObject(Setting);
-            Console.Write("Настройки:\n" + SettingJson);
-            File.WriteAllText(Application.StartupPath + "\\" + "Launcher.Config", SettingJson);
+            Console.Write("Settings:\n" + SettingJson);
+            // Console.Write("Настройки:\n" + SettingJson);
+            File.WriteAllText(Application.StartupPath + "\\" + launcherConfigFile, SettingJson);
             gbSettings.Visible = false;
         }
 

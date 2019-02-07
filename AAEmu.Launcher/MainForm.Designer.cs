@@ -67,14 +67,13 @@
             // 
             // webBrowser
             // 
-            this.webBrowser.AllowNavigation = false;
             this.webBrowser.AllowWebBrowserDrop = false;
             this.webBrowser.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.webBrowser.IsWebBrowserContextMenuEnabled = false;
             this.webBrowser.Location = new System.Drawing.Point(617, 191);
             this.webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser.Name = "webBrowser";
-            this.webBrowser.ScrollBarsEnabled = false;
+            this.webBrowser.ScriptErrorsSuppressed = true;
             this.webBrowser.Size = new System.Drawing.Size(329, 285);
             this.webBrowser.TabIndex = 0;
             this.webBrowser.Url = new System.Uri("https://aaemu.pw/updater/", System.UriKind.Absolute);
@@ -82,21 +81,25 @@
             // txtLogin
             // 
             this.txtLogin.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(56)))), ((int)(((byte)(66)))));
+            this.txtLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.150944F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtLogin.ForeColor = System.Drawing.Color.White;
-            this.txtLogin.Location = new System.Drawing.Point(678, 162);
+            this.txtLogin.Location = new System.Drawing.Point(688, 162);
             this.txtLogin.Name = "txtLogin";
-            this.txtLogin.Size = new System.Drawing.Size(93, 20);
+            this.txtLogin.Size = new System.Drawing.Size(71, 21);
             this.txtLogin.TabIndex = 1;
+            this.txtLogin.Text = "Test";
             // 
             // txtPassword
             // 
             this.txtPassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(56)))), ((int)(((byte)(66)))));
+            this.txtPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.150944F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtPassword.ForeColor = System.Drawing.Color.White;
-            this.txtPassword.Location = new System.Drawing.Point(838, 162);
+            this.txtPassword.Location = new System.Drawing.Point(855, 162);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
-            this.txtPassword.Size = new System.Drawing.Size(106, 20);
+            this.txtPassword.Size = new System.Drawing.Size(89, 21);
             this.txtPassword.TabIndex = 2;
+            this.txtPassword.Text = "test";
             // 
             // progressBar1
             // 
@@ -108,6 +111,7 @@
             // timer1
             // 
             this.timer1.Enabled = true;
+            this.timer1.Interval = 200;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // progressBar2
@@ -119,26 +123,24 @@
             // 
             // LblLogin
             // 
-            this.LblLogin.AutoSize = true;
-            this.LblLogin.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(56)))), ((int)(((byte)(66)))));
+            this.LblLogin.BackColor = System.Drawing.Color.Transparent;
             this.LblLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.LblLogin.ForeColor = System.Drawing.Color.White;
-            this.LblLogin.Location = new System.Drawing.Point(631, 165);
+            this.LblLogin.Location = new System.Drawing.Point(548, 162);
             this.LblLogin.Name = "LblLogin";
-            this.LblLogin.Size = new System.Drawing.Size(47, 13);
+            this.LblLogin.Size = new System.Drawing.Size(134, 16);
             this.LblLogin.TabIndex = 5;
             this.LblLogin.Text = "Логин:";
             this.LblLogin.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // LblPassword
             // 
-            this.LblPassword.AutoSize = true;
-            this.LblPassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(56)))), ((int)(((byte)(66)))));
+            this.LblPassword.BackColor = System.Drawing.Color.Transparent;
             this.LblPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.LblPassword.ForeColor = System.Drawing.Color.White;
-            this.LblPassword.Location = new System.Drawing.Point(774, 165);
+            this.LblPassword.Location = new System.Drawing.Point(765, 162);
             this.LblPassword.Name = "LblPassword";
-            this.LblPassword.Size = new System.Drawing.Size(55, 13);
+            this.LblPassword.Size = new System.Drawing.Size(83, 16);
             this.LblPassword.TabIndex = 6;
             this.LblPassword.Text = "Пароль:";
             this.LblPassword.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -237,7 +239,7 @@
             this.gbSettings.ForeColor = System.Drawing.Color.White;
             this.gbSettings.Location = new System.Drawing.Point(12, 209);
             this.gbSettings.Name = "gbSettings";
-            this.gbSettings.Size = new System.Drawing.Size(584, 170);
+            this.gbSettings.Size = new System.Drawing.Size(599, 170);
             this.gbSettings.TabIndex = 13;
             this.gbSettings.TabStop = false;
             this.gbSettings.Text = "Настройки";
@@ -246,7 +248,7 @@
             // ButSettingCancel
             // 
             this.ButSettingCancel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(56)))), ((int)(((byte)(66)))));
-            this.ButSettingCancel.Location = new System.Drawing.Point(309, 140);
+            this.ButSettingCancel.Location = new System.Drawing.Point(329, 138);
             this.ButSettingCancel.Name = "ButSettingCancel";
             this.ButSettingCancel.Size = new System.Drawing.Size(81, 23);
             this.ButSettingCancel.TabIndex = 13;
@@ -257,7 +259,7 @@
             // ButSettingSave
             // 
             this.ButSettingSave.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(56)))), ((int)(((byte)(66)))));
-            this.ButSettingSave.Location = new System.Drawing.Point(221, 140);
+            this.ButSettingSave.Location = new System.Drawing.Point(241, 138);
             this.ButSettingSave.Name = "ButSettingSave";
             this.ButSettingSave.Size = new System.Drawing.Size(81, 23);
             this.ButSettingSave.TabIndex = 12;
@@ -268,9 +270,9 @@
             // cbHideSplashLogo
             // 
             this.cbHideSplashLogo.AutoSize = true;
-            this.cbHideSplashLogo.Location = new System.Drawing.Point(202, 116);
+            this.cbHideSplashLogo.Location = new System.Drawing.Point(222, 114);
             this.cbHideSplashLogo.Name = "cbHideSplashLogo";
-            this.cbHideSplashLogo.Size = new System.Drawing.Size(208, 17);
+            this.cbHideSplashLogo.Size = new System.Drawing.Size(254, 20);
             this.cbHideSplashLogo.TabIndex = 11;
             this.cbHideSplashLogo.Text = "Показывать логотип загрузки";
             this.cbHideSplashLogo.UseVisualStyleBackColor = true;
@@ -278,9 +280,9 @@
             // cbSkipIntro
             // 
             this.cbSkipIntro.AutoSize = true;
-            this.cbSkipIntro.Location = new System.Drawing.Point(202, 93);
+            this.cbSkipIntro.Location = new System.Drawing.Point(222, 91);
             this.cbSkipIntro.Name = "cbSkipIntro";
-            this.cbSkipIntro.Size = new System.Drawing.Size(153, 17);
+            this.cbSkipIntro.Size = new System.Drawing.Size(188, 20);
             this.cbSkipIntro.TabIndex = 10;
             this.cbSkipIntro.Text = "Пропустить заставку";
             this.cbSkipIntro.UseVisualStyleBackColor = true;
@@ -288,47 +290,46 @@
             // ButPathToGame
             // 
             this.ButPathToGame.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(56)))), ((int)(((byte)(66)))));
-            this.ButPathToGame.Location = new System.Drawing.Point(468, 44);
+            this.ButPathToGame.Location = new System.Drawing.Point(552, 41);
             this.ButPathToGame.Name = "ButPathToGame";
-            this.ButPathToGame.Size = new System.Drawing.Size(75, 23);
+            this.ButPathToGame.Size = new System.Drawing.Size(28, 23);
             this.ButPathToGame.TabIndex = 8;
-            this.ButPathToGame.Text = "Обзор";
+            this.ButPathToGame.Text = "...";
             this.ButPathToGame.UseVisualStyleBackColor = true;
             this.ButPathToGame.Click += new System.EventHandler(this.ButPathToGame_Click);
             // 
             // txtPathToGame
             // 
             this.txtPathToGame.Enabled = false;
-            this.txtPathToGame.Location = new System.Drawing.Point(203, 44);
+            this.txtPathToGame.Location = new System.Drawing.Point(223, 42);
             this.txtPathToGame.Name = "txtPathToGame";
-            this.txtPathToGame.Size = new System.Drawing.Size(259, 20);
+            this.txtPathToGame.Size = new System.Drawing.Size(323, 21);
             this.txtPathToGame.TabIndex = 7;
             this.txtPathToGame.Text = "c:\\ArcheAge\\bin32\\Archeage.exe";
             // 
             // cbSaveLogin
             // 
             this.cbSaveLogin.AutoSize = true;
-            this.cbSaveLogin.Location = new System.Drawing.Point(202, 70);
+            this.cbSaveLogin.Location = new System.Drawing.Point(222, 68);
             this.cbSaveLogin.Name = "cbSaveLogin";
-            this.cbSaveLogin.Size = new System.Drawing.Size(188, 17);
+            this.cbSaveLogin.Size = new System.Drawing.Size(230, 20);
             this.cbSaveLogin.TabIndex = 6;
             this.cbSaveLogin.Text = "Сохранять учетные данные";
             this.cbSaveLogin.UseVisualStyleBackColor = true;
             // 
             // txtServerIP
             // 
-            this.txtServerIP.Location = new System.Drawing.Point(203, 16);
+            this.txtServerIP.Location = new System.Drawing.Point(223, 14);
             this.txtServerIP.Name = "txtServerIP";
-            this.txtServerIP.Size = new System.Drawing.Size(100, 20);
+            this.txtServerIP.Size = new System.Drawing.Size(100, 21);
             this.txtServerIP.TabIndex = 5;
             this.txtServerIP.Text = "127.0.0.1";
             // 
             // LblPathToGame
             // 
-            this.LblPathToGame.AutoSize = true;
-            this.LblPathToGame.Location = new System.Drawing.Point(36, 47);
+            this.LblPathToGame.Location = new System.Drawing.Point(6, 45);
             this.LblPathToGame.Name = "LblPathToGame";
-            this.LblPathToGame.Size = new System.Drawing.Size(161, 13);
+            this.LblPathToGame.Size = new System.Drawing.Size(211, 16);
             this.LblPathToGame.TabIndex = 2;
             this.LblPathToGame.Text = "Путь к игровому клиенту:";
             this.LblPathToGame.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -338,16 +339,15 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(23, 44);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(0, 13);
+            this.label2.Size = new System.Drawing.Size(0, 16);
             this.label2.TabIndex = 1;
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // LblIPAddress
             // 
-            this.LblIPAddress.AutoSize = true;
-            this.LblIPAddress.Location = new System.Drawing.Point(82, 19);
+            this.LblIPAddress.Location = new System.Drawing.Point(6, 19);
             this.LblIPAddress.Name = "LblIPAddress";
-            this.LblIPAddress.Size = new System.Drawing.Size(115, 13);
+            this.LblIPAddress.Size = new System.Drawing.Size(211, 16);
             this.LblIPAddress.TabIndex = 0;
             this.LblIPAddress.Text = "IP адрес сервера:";
             this.LblIPAddress.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
