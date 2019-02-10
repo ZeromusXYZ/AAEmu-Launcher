@@ -219,6 +219,7 @@ namespace AAEmu.Launcher
                 Setting.Lang = "en";
                 Setting.LastLoginUser = "test";
                 Setting.LastLoginPass = "";
+                Setting.UserHistory = new List<string>();
                 Setting.UserHistory.Clear();
             }
             try
