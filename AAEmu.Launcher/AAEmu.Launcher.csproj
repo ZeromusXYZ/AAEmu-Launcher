@@ -161,6 +161,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="aaemu.ico" />
+    <None Include="Resources\btn_conf.png" />
+    <None Include="Resources\btn_conf_a.png" />
+    <None Include="Resources\btn_pickup.png" />
+    <None Include="Resources\btn_pickup_a.png" />
+    <None Include="Resources\btn_portal_exit.png" />
+    <None Include="Resources\btn_portal_exit_a.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">

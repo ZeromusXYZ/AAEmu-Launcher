@@ -37,6 +37,15 @@ namespace AAEmu.Launcher
 
             [JsonProperty("hideSplashLogo")]
             public string HideSplashLogo { get; set; }
+
+            [JsonProperty("lastLoginUser")]
+            public string LastLoginUser { get; set; }
+
+            [JsonProperty("lastLoginPass")]
+            public string LastLoginPass { get; set; }
+
+            [JsonProperty("userHistory")]
+            public List<string> UserHistory { get; set; }
         }
 
         public Settings Setting = new Settings();
@@ -46,6 +55,8 @@ namespace AAEmu.Launcher
         const string urlDiscordInvite = "https://discord.gg/vn8E8E6";
         const string urlNews = "https://aaemu.pw/updater/";
         // const string urlNews = "https://cl2.widgetbot.io/channels/479677351618281472/481782245087248400";
+        private bool formMouseDown;
+        private Point lastLocation;
 
         public LauncherForm()
         {
@@ -71,10 +82,6 @@ namespace AAEmu.Launcher
             */
         }
 
-        private void pictureBox4_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
 
         private void UpdateFormLanguageElements()
         {
@@ -189,10 +196,16 @@ namespace AAEmu.Launcher
 
         private void LauncherForm_Load(object sender, EventArgs e)
         {
+            LoadSettings();
+        }
+
+        private void LoadSettings()
+        { 
+            StreamReader reader = null ;
             Console.WriteLine(Application.StartupPath + "\\" + launcherConfigFile);
             try
             {
-                StreamReader reader = new StreamReader(Application.StartupPath + "\\" + launcherConfigFile);
+                reader = new StreamReader(Application.StartupPath + "\\" + launcherConfigFile);
                 var ConfigFile = reader.ReadToEnd();
                 Console.Write(ConfigFile.ToString());
 
@@ -204,44 +217,61 @@ namespace AAEmu.Launcher
                 Setting.PathToGame = "";
                 Setting.ServerIpAddress = "127.0.0.1";
                 Setting.Lang = "en";
+                Setting.LastLoginUser = "test";
+                Setting.LastLoginPass = "";
+                Setting.UserHistory.Clear();
             }
+            try
+            {
+                // Make sure we close out stream so the file won't be in use when we need to save it
+                reader.Close();
+            }
+            catch
+            {
 
+            }
 
             txtPathToGame.Text = Setting.PathToGame;
             txtServerIP.Text = Setting.ServerIpAddress;
 
+            txtLogin.Items.Clear();
+            if (Setting.UserHistory != null)
+            foreach (string s in Setting.UserHistory)
+                txtLogin.Items.Add(s);
+
+            txtLogin.Text = Setting.LastLoginUser;
+            txtPassword.Text = Setting.LastLoginPass;
+
             UpdateFormLanguageElements();
 
-            if (Setting.SaveLoginAndPassword == "True")
-                cbSaveLogin.Checked = true;
-            if (Setting.SkipIntro == "True")
-                cbSkipIntro.Checked = true;
-            if (Setting.HideSplashLogo == "True")
-                cbHideSplashLogo.Checked = true;
+            cbSaveLogin.Checked = (Setting.SaveLoginAndPassword == "True");
+            cbSkipIntro.Checked = (Setting.SkipIntro == "True");
+            cbHideSplashLogo.Checked = (Setting.HideSplashLogo == "True");
         }
 
         private void PicButSetting_MouseEnter(object sender, EventArgs e)
         {
-            PicButSetting.Image = Properties.Resources.But_Settings_Active;
+            PicButSetting.Image = Properties.Resources.btn_conf_a;
         }
 
         private void PicButSetting_MouseLeave(object sender, EventArgs e)
         {
-            PicButSetting.Image = Properties.Resources.But_Settings;
+            PicButSetting.Image = Properties.Resources.btn_conf;
         }
 
         private void PicButExit_MouseEnter(object sender, EventArgs e)
         {
-            PicButExit.Image = Properties.Resources.But_Power_Active;
+            PicButExit.Image = Properties.Resources.btn_portal_exit_a;
         }
 
         private void PicButExit_MouseLeave(object sender, EventArgs e)
         {
-            PicButExit.Image = Properties.Resources.But_Power;
+            PicButExit.Image = Properties.Resources.btn_portal_exit;
         }
 
         private void PicButEnter_Click(object sender, EventArgs e)
         {
+            Application.UseWaitCursor = true;
             if (Setting.PathToGame != "")
             {
                 if (txtLogin.Text != "" && txtPassword.Text != "")
@@ -259,6 +289,12 @@ namespace AAEmu.Launcher
                     try
                     {
                         Process.Start(GameClient);
+
+                        if (Setting.SaveLoginAndPassword == "true")
+                            SaveSettings();
+
+                        // Minimize after launching AA
+                        WindowState = FormWindowState.Minimized;
                     }
                     catch {
                         MessageBox.Show("Error: Failed to start the game");
@@ -275,6 +311,7 @@ namespace AAEmu.Launcher
                 MessageBox.Show("Error: No game path set");
                 // MessageBox.Show("Не указан путь размещения клиента игры!");
             }
+            Application.UseWaitCursor = false;
         }
 
         private void PicButSetting_Click(object sender, EventArgs e)
@@ -301,15 +338,7 @@ namespace AAEmu.Launcher
 
         private void ButSettingSave_Click(object sender, EventArgs e)
         {
-            Setting.PathToGame = txtPathToGame.Text;
-            Setting.SaveLoginAndPassword = cbSaveLogin.Checked.ToString();
-            Setting.ServerIpAddress = txtServerIP.Text;
-            Setting.SkipIntro = cbSkipIntro.Checked.ToString();
-            Setting.HideSplashLogo = cbHideSplashLogo.Checked.ToString();
-            var SettingJson = JsonConvert.SerializeObject(Setting);
-            Console.Write("Settings:\n" + SettingJson);
-            // Console.Write("Настройки:\n" + SettingJson);
-            File.WriteAllText(Application.StartupPath + "\\" + launcherConfigFile, SettingJson);
+            SaveSettings();
             gbSettings.Visible = false;
         }
 
@@ -317,5 +346,108 @@ namespace AAEmu.Launcher
         {
             gbSettings.Visible = false;
         }
+
+        private void LauncherForm_MouseDown(object sender, MouseEventArgs e)
+        {
+            // Code for form drag
+            formMouseDown = true;
+            lastLocation = e.Location;
+        }
+
+        private void LauncherForm_MouseMove(object sender, MouseEventArgs e)
+        {
+            // Code for form drag
+            if (formMouseDown)
+            {
+                this.Location = new Point(
+                    (this.Location.X - lastLocation.X) + e.X, (this.Location.Y - lastLocation.Y) + e.Y);
+
+                this.Update();
+            }
+        }
+
+        private void LauncherForm_MouseUp(object sender, MouseEventArgs e)
+        {
+            // Code for form drag
+            formMouseDown = false;
+        }
+
+        private void txtLogin_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                txtPassword.Focus();
+                txtPassword.SelectAll();
+            }
+        }
+
+        private void txtPassword_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                PicButEnter_Click(null,null);
+            }
+
+        }
+
+        private void PicButMinimize_Click(object sender, EventArgs e)
+        {
+            WindowState = FormWindowState.Minimized;
+        }
+
+        private void PicButMinimize_MouseEnter(object sender, EventArgs e)
+        {
+            PicButMinimize.Image = Properties.Resources.btn_pickup_a;
+        }
+
+        private void PicButMinimize_MouseLeave(object sender, EventArgs e)
+        {
+            PicButMinimize.Image = Properties.Resources.btn_pickup;
+        }
+
+        private void PicButExit_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void LauncherForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            SaveSettings();
+        }
+
+        private void SaveSettings()
+        {
+            Setting.PathToGame = txtPathToGame.Text;
+            Setting.SaveLoginAndPassword = cbSaveLogin.Checked.ToString();
+            Setting.ServerIpAddress = txtServerIP.Text;
+            Setting.SkipIntro = cbSkipIntro.Checked.ToString();
+            Setting.HideSplashLogo = cbHideSplashLogo.Checked.ToString();
+
+            if (cbSaveLogin.Checked)
+            {
+                Setting.LastLoginUser = txtLogin.Text;
+                // TODO: Save the password in a somewhat more safe way
+                Setting.LastLoginPass = ""; // don't save password, unsafe
+                if (!txtLogin.Items.Contains(txtLogin.Text))
+                {
+                    txtLogin.Items.Add(txtLogin.Text);
+                }
+            } else
+            {
+                Setting.LastLoginUser = "";
+                Setting.LastLoginPass = "";
+            }
+            Setting.UserHistory = new List<string>();
+            Setting.UserHistory.Clear();
+            foreach(Object o in txtLogin.Items)
+                Setting.UserHistory.Add(txtLogin.GetItemText(o));
+
+            var SettingJson = JsonConvert.SerializeObject(Setting);
+            Console.Write("Saving Settings:\n" + SettingJson);
+            // Console.Write("Настройки:\n" + SettingJson);
+            File.WriteAllText(Application.StartupPath + "\\" + launcherConfigFile, SettingJson);
+        }
+
+
     }
 }
