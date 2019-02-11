@@ -90,8 +90,8 @@ namespace AAEmu.Launcher
             {
                 case "ru":
                     PicButLangChange.Image = Properties.Resources.But_Lang_Ru;
-                    LblLogin.Text = "Логин:";
-                    LblPassword.Text = "Пароль:";
+                    LLogin.Text = "Логин";
+                    LPassword.Text = "Пароль";
                     LblIPAddress.Text = "IP адрес сервера:";
                     LblPathToGame.Text = "Путь к игровому клиенту:";
                     cbSaveLogin.Text = "Сохранять учетные данные";
@@ -99,12 +99,12 @@ namespace AAEmu.Launcher
                     cbHideSplashLogo.Text = "Показывать логотип загрузки";
                     ButSettingSave.Text = "Сохранить";
                     ButSettingCancel.Text = "Отмена";
-                    gbSettings.Text = "Настройки:";
+                    gbSettings.Text = "Настройки";
                     break;
                 case "de":
                     PicButLangChange.Image = Properties.Resources.But_Lang_De;
-                    LblLogin.Text = "Benutzername:";
-                    LblPassword.Text = "Passwort:";
+                    LLogin.Text = "Benutzername";
+                    LPassword.Text = "Passwort";
                     LblIPAddress.Text = "Server IP Adresse:";
                     LblPathToGame.Text = "Pfad zum Game Client:";
                     cbSaveLogin.Text = "Speichern sie Benutzername und Passwort";
@@ -112,14 +112,14 @@ namespace AAEmu.Launcher
                     cbHideSplashLogo.Text = "Begrüßungsbildschirm ausblenden";
                     ButSettingSave.Text = "Speichern";
                     ButSettingCancel.Text = "Abbrechen";
-                    gbSettings.Text = "Einstellungen:";
+                    gbSettings.Text = "Einstellungen";
                     break;
                 case "en":
                 default:
                     Setting.Lang = "en";
                     PicButLangChange.Image = Properties.Resources.But_Lang_En;
-                    LblLogin.Text = "Login:";
-                    LblPassword.Text = "Password:";
+                    LLogin.Text = "Username";
+                    LPassword.Text = "Password";
                     LblIPAddress.Text = "Server IP Address:";
                     LblPathToGame.Text = "Path to Game Client:";
                     cbSaveLogin.Text = "Save Login & Password";
@@ -127,7 +127,7 @@ namespace AAEmu.Launcher
                     cbHideSplashLogo.Text = "Hide Splash Screen";
                     ButSettingSave.Text = "Save";
                     ButSettingCancel.Text = "Cancel";
-                    gbSettings.Text = "Settings:";
+                    gbSettings.Text = "Settings";
                     break;
             }
 
@@ -235,13 +235,15 @@ namespace AAEmu.Launcher
             txtPathToGame.Text = Setting.PathToGame;
             txtServerIP.Text = Setting.ServerIpAddress;
 
-            txtLogin.Items.Clear();
+            txtLoginList.Items.Clear();
             if (Setting.UserHistory != null)
             foreach (string s in Setting.UserHistory)
-                txtLogin.Items.Add(s);
+                txtLoginList.Items.Add(s);
 
-            txtLogin.Text = Setting.LastLoginUser;
+            txtLoginList.Text = Setting.LastLoginUser;
+            LFakeUser.Text = txtLoginList.Text;
             txtPassword.Text = Setting.LastLoginPass;
+            LFakePassword.Text = new String('*', 10);
 
             UpdateFormLanguageElements();
 
@@ -275,12 +277,12 @@ namespace AAEmu.Launcher
             Application.UseWaitCursor = true;
             if (Setting.PathToGame != "")
             {
-                if (txtLogin.Text != "" && txtPassword.Text != "")
+                if (txtLoginList.Text != "" && txtPassword.Text != "")
                 {
                     byte[] data = Encoding.Default.GetBytes(txtPassword.Text);
                     var result = new SHA256Managed().ComputeHash(data);
 
-                    string LoginArg = "-r +auth_ip "+ txtServerIP.Text + " -uid " + txtLogin.Text + " -token " + BitConverter.ToString(result).Replace("-", "").ToLower();
+                    string LoginArg = "-r +auth_ip "+ txtServerIP.Text + " -uid " + txtLoginList.Text + " -token " + BitConverter.ToString(result).Replace("-", "").ToLower();
                     string HShield = " +acpxmk";
 
                     ProcessStartInfo GameClient = new ProcessStartInfo();
@@ -377,8 +379,12 @@ namespace AAEmu.Launcher
         {
             if (e.KeyCode == Keys.Enter)
             {
+                LFakePassword.Hide();
+                txtPassword.Show();
                 txtPassword.Focus();
                 txtPassword.SelectAll();
+                txtLogin.Hide();
+                txtLoginList.Hide();
             }
         }
 
@@ -426,12 +432,12 @@ namespace AAEmu.Launcher
 
             if (cbSaveLogin.Checked)
             {
-                Setting.LastLoginUser = txtLogin.Text;
+                Setting.LastLoginUser = txtLoginList.Text;
                 // TODO: Save the password in a somewhat more safe way
                 Setting.LastLoginPass = ""; // don't save password, unsafe
-                if (!txtLogin.Items.Contains(txtLogin.Text))
+                if (!txtLoginList.Items.Contains(txtLoginList.Text))
                 {
-                    txtLogin.Items.Add(txtLogin.Text);
+                    txtLoginList.Items.Add(txtLoginList.Text);
                 }
             } else
             {
@@ -440,8 +446,8 @@ namespace AAEmu.Launcher
             }
             Setting.UserHistory = new List<string>();
             Setting.UserHistory.Clear();
-            foreach(Object o in txtLogin.Items)
-                Setting.UserHistory.Add(txtLogin.GetItemText(o));
+            foreach(Object o in txtLoginList.Items)
+                Setting.UserHistory.Add(txtLoginList.GetItemText(o));
 
             var SettingJson = JsonConvert.SerializeObject(Setting);
             Console.Write("Saving Settings:\n" + SettingJson);
@@ -449,6 +455,57 @@ namespace AAEmu.Launcher
             File.WriteAllText(Application.StartupPath + "\\" + launcherConfigFile, SettingJson);
         }
 
+        private void LFakePassword_MouseEnter(object sender, EventArgs e)
+        {
+            LFakePassword.Hide();
+            txtPassword.Show();
+            txtPassword.Focus();
 
+            txtLoginList.Hide();
+        }
+
+        private void txtPassword_MouseLeave(object sender, EventArgs e)
+        {
+            Focus();
+            txtPassword.Hide();
+            LFakePassword.Text = new String('*', txtPassword.TextLength);
+            LFakePassword.Show();            
+        }
+
+        private void LFakeUser_MouseEnter(object sender, EventArgs e)
+        {
+            LFakeUser.Hide();
+            txtLogin.Show();
+            txtLogin.Focus();
+            txtLoginList.Show();
+        }
+
+        private void txtLogin_MouseLeave(object sender, EventArgs e)
+        {
+            Focus();
+            txtLogin.Hide();
+            //txtLoginList.Hide();
+            LFakeUser.Text = txtLogin.Text;
+            LFakeUser.Show();
+        }
+
+        private void txtLoginList_SelectedValueChanged(object sender, EventArgs e)
+        {
+            txtLogin.Text = txtLoginList.Text;
+            LFakeUser.Text = txtLoginList.Text;
+            txtLoginList.Hide();
+        }
+
+        private void txtLogin_Leave(object sender, EventArgs e)
+        {
+            LFakeUser.Text = txtLogin.Text;
+
+        }
+
+        private void txtPassword_Leave(object sender, EventArgs e)
+        {
+            LFakePassword.Text = new String('*', txtPassword.TextLength);
+            LFakePassword.Show();
+        }
     }
 }
