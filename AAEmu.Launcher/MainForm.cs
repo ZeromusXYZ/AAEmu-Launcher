@@ -54,6 +54,7 @@ namespace AAEmu.Launcher
         const string urlGitHub = "https://github.com/atel0/AAEmu";
         const string urlDiscordInvite = "https://discord.gg/vn8E8E6";
         const string urlNews = "https://aaemu.pw/updater/";
+        const string urlWebsite = "https://aaemu.info/";
         // const string urlNews = "https://cl2.widgetbot.io/channels/479677351618281472/481782245087248400";
         private bool formMouseDown;
         private Point lastLocation;
@@ -65,13 +66,6 @@ namespace AAEmu.Launcher
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (webBrowser.Visible == false)
-            {
-                webBrowser.Visible = true;
-                //webBrowser.AllowNavigation = true;
-                //webBrowser.Navigate(urlNews);
-                //webBrowser.AllowNavigation = false;
-            }
             /*
             if (progressBar1.Value >= 100)
                 progressBar1.Value = 0;
@@ -89,49 +83,58 @@ namespace AAEmu.Launcher
             switch (Setting.Lang)
             {
                 case "ru":
-                    PicButLangChange.Image = Properties.Resources.But_Lang_Ru;
-                    LLogin.Text = "Логин";
-                    LPassword.Text = "Пароль";
-                    LblIPAddress.Text = "IP адрес сервера:";
-                    LblPathToGame.Text = "Путь к игровому клиенту:";
+                    btnLangChange.Image = Properties.Resources.But_Lang_Ru;
+                    lLogin.Text = "Логин";
+                    lPassword.Text = "Пароль";
+                    lIPAddress.Text = "IP адрес сервера:";
+                    lPathToGame.Text = "Путь к игровому клиенту:";
                     cbSaveLogin.Text = "Сохранять учетные данные";
                     cbSkipIntro.Text = "Пропустить заставку";
                     cbHideSplashLogo.Text = "Показывать логотип загрузки";
-                    ButSettingSave.Text = "Сохранить";
-                    ButSettingCancel.Text = "Отмена";
-                    gbSettings.Text = "Настройки";
+                    btnSettingsSave.Text = "Сохранить";
+                    btnSettingsCancel.Text = "Отмена";
+                    btnSettings.Text = "Настройки";
+                    gbSettings.Text = btnSettings.Text;
+                    btnWebsite.Text = "сайт";
+                    btnPlay.Text = "играть";
                     break;
                 case "de":
-                    PicButLangChange.Image = Properties.Resources.But_Lang_De;
-                    LLogin.Text = "Benutzername";
-                    LPassword.Text = "Passwort";
-                    LblIPAddress.Text = "Server IP Adresse:";
-                    LblPathToGame.Text = "Pfad zum Game Client:";
+                    btnLangChange.Image = Properties.Resources.But_Lang_De;
+                    lLogin.Text = "Benutzername";
+                    lPassword.Text = "Passwort";
+                    lIPAddress.Text = "Server IP Adresse:";
+                    lPathToGame.Text = "Pfad zum Game Client:";
                     cbSaveLogin.Text = "Speichern sie Benutzername und Passwort";
                     cbSkipIntro.Text = "Intro überspringen";
                     cbHideSplashLogo.Text = "Begrüßungsbildschirm ausblenden";
-                    ButSettingSave.Text = "Speichern";
-                    ButSettingCancel.Text = "Abbrechen";
-                    gbSettings.Text = "Einstellungen";
+                    btnSettingsSave.Text = "Speichern";
+                    btnSettingsCancel.Text = "Abbrechen";
+                    btnSettings.Text = "Einstellungen";
+                    gbSettings.Text = btnSettings.Text;
+                    btnWebsite.Text = "Website";
+                    btnPlay.Text = "Spielen" ;
                     break;
                 case "en":
                 default:
                     Setting.Lang = "en";
-                    PicButLangChange.Image = Properties.Resources.But_Lang_En;
-                    LLogin.Text = "Username";
-                    LPassword.Text = "Password";
-                    LblIPAddress.Text = "Server IP Address:";
-                    LblPathToGame.Text = "Path to Game Client:";
+                    btnLangChange.Image = Properties.Resources.But_Lang_En;
+                    lLogin.Text = "Username";
+                    lPassword.Text = "Password";
+                    lIPAddress.Text = "Server IP Address:";
+                    lPathToGame.Text = "Path to Game Client:";
                     cbSaveLogin.Text = "Save Login & Password";
                     cbSkipIntro.Text = "Skip Intro";
                     cbHideSplashLogo.Text = "Hide Splash Screen";
-                    ButSettingSave.Text = "Save";
-                    ButSettingCancel.Text = "Cancel";
-                    gbSettings.Text = "Settings";
+                    btnSettingsSave.Text = "Save";
+                    btnSettingsCancel.Text = "Cancel";
+                    btnSettings.Text = "Settings";
+                    gbSettings.Text = btnSettings.Text;
+                    btnWebsite.Text = "Website";
+                    btnPlay.Text = "Play";
                     break;
             }
 
-            PicButLangChange.Refresh();
+            btnLangChange.Refresh();
 
         }
 
@@ -151,37 +154,27 @@ namespace AAEmu.Launcher
             }
             Console.WriteLine("Updating Language: {0}",Setting.Lang);
             UpdateFormLanguageElements();
-            PicButLangChange.Refresh();
-        }
-
-        private void PicButEnter_MouseEnter(object sender, EventArgs e)
-        {
-            PicButEnter.Image = Properties.Resources.Logo_Active;
-        }
-
-        private void PicButEnter_MouseLeave(object sender, EventArgs e)
-        {
-            PicButEnter.Image = Properties.Resources.Logo;
+            btnLangChange.Refresh();
         }
 
         private void PicButGithub_MouseEnter(object sender, EventArgs e)
         {
-            PicButGithub.Image = Properties.Resources.GitHub_Logo_Only_Active;
+            btnGithub.Image = Properties.Resources.GitHub_Logo_Only_Active;
         }
 
         private void PicButGithub_MouseLeave(object sender, EventArgs e)
         {
-            PicButGithub.Image = Properties.Resources.GitHub_Logo_Only;
+            btnGithub.Image = Properties.Resources.GitHub_Logo_Only;
         }
 
         private void PicButDiscord_MouseEnter(object sender, EventArgs e)
         {
-            PicButDiscord.Image = Properties.Resources.Discord_Logo_Only_Active;
+            btnDiscord.Image = Properties.Resources.Discord_Logo_Only_Active;
         }
 
         private void PicButDiscord_MouseLeave(object sender, EventArgs e)
         {
-            PicButDiscord.Image = Properties.Resources.Discord_Logo_Only;
+            btnDiscord.Image = Properties.Resources.Discord_Logo_Only;
         }
 
         private void PicButGithub_Click(object sender, EventArgs e)
@@ -232,18 +225,18 @@ namespace AAEmu.Launcher
 
             }
 
-            txtPathToGame.Text = Setting.PathToGame;
-            txtServerIP.Text = Setting.ServerIpAddress;
+            ePathToGame.Text = Setting.PathToGame;
+            eServerIP.Text = Setting.ServerIpAddress;
 
-            txtLoginList.Items.Clear();
+            cbLoginList.Items.Clear();
             if (Setting.UserHistory != null)
             foreach (string s in Setting.UserHistory)
-                txtLoginList.Items.Add(s);
+                cbLoginList.Items.Add(s);
 
-            txtLoginList.Text = Setting.LastLoginUser;
-            LFakeUser.Text = txtLoginList.Text;
-            txtPassword.Text = Setting.LastLoginPass;
-            LFakePassword.Text = new String('*', 10);
+            cbLoginList.Text = Setting.LastLoginUser;
+            lFakeUser.Text = cbLoginList.Text;
+            ePassword.Text = Setting.LastLoginPass;
+            lFakePassword.Text = new String('*', 10);
 
             UpdateFormLanguageElements();
 
@@ -254,35 +247,33 @@ namespace AAEmu.Launcher
 
         private void PicButSetting_MouseEnter(object sender, EventArgs e)
         {
-            PicButSetting.Image = Properties.Resources.btn_conf_a;
         }
 
         private void PicButSetting_MouseLeave(object sender, EventArgs e)
         {
-            PicButSetting.Image = Properties.Resources.btn_conf;
         }
 
         private void PicButExit_MouseEnter(object sender, EventArgs e)
         {
-            PicButExit.Image = Properties.Resources.btn_portal_exit_a;
+            btnExit.Image = Properties.Resources.btn_portal_exit_a;
         }
 
         private void PicButExit_MouseLeave(object sender, EventArgs e)
         {
-            PicButExit.Image = Properties.Resources.btn_portal_exit;
+            btnExit.Image = Properties.Resources.btn_portal_exit;
         }
 
-        private void PicButEnter_Click(object sender, EventArgs e)
-        {
+        private void StartGame()
+        { 
             Application.UseWaitCursor = true;
             if (Setting.PathToGame != "")
             {
-                if (txtLoginList.Text != "" && txtPassword.Text != "")
+                if (cbLoginList.Text != "" && ePassword.Text != "")
                 {
-                    byte[] data = Encoding.Default.GetBytes(txtPassword.Text);
+                    byte[] data = Encoding.Default.GetBytes(ePassword.Text);
                     var result = new SHA256Managed().ComputeHash(data);
 
-                    string LoginArg = "-r +auth_ip "+ txtServerIP.Text + " -uid " + txtLoginList.Text + " -token " + BitConverter.ToString(result).Replace("-", "").ToLower();
+                    string LoginArg = "-r +auth_ip "+ eServerIP.Text + " -uid " + cbLoginList.Text + " -token " + BitConverter.ToString(result).Replace("-", "").ToLower();
                     string HShield = " +acpxmk";
 
                     ProcessStartInfo GameClient = new ProcessStartInfo();
@@ -319,7 +310,6 @@ namespace AAEmu.Launcher
 
         private void PicButSetting_Click(object sender, EventArgs e)
         {
-            gbSettings.Visible = !gbSettings.Visible;
         }
 
         private void ButPathToGame_Click(object sender, EventArgs e)
@@ -334,7 +324,7 @@ namespace AAEmu.Launcher
             {
                 //Get the path of specified file
                 Setting.PathToGame = openFileDialog.FileName;
-                txtPathToGame.Text = Setting.PathToGame;
+                ePathToGame.Text = Setting.PathToGame;
                 Console.WriteLine(openFileDialog.OpenFile());
             }
         }
@@ -379,12 +369,12 @@ namespace AAEmu.Launcher
         {
             if (e.KeyCode == Keys.Enter)
             {
-                LFakePassword.Hide();
-                txtPassword.Show();
-                txtPassword.Focus();
-                txtPassword.SelectAll();
-                txtLogin.Hide();
-                txtLoginList.Hide();
+                lFakePassword.Hide();
+                ePassword.Show();
+                ePassword.Focus();
+                ePassword.SelectAll();
+                eLogin.Hide();
+                cbLoginList.Hide();
             }
         }
 
@@ -392,7 +382,7 @@ namespace AAEmu.Launcher
         {
             if (e.KeyCode == Keys.Enter)
             {
-                PicButEnter_Click(null,null);
+                btnPlay_Click(null,null);
             }
 
         }
@@ -404,12 +394,12 @@ namespace AAEmu.Launcher
 
         private void PicButMinimize_MouseEnter(object sender, EventArgs e)
         {
-            PicButMinimize.Image = Properties.Resources.btn_pickup_a;
+            btnMinimize.Image = Properties.Resources.btn_pickup_a;
         }
 
         private void PicButMinimize_MouseLeave(object sender, EventArgs e)
         {
-            PicButMinimize.Image = Properties.Resources.btn_pickup;
+            btnMinimize.Image = Properties.Resources.btn_pickup;
         }
 
         private void PicButExit_Click(object sender, EventArgs e)
@@ -424,20 +414,20 @@ namespace AAEmu.Launcher
 
         private void SaveSettings()
         {
-            Setting.PathToGame = txtPathToGame.Text;
+            Setting.PathToGame = ePathToGame.Text;
             Setting.SaveLoginAndPassword = cbSaveLogin.Checked.ToString();
-            Setting.ServerIpAddress = txtServerIP.Text;
+            Setting.ServerIpAddress = eServerIP.Text;
             Setting.SkipIntro = cbSkipIntro.Checked.ToString();
             Setting.HideSplashLogo = cbHideSplashLogo.Checked.ToString();
 
             if (cbSaveLogin.Checked)
             {
-                Setting.LastLoginUser = txtLoginList.Text;
+                Setting.LastLoginUser = cbLoginList.Text;
                 // TODO: Save the password in a somewhat more safe way
                 Setting.LastLoginPass = ""; // don't save password, unsafe
-                if (!txtLoginList.Items.Contains(txtLoginList.Text))
+                if (!cbLoginList.Items.Contains(cbLoginList.Text))
                 {
-                    txtLoginList.Items.Add(txtLoginList.Text);
+                    cbLoginList.Items.Add(cbLoginList.Text);
                 }
             } else
             {
@@ -446,8 +436,8 @@ namespace AAEmu.Launcher
             }
             Setting.UserHistory = new List<string>();
             Setting.UserHistory.Clear();
-            foreach(Object o in txtLoginList.Items)
-                Setting.UserHistory.Add(txtLoginList.GetItemText(o));
+            foreach(Object o in cbLoginList.Items)
+                Setting.UserHistory.Add(cbLoginList.GetItemText(o));
 
             var SettingJson = JsonConvert.SerializeObject(Setting);
             Console.Write("Saving Settings:\n" + SettingJson);
@@ -457,55 +447,85 @@ namespace AAEmu.Launcher
 
         private void LFakePassword_MouseEnter(object sender, EventArgs e)
         {
-            LFakePassword.Hide();
-            txtPassword.Show();
-            txtPassword.Focus();
+            lFakePassword.Hide();
+            ePassword.Show();
+            ePassword.Focus();
 
-            txtLoginList.Hide();
+            cbLoginList.Hide();
         }
 
         private void txtPassword_MouseLeave(object sender, EventArgs e)
         {
             Focus();
-            txtPassword.Hide();
-            LFakePassword.Text = new String('*', txtPassword.TextLength);
-            LFakePassword.Show();            
+            ePassword.Hide();
+            lFakePassword.Text = new String('*', ePassword.TextLength);
+            lFakePassword.Show();            
         }
 
         private void LFakeUser_MouseEnter(object sender, EventArgs e)
         {
-            LFakeUser.Hide();
-            txtLogin.Show();
-            txtLogin.Focus();
-            txtLoginList.Show();
+            lFakeUser.Hide();
+            eLogin.Show();
+            eLogin.Focus();
+            cbLoginList.Show();
         }
 
         private void txtLogin_MouseLeave(object sender, EventArgs e)
         {
             Focus();
-            txtLogin.Hide();
+            eLogin.Hide();
             //txtLoginList.Hide();
-            LFakeUser.Text = txtLogin.Text;
-            LFakeUser.Show();
+            lFakeUser.Text = eLogin.Text;
+            lFakeUser.Show();
         }
 
         private void txtLoginList_SelectedValueChanged(object sender, EventArgs e)
         {
-            txtLogin.Text = txtLoginList.Text;
-            LFakeUser.Text = txtLoginList.Text;
-            txtLoginList.Hide();
+            eLogin.Text = cbLoginList.Text;
+            lFakeUser.Text = cbLoginList.Text;
+            cbLoginList.Hide();
         }
 
         private void txtLogin_Leave(object sender, EventArgs e)
         {
-            LFakeUser.Text = txtLogin.Text;
+            lFakeUser.Text = eLogin.Text;
 
         }
 
         private void txtPassword_Leave(object sender, EventArgs e)
         {
-            LFakePassword.Text = new String('*', txtPassword.TextLength);
-            LFakePassword.Show();
+            lFakePassword.Text = new String('*', ePassword.TextLength);
+            lFakePassword.Show();
+        }
+
+        private void btnPlay_Click(object sender, EventArgs e)
+        {
+            StartGame();
+        }
+
+        private void btnPlay_MouseEnter(object sender, EventArgs e)
+        {
+            btnPlay.Image = Properties.Resources.btn_green_a;
+        }
+
+        private void btnPlay_MouseLeave(object sender, EventArgs e)
+        {
+            btnPlay.Image = Properties.Resources.btn_green;
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            gbSettings.Visible = !gbSettings.Visible;
+        }
+
+        private void btnWebsite_Click(object sender, EventArgs e)
+        {
+            Process.Start(urlWebsite);
         }
     }
 }

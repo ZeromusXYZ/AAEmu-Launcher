@@ -161,6 +161,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="aaemu.ico" />
+    <None Include="Res\btn_green_small.png" />
+    <None Include="Res\btn_red_small.png" />
+    <None Include="Res\bg_newsfeed.png" />
+    <None Include="Res\btn_green_a.png" />
+    <None Include="Res\btn_green.png" />
+    <None Include="Res\bg.png" />
     <None Include="Resources\btn_conf.png" />
     <None Include="Resources\btn_conf_a.png" />
     <None Include="Resources\btn_pickup.png" />
