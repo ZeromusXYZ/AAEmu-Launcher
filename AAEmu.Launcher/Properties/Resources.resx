@@ -118,9 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="background_old" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\background.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="But_Lang_De" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\But_Lang_De.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -129,18 +126,6 @@
   </data>
   <data name="But_Lang_Ru" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\But_Lang_Ru.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="But_Power" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\But_Power.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="But_Power_Active" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\But_Power_Active.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="But_Settings" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\But_Settings.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="But_Settings_Active" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\But_Settings_Active.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Discord_Logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Discord_Logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -165,12 +150,6 @@
   </data>
   <data name="GitHub_Logo_Only_Active" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\GitHub_Logo_Only_Active.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Logo_Active" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Logo_Active.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="btn_conf" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\btn_conf.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -207,5 +186,17 @@
   </data>
   <data name="btn_green_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Res\btn_green_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="aaemu_logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\aaemu_logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="bg_login" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\bg_login.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="bg_setup" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\bg_setup.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btn_green_d" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\btn_green_d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
