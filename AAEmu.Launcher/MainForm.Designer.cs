@@ -130,7 +130,7 @@
             this.eServerIP.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.eServerIP.Font = new System.Drawing.Font("Georgia", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.eServerIP.ForeColor = System.Drawing.Color.White;
-            this.eServerIP.Location = new System.Drawing.Point(26, 246);
+            this.eServerIP.Location = new System.Drawing.Point(25, 172);
             this.eServerIP.Margin = new System.Windows.Forms.Padding(0);
             this.eServerIP.Name = "eServerIP";
             this.eServerIP.Size = new System.Drawing.Size(222, 24);
@@ -143,9 +143,9 @@
             this.lPathToGameLabel.BackColor = System.Drawing.Color.Transparent;
             this.lPathToGameLabel.Font = new System.Drawing.Font("Georgia", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lPathToGameLabel.ForeColor = System.Drawing.Color.White;
-            this.lPathToGameLabel.Location = new System.Drawing.Point(22, 304);
+            this.lPathToGameLabel.Location = new System.Drawing.Point(22, 230);
             this.lPathToGameLabel.Name = "lPathToGameLabel";
-            this.lPathToGameLabel.Size = new System.Drawing.Size(226, 20);
+            this.lPathToGameLabel.Size = new System.Drawing.Size(155, 20);
             this.lPathToGameLabel.TabIndex = 2;
             this.lPathToGameLabel.Text = "gamepath";
             this.lPathToGameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -233,7 +233,7 @@
             this.lSettingsBack.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.lSettingsBack.Font = new System.Drawing.Font("Georgia", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lSettingsBack.ForeColor = System.Drawing.Color.White;
-            this.lSettingsBack.Location = new System.Drawing.Point(12, 142);
+            this.lSettingsBack.Location = new System.Drawing.Point(12, 356);
             this.lSettingsBack.Name = "lSettingsBack";
             this.lSettingsBack.Size = new System.Drawing.Size(165, 36);
             this.lSettingsBack.TabIndex = 29;
@@ -246,9 +246,9 @@
             this.lIPAddress.BackColor = System.Drawing.Color.Transparent;
             this.lIPAddress.Font = new System.Drawing.Font("Georgia", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lIPAddress.ForeColor = System.Drawing.Color.White;
-            this.lIPAddress.Location = new System.Drawing.Point(23, 212);
+            this.lIPAddress.Location = new System.Drawing.Point(22, 138);
             this.lIPAddress.Name = "lIPAddress";
-            this.lIPAddress.Size = new System.Drawing.Size(225, 24);
+            this.lIPAddress.Size = new System.Drawing.Size(155, 24);
             this.lIPAddress.TabIndex = 0;
             this.lIPAddress.Text = "Server";
             this.lIPAddress.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -260,7 +260,7 @@
             this.lGamePath.Cursor = System.Windows.Forms.Cursors.Hand;
             this.lGamePath.Font = new System.Drawing.Font("Georgia", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lGamePath.ForeColor = System.Drawing.Color.White;
-            this.lGamePath.Location = new System.Drawing.Point(25, 340);
+            this.lGamePath.Location = new System.Drawing.Point(24, 265);
             this.lGamePath.Name = "lGamePath";
             this.lGamePath.Size = new System.Drawing.Size(223, 20);
             this.lGamePath.TabIndex = 30;
