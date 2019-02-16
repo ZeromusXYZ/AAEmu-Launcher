@@ -13,6 +13,8 @@ using System.Windows.Forms;
 using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.Threading;
+using System.Security.AccessControl;
 
 namespace AAEmu.Launcher
 {
@@ -318,7 +320,18 @@ namespace AAEmu.Launcher
                     byte[] data = Encoding.Default.GetBytes(ePassword.Text);
                     var result = new SHA256Managed().ComputeHash(data);
 
-                    string LoginArg = "-r +auth_ip "+ eServerIP.Text + " -uid " + eLogin.Text + " -token " + BitConverter.ToString(result).Replace("-", "").ToLower();
+                    // MutexSecurity mutSec = new MutexSecurity();
+                    Mutex mutUser = new Mutex(false, eLogin.Text);
+                    Mutex mutPass = new Mutex(false, BitConverter.ToString(result).Replace("-", ""));
+
+                    // archeage.exe -t -auth_ip 127.0.0.1 -auth_port 1237 -handle 00000000:00000000 -lang en_us
+
+                    string LangArg1 = "-t";
+                    string LangArg2 = "-lang en_us";
+
+                    string LoginArg = LangArg1 + " +auth_ip " + eServerIP.Text + " -auth_port 1237 -handle " + mutPass.Handle.ToString("X8") + ":" + mutUser.Handle.ToString("X8")+" "+LangArg2;
+                    // string LoginArg = "-t +auth_ip " + eServerIP.Text + " -auth_port 1237 -handle " + mutUser.Handle.ToString("X8") + ":" + mutPass.Handle.ToString("X8") + " -lang en_us";
+                    // string LoginArg = "-r +auth_ip " + eServerIP.Text + " -uid " + eLogin.Text + " -token " + BitConverter.ToString(result).Replace("-", "").ToLower();
                     string HShield = " +acpxmk";
 
                     ProcessStartInfo GameClient = new ProcessStartInfo();
@@ -532,7 +545,10 @@ namespace AAEmu.Launcher
         private void lGamePath_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = Path.GetDirectoryName(lGamePath.Text);
+            if (lGamePath.Text != "")
+            {
+                openFileDialog.InitialDirectory = Path.GetDirectoryName(lGamePath.Text);
+            }
             if (openFileDialog.InitialDirectory == "")
             {
                 openFileDialog.InitialDirectory = "C:\\ArcheAge\\Working\\Bin32";
