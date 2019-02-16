@@ -44,8 +44,13 @@ namespace AAEmu.Launcher
             [JsonProperty("lastLoginPass")]
             public string LastLoginPass { get; set; }
 
+            [JsonProperty("allowGameUpdates")]
+            public string AllowGameUpdates { get; set; }
+
             [JsonProperty("userHistory")]
             public List<string> UserHistory { get; set; }
+
+
         }
 
         public Settings Setting = new Settings();
