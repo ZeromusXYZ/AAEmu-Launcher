@@ -15,11 +15,21 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Threading;
 using System.Security.AccessControl;
+using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
+
 
 namespace AAEmu.Launcher
 {
+
     public partial class LauncherForm : Form
     {
+
+//        [DllImport("ToolsA.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "?_g3@@YA_NPAEH0HPAPAX1@Z")]
+        [DllImport("ToolsA.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "#15")]
+        public static extern bool generateInitStr(byte[] byte_0, int int_28, byte[] byte_1, int int_29, ref uint uint_0, ref uint uint_1);
+
+
         public partial class Settings
         {
             [JsonProperty("lang")]
@@ -310,6 +320,77 @@ namespace AAEmu.Launcher
             SetCustomCheckBox(cbHideSplash, Setting.HideSplashLogo);
         }
 
+        private static string GetHandleIDs(string user, string pass)
+        {
+            uint HandleID1 = 0;
+            uint HandleID2 = 0;
+
+            byte[] buffer4 = Encoding.UTF8.GetBytes(user);
+            byte[] buffer5 = Encoding.UTF8.GetBytes(pass);
+            byte[] buffer6 = new byte[(buffer4.Length + 1) + buffer5.Length];
+            Array.Copy(buffer5, 0, buffer6, 0, buffer5.Length);
+            buffer6[buffer5.Length] = 10;
+            Array.Copy(buffer4, 0, buffer6, buffer5.Length + 1, buffer4.Length);
+            bool genRes = generateInitStr(buffer6, buffer6.Length, buffer5, buffer5.Length, ref HandleID1, ref HandleID2);
+
+            if (genRes == false)
+            {
+                MessageBox.Show("Error generating handle");
+                return "00000000:00000000";
+            }
+            else
+            {
+            }
+
+            return HandleID1.ToString("X8") + ":" + HandleID2.ToString("X8");
+        }
+
+        private string CreateArgs_1_0(string user, string pass)
+        {
+            byte[] data = Encoding.Default.GetBytes(pass);
+            var passHash = new SHA256Managed().ComputeHash(data);
+
+            string l1, l2;
+            switch(Setting.Lang)
+            {
+                case "ru":
+                    l1 = "-r ";
+                    l2 = "-lang ru";
+                    break;
+                case "en":
+                default:
+                    l1 = "-t ";
+                    l2 = "-lang en_us ";
+                    break;
+            }
+            return l1 + " +auth_ip " + eServerIP.Text + " -uid " + eLogin.Text + " -token " + BitConverter.ToString(passHash).Replace("-", "").ToLower()+" " + l2;
+        }
+
+        private string CreateArgs_1_2(string user, string pass)
+        {
+            byte[] data = Encoding.Default.GetBytes(pass);
+            var passHash = new SHA256Managed().ComputeHash(data);
+
+            string l1, l2;
+            switch (Setting.Lang)
+            {
+                case "ru":
+                    l1 = "-r ";
+                    l2 = "-lang ru";
+                    break;
+                case "en":
+                default:
+                    l1 = "-t ";
+                    l2 = "-lang en_us ";
+                    break;
+            }
+
+            string handleArgs = "-handle " + GetHandleIDs(eLogin.Text, BitConverter.ToString(passHash).Replace("-", ""));
+
+            // archeage.exe -t -auth_ip 127.0.0.1 -auth_port 1237 -handle 00000000:00000000 -lang en_us
+            return l1 + "+auth_ip " + eServerIP.Text + ":1237 " + handleArgs + " " + l2;
+        }
+
         private void StartGame()
         { 
             Application.UseWaitCursor = true;
@@ -317,22 +398,23 @@ namespace AAEmu.Launcher
             {
                 if (eLogin.Text != "" && ePassword.Text != "")
                 {
-                    byte[] data = Encoding.Default.GetBytes(ePassword.Text);
-                    var result = new SHA256Managed().ComputeHash(data);
 
-                    // MutexSecurity mutSec = new MutexSecurity();
-                    Mutex mutUser = new Mutex(false, eLogin.Text);
-                    Mutex mutPass = new Mutex(false, BitConverter.ToString(result).Replace("-", ""));
+                    // Mutex mutUser = new Mutex(false, "archeage_auth_ticket_event");
+                    // mutex name might be: archeage_auth_ticket_event
 
-                    // archeage.exe -t -auth_ip 127.0.0.1 -auth_port 1237 -handle 00000000:00000000 -lang en_us
-
-                    string LangArg1 = "-t";
-                    string LangArg2 = "-lang en_us";
-
-                    string LoginArg = LangArg1 + " +auth_ip " + eServerIP.Text + " -auth_port 1237 -handle " + mutPass.Handle.ToString("X8") + ":" + mutUser.Handle.ToString("X8")+" "+LangArg2;
-                    // string LoginArg = "-t +auth_ip " + eServerIP.Text + " -auth_port 1237 -handle " + mutUser.Handle.ToString("X8") + ":" + mutPass.Handle.ToString("X8") + " -lang en_us";
-                    // string LoginArg = "-r +auth_ip " + eServerIP.Text + " -uid " + eLogin.Text + " -token " + BitConverter.ToString(result).Replace("-", "").ToLower();
+                    string LoginArg = "";
+                    //LoginArg = CreateArgs_1_0(eLogin.Text, ePassword.Text);
+                    LoginArg = CreateArgs_1_2(eLogin.Text, ePassword.Text);
                     string HShield = " +acpxmk";
+
+                    DebugHelperForm dlg = new DebugHelperForm();
+                    dlg.textBox1.Text = LoginArg;
+                    dlg.textBox2.Text = HShield;
+                    if (dlg.ShowDialog() == DialogResult.OK)
+                    {
+                        dlg.textBox1.Text = LoginArg;
+                        dlg.textBox2.Text = HShield;
+                    }
 
                     ProcessStartInfo GameClient = new ProcessStartInfo();
 
