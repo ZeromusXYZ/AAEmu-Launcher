@@ -174,7 +174,7 @@
   <ItemGroup>
     <Content Include="aaemu.ico" />
     <Content Include="ToolsA.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Res\btn_green_d.png" />
     <None Include="Res\bg_setup.png" />

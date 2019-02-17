@@ -73,6 +73,7 @@ namespace AAEmu.Launcher
         const string urlNews = "https://aaemu.pw/updater/";
         const string urlWebsite = "https://aaemu.info/";
         // const string urlNews = "https://cl2.widgetbot.io/channels/479677351618281472/481782245087248400";
+        const string dx9downloadURL = "https://www.microsoft.com/en-us/download/confirmation.aspx?id=35";
         private bool formMouseDown;
         private Point lastLocation;
 
@@ -320,18 +321,34 @@ namespace AAEmu.Launcher
             SetCustomCheckBox(cbHideSplash, Setting.HideSplashLogo);
         }
 
-        private static string GetHandleIDs(string user, string pass)
+        private static string CreateHandleIDs(string user, string pass, string passHash)
         {
             uint HandleID1 = 0;
             uint HandleID2 = 0;
 
+            string ticketData = "";
+            ticketData += "<?xml version=\"1.0\" encoding=\"UTF - 8\" standalone=\"yes\"?>";
+            ticketData += "<authTicket version = \"1.2\">";
+            ticketData += "<storeToken>1</storeToken>";
+            ticketData += "<username>" + user + "</username>";
+            ticketData += "<password>" + passHash + "</password>";
+            ticketData += "</authTicket>";
+
             byte[] buffer4 = Encoding.UTF8.GetBytes(user);
-            byte[] buffer5 = Encoding.UTF8.GetBytes(pass);
+            byte[] buffer5 = Encoding.UTF8.GetBytes(ticketData);
             byte[] buffer6 = new byte[(buffer4.Length + 1) + buffer5.Length];
             Array.Copy(buffer5, 0, buffer6, 0, buffer5.Length);
-            buffer6[buffer5.Length] = 10;
+            buffer6[buffer5.Length] = 10; // put a LF between the two
             Array.Copy(buffer4, 0, buffer6, buffer5.Length + 1, buffer4.Length);
-            bool genRes = generateInitStr(buffer6, buffer6.Length, buffer5, buffer5.Length, ref HandleID1, ref HandleID2);
+            bool genRes = false;
+            try
+            {
+                genRes = generateInitStr(buffer6, buffer6.Length, buffer5, buffer5.Length, ref HandleID1, ref HandleID2);
+            }
+            catch
+            {
+                MessageBox.Show("Failed to load DLL");
+            }
 
             if (genRes == false)
             {
@@ -350,20 +367,28 @@ namespace AAEmu.Launcher
             byte[] data = Encoding.Default.GetBytes(pass);
             var passHash = new SHA256Managed().ComputeHash(data);
 
-            string l1, l2;
+            string gameProviderArg, languageArg;
             switch(Setting.Lang)
             {
                 case "ru":
-                    l1 = "-r ";
-                    l2 = "-lang ru";
+                    gameProviderArg = "-r ";
+                    languageArg = "";
+                    break;
+                case "fr":
+                    gameProviderArg = "-t ";
+                    languageArg = " -lang fr";
+                    break;
+                case "de":
+                    gameProviderArg = "-t ";
+                    languageArg = " -lang de";
                     break;
                 case "en":
                 default:
-                    l1 = "-t ";
-                    l2 = "-lang en_us ";
+                    gameProviderArg = "-t ";
+                    languageArg = " -lang en_us";
                     break;
             }
-            return l1 + " +auth_ip " + eServerIP.Text + " -uid " + eLogin.Text + " -token " + BitConverter.ToString(passHash).Replace("-", "").ToLower()+" " + l2;
+            return gameProviderArg + " +auth_ip " + eServerIP.Text + " -uid " + eLogin.Text + " -token " + BitConverter.ToString(passHash).Replace("-", "").ToLower()+languageArg;
         }
 
         private string CreateArgs_1_2(string user, string pass)
@@ -371,24 +396,33 @@ namespace AAEmu.Launcher
             byte[] data = Encoding.Default.GetBytes(pass);
             var passHash = new SHA256Managed().ComputeHash(data);
 
-            string l1, l2;
+            string gameProviderArg, languageArg;
             switch (Setting.Lang)
             {
                 case "ru":
-                    l1 = "-r ";
-                    l2 = "-lang ru";
+                    gameProviderArg = "-r ";
+                    languageArg = "";
+                    break;
+                case "fr":
+                    gameProviderArg = "-t ";
+                    languageArg = " -lang fr";
+                    break;
+                case "de":
+                    gameProviderArg = "-t ";
+                    languageArg = " -lang de";
                     break;
                 case "en":
                 default:
-                    l1 = "-t ";
-                    l2 = "-lang en_us ";
+                    gameProviderArg = "-t ";
+                    languageArg = " -lang en_us";
                     break;
             }
 
-            string handleArgs = "-handle " + GetHandleIDs(eLogin.Text, BitConverter.ToString(passHash).Replace("-", ""));
+            // string handleArgs = "-handle " + GetHandleIDs(user, pass);
+            string handleArgs = "-handle " + CreateHandleIDs(user, pass, BitConverter.ToString(passHash).Replace("-", ""));
 
             // archeage.exe -t -auth_ip 127.0.0.1 -auth_port 1237 -handle 00000000:00000000 -lang en_us
-            return l1 + "+auth_ip " + eServerIP.Text + ":1237 " + handleArgs + " " + l2;
+            return gameProviderArg + "+auth_ip " + eServerIP.Text + " -auth_port 1237 " + handleArgs + languageArg;
         }
 
         private void StartGame()
@@ -415,14 +449,30 @@ namespace AAEmu.Launcher
                         dlg.textBox1.Text = LoginArg;
                         dlg.textBox2.Text = HShield;
                     }
+                    dlg.Dispose();
 
-                    ProcessStartInfo GameClient = new ProcessStartInfo();
-
-                    GameClient.FileName = Setting.PathToGame;
-                    GameClient.Arguments = LoginArg + HShield;
+                    ProcessStartInfo GameClientProcessInfo = new ProcessStartInfo(Setting.PathToGame, LoginArg + HShield);
+                    GameClientProcessInfo.UseShellExecute = true;
                     try
                     {
-                        Process.Start(GameClient);
+                        Mutex myMut = new Mutex(false,"archeage_auth_ticket_event");
+                        
+                        Process.Start(GameClientProcessInfo);
+
+                        try
+                        {
+                            if (!myMut.WaitOne(30000)) // try waiting 30s before releasing the mutex
+                            {
+                                MessageBox.Show("Timeout releasing mutex");
+                            }
+                            myMut.ReleaseMutex();
+                            myMut.Dispose();
+                        }
+                        catch
+                        {
+                            MessageBox.Show("Error releasing mutex");
+                        }
+
 
                         if (Setting.SaveLoginAndPassword == "true")
                             SaveSettings();
