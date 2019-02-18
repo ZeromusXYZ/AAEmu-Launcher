@@ -421,17 +421,17 @@ namespace AAEmu.Launcher
                     languageArg = "";
                     break;
                 case "fr":
-                    gameProviderArg = "-t ";
-                    languageArg = " -lang fr";
+                    gameProviderArg = "-r ";
+                    languageArg = "";
                     break;
                 case "de":
-                    gameProviderArg = "-t ";
-                    languageArg = " -lang de";
+                    gameProviderArg = "-r ";
+                    languageArg = "";
                     break;
                 case "en":
                 default:
-                    gameProviderArg = "-t ";
-                    languageArg = " -lang en_us";
+                    gameProviderArg = "-r ";
+                    languageArg = "";
                     break;
             }
             return gameProviderArg + " +auth_ip " + eServerIP.Text + " -uid " + eLogin.Text + " -token " + BitConverter.ToString(passHash).Replace("-", "").ToLower()+languageArg;
@@ -498,8 +498,8 @@ namespace AAEmu.Launcher
                     dlg.textBox2.Text = HShield;
                     if (dlg.ShowDialog() == DialogResult.OK)
                     {
-                        dlg.textBox1.Text = LoginArg;
-                        dlg.textBox2.Text = HShield;
+                        LoginArg = dlg.textBox1.Text;
+                        HShield = dlg.textBox2.Text;
                     }
                     dlg.Dispose();
 
