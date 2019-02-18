@@ -434,7 +434,7 @@ namespace AAEmu.Launcher
                     languageArg = "";
                     break;
             }
-            return gameProviderArg + " +auth_ip " + eServerIP.Text + " -uid " + eLogin.Text + " -token " + BitConverter.ToString(passHash).Replace("-", "").ToLower()+languageArg;
+            return gameProviderArg + "+auth_ip " + eServerIP.Text + " -uid " + eLogin.Text + " -token " + BitConverter.ToString(passHash).Replace("-", "").ToLower()+languageArg;
         }
 
         private string CreateArgs_1_2(string user, string pass)
