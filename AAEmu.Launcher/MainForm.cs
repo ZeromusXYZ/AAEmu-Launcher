@@ -286,7 +286,8 @@ namespace AAEmu.Launcher
             finally
             {
                 // Make sure we close our stream so the file won't be in use when we need to save it
-                reader.Close();
+                if (reader != null)
+                  reader.Close();
             }
 
             lGamePath.Text = Setting.PathToGame;
@@ -532,7 +533,10 @@ namespace AAEmu.Launcher
         private void lGamePath_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = Path.GetDirectoryName(lGamePath.Text);
+            if (lGamePath.Text != "")
+            {
+                openFileDialog.InitialDirectory = Path.GetDirectoryName(lGamePath.Text);
+            }
             if (openFileDialog.InitialDirectory == "")
             {
                 openFileDialog.InitialDirectory = "C:\\ArcheAge\\Working\\Bin32";
