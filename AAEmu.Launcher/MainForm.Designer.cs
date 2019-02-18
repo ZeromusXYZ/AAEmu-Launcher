@@ -62,6 +62,7 @@
             this.btnGithub = new System.Windows.Forms.PictureBox();
             this.btnLangChange = new System.Windows.Forms.PictureBox();
             this.imgBigNews = new System.Windows.Forms.PictureBox();
+            this.cbUse1_2 = new System.Windows.Forms.CheckBox();
             this.cmsAAEmuButton.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.btnSystem)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnDiscord)).BeginInit();
@@ -482,6 +483,18 @@
             this.imgBigNews.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
             this.imgBigNews.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
             // 
+            // cbUse1_2
+            // 
+            this.cbUse1_2.AutoSize = true;
+            this.cbUse1_2.BackColor = System.Drawing.Color.Transparent;
+            this.cbUse1_2.ForeColor = System.Drawing.Color.Red;
+            this.cbUse1_2.Location = new System.Drawing.Point(558, 464);
+            this.cbUse1_2.Name = "cbUse1_2";
+            this.cbUse1_2.Size = new System.Drawing.Size(161, 22);
+            this.cbUse1_2.TabIndex = 37;
+            this.cbUse1_2.Text = "Use V1.2 Launcher";
+            this.cbUse1_2.UseVisualStyleBackColor = false;
+            // 
             // LauncherForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -489,6 +502,7 @@
             this.BackColor = System.Drawing.Color.Fuchsia;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(950, 510);
+            this.Controls.Add(this.cbUse1_2);
             this.Controls.Add(this.cbLoginList);
             this.Controls.Add(this.eLogin);
             this.Controls.Add(this.cbSaveUser);
@@ -577,6 +591,7 @@
         private System.Windows.Forms.Label lSkipIntro;
         private System.Windows.Forms.Label cbSaveUser;
         private System.Windows.Forms.Label lSaveUser;
+        private System.Windows.Forms.CheckBox cbUse1_2;
     }
 }
 

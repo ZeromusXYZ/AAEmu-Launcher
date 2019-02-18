@@ -65,6 +65,11 @@ namespace AAEmu.Launcher
         [DllImport("Kernel32.dll")]
         private static extern bool CreateProcess(string lpApplicationName, string lpCommandLine, IntPtr lpProcessAttributes, IntPtr lpThreadAttributes, bool bInheritHandles, uint dwCreationFlags, IntPtr lpEnvironment, string lpCurrentDirectory, ref STARTUPINFO lpStartupInfo, out PROCESS_INFORMATION lpProcessInformation);
 
+        [DllImport("Kernel32.dll")]
+        private static extern int ResumeThread(IntPtr hThread);
+
+        [DllImport("Kernel32.dll")]
+        private static extern uint GetLastError();
 
         //        [DllImport("ToolsA.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "?_g3@@YA_NPAEH0HPAPAX1@Z")]
         [DllImport("ToolsA.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "#15")]
@@ -478,8 +483,14 @@ namespace AAEmu.Launcher
                     // mutex name might be: archeage_auth_ticket_event
 
                     string LoginArg = "";
-                    //LoginArg = CreateArgs_1_0(eLogin.Text, ePassword.Text);
-                    LoginArg = CreateArgs_1_2(eLogin.Text, ePassword.Text);
+                    if (cbUse1_2.Checked)
+                    {
+                        LoginArg = CreateArgs_1_2(eLogin.Text, ePassword.Text);
+                    }
+                    else
+                    {
+                        LoginArg = CreateArgs_1_0(eLogin.Text, ePassword.Text);
+                    }
                     string HShield = " +acpxmk";
 
                     DebugHelperForm dlg = new DebugHelperForm();
@@ -492,30 +503,66 @@ namespace AAEmu.Launcher
                     }
                     dlg.Dispose();
 
+                    uint lerr = 0;
+
+                    // for 1.0
+                    ProcessStartInfo GameClientProcessInfo;
+                    // for 1.2+
                     PROCESS_INFORMATION pi = new PROCESS_INFORMATION();
                     STARTUPINFO si = new STARTUPINFO();
-                    bool isCreated = CreateProcess(
-                        Setting.PathToGame, // app
-                        LoginArg + HShield, //cmdline
-                        IntPtr.Zero, // ProcAttrib
-                        IntPtr.Zero, // ThreadAttrib
-                        true, // inherit handles
-                        0x00000004, // create flag 4 = CREATE_SUSPENDED
-                        IntPtr.Zero, // envi (null = inherit)
-                        null, // current dir (null = app's dir)
-                        ref si, // start info
-                        out pi // proc info
-                        ); 
 
-                    dsdqsd
-                    ProcessStartInfo GameClientProcessInfo = new ProcessStartInfo(Setting.PathToGame, LoginArg + HShield);
-                    GameClientProcessInfo.UseShellExecute = true;
                     try
                     {
-                        Mutex myMut = new Mutex(false,"archeage_auth_ticket_event");
-                        
-                        Process.Start(GameClientProcessInfo);
+                        //Mutex myMut = new Mutex(false,"archeage_auth_ticket_event");
 
+                        if (cbUse1_2.Checked)
+                        {
+
+                            bool isCreated = CreateProcess(
+                                Setting.PathToGame, // app
+                                "\"" + Setting.PathToGame + "\" " + LoginArg + HShield, //cmdline
+                                IntPtr.Zero, // ProcAttrib
+                                IntPtr.Zero, // ThreadAttrib
+                                true, // inherit handles
+                                0x00000004, // create flags: 0x00000004 = CREATE_SUSPENDED ;
+                                IntPtr.Zero, // envi (null = inherit)
+                                null, // current dir (null = app's dir)
+                                ref si, // start info
+                                out pi // proc info
+                                );
+
+                            if (isCreated == false)
+                            {
+                                lerr = GetLastError();
+                                if (lerr == 740) // 0x2E4
+                                {
+                                    MessageBox.Show("Elevation required ! Please run the launcher with admin rights.");
+                                }
+                                else if (lerr != 0)
+                                {
+                                    MessageBox.Show("Failed to create process, error: " + lerr.ToString());
+                                }
+                                return;
+                            }
+
+                            if (ResumeThread(pi.hThread) == -1)
+                            {
+                                lerr = GetLastError();
+                                if (lerr != 0)
+                                {
+                                    MessageBox.Show("Failed to resume thread, error: " + lerr.ToString());
+                                    return;
+                                }
+                            }
+                        } else
+                        {
+                            // 1.0 loading
+                            GameClientProcessInfo = new ProcessStartInfo(Setting.PathToGame, LoginArg + HShield);
+                            GameClientProcessInfo.UseShellExecute = true;
+                            Process.Start(GameClientProcessInfo);
+                        }
+
+                        /*
                         try
                         {
                             if (!myMut.WaitOne(30000)) // try waiting 30s before releasing the mutex
@@ -529,6 +576,7 @@ namespace AAEmu.Launcher
                         {
                             MessageBox.Show("Error releasing mutex");
                         }
+                        */
 
 
                         if (Setting.SaveLoginAndPassword == "true")
