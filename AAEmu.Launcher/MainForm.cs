@@ -25,7 +25,48 @@ namespace AAEmu.Launcher
     public partial class LauncherForm : Form
     {
 
-//        [DllImport("ToolsA.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "?_g3@@YA_NPAEH0HPAPAX1@Z")]
+        public struct PROCESS_INFORMATION
+        {
+            public IntPtr hProcess;
+            public IntPtr hThread;
+            public uint dwProcessId;
+            public uint dwThreadId;
+        }
+
+        public struct STARTUPINFO
+        {
+            public uint cb;
+            public string lpReserved;
+            public string lpDesktop;
+            public string lpTitle;
+            public uint dwX;
+            public uint dwY;
+            public uint dwXSize;
+            public uint dwYSize;
+            public uint dwXCountChars;
+            public uint dwYCountChars;
+            public uint dwFillAttribute;
+            public uint dwFlags;
+            public short wShowWindow;
+            public short cbReserved2;
+            public IntPtr lpReserved2;
+            public IntPtr hStdInput;
+            public IntPtr hStdOutput;
+            public IntPtr hStdError;
+        }
+
+        public struct SECURITY_ATTRIBUTES
+        {
+            public int length;
+            public IntPtr lpSecurityDescriptor;
+            public bool bInheritHandle;
+        }
+
+        [DllImport("Kernel32.dll")]
+        private static extern bool CreateProcess(string lpApplicationName, string lpCommandLine, IntPtr lpProcessAttributes, IntPtr lpThreadAttributes, bool bInheritHandles, uint dwCreationFlags, IntPtr lpEnvironment, string lpCurrentDirectory, ref STARTUPINFO lpStartupInfo, out PROCESS_INFORMATION lpProcessInformation);
+
+
+        //        [DllImport("ToolsA.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "?_g3@@YA_NPAEH0HPAPAX1@Z")]
         [DllImport("ToolsA.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "#15")]
         public static extern bool generateInitStr(byte[] byte_0, int int_28, byte[] byte_1, int int_29, ref uint uint_0, ref uint uint_1);
 
@@ -451,6 +492,22 @@ namespace AAEmu.Launcher
                     }
                     dlg.Dispose();
 
+                    PROCESS_INFORMATION pi = new PROCESS_INFORMATION();
+                    STARTUPINFO si = new STARTUPINFO();
+                    bool isCreated = CreateProcess(
+                        Setting.PathToGame, // app
+                        LoginArg + HShield, //cmdline
+                        IntPtr.Zero, // ProcAttrib
+                        IntPtr.Zero, // ThreadAttrib
+                        true, // inherit handles
+                        0x00000004, // create flag 4 = CREATE_SUSPENDED
+                        IntPtr.Zero, // envi (null = inherit)
+                        null, // current dir (null = app's dir)
+                        ref si, // start info
+                        out pi // proc info
+                        ); 
+
+                    dsdqsd
                     ProcessStartInfo GameClientProcessInfo = new ProcessStartInfo(Setting.PathToGame, LoginArg + HShield);
                     GameClientProcessInfo.UseShellExecute = true;
                     try
