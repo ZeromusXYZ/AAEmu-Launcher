@@ -338,14 +338,17 @@ namespace AAEmu.Launcher
                 Setting.ServerIpAddress = "127.0.0.1";
                 Setting.Lang = "en";
                 Setting.LastLoginUser = "test";
-                Setting.LastLoginPass = "";
+                Setting.LastLoginPass = "test";
                 Setting.UserHistory = new List<string>();
                 Setting.UserHistory.Clear();
             }
             finally
             {
                 // Make sure we close our stream so the file won't be in use when we need to save it
-                reader.Close();
+                if (reader != null)
+                {
+                    reader.Close();
+                }
             }
 
             lGamePath.Text = Setting.PathToGame;
@@ -381,7 +384,7 @@ namespace AAEmu.Launcher
             ticketData += "</authTicket>";
 
             byte[] buffer4 = Encoding.UTF8.GetBytes(user);
-            byte[] buffer5 = Encoding.UTF8.GetBytes(ticketData);
+            byte[] buffer5 = Encoding.UTF8.GetBytes(pass); // not sure what to pass to this
             byte[] buffer6 = new byte[(buffer4.Length + 1) + buffer5.Length];
             Array.Copy(buffer5, 0, buffer6, 0, buffer5.Length);
             buffer6[buffer5.Length] = 10; // put a LF between the two
@@ -473,7 +476,6 @@ namespace AAEmu.Launcher
 
         private void StartGame()
         { 
-            Application.UseWaitCursor = true;
             if (Setting.PathToGame != "")
             {
                 if (eLogin.Text != "" && ePassword.Text != "")
@@ -494,28 +496,30 @@ namespace AAEmu.Launcher
                     string HShield = " +acpxmk";
 
                     DebugHelperForm dlg = new DebugHelperForm();
-                    dlg.textBox1.Text = LoginArg;
-                    dlg.textBox2.Text = HShield;
+                    dlg.eArgs.Text = LoginArg;
+                    dlg.eHackShieldArg.Text = HShield;
                     if (dlg.ShowDialog() == DialogResult.OK)
                     {
-                        LoginArg = dlg.textBox1.Text;
-                        HShield = dlg.textBox2.Text;
+                        LoginArg = dlg.eArgs.Text;
+                        HShield = dlg.eHackShieldArg.Text;
                     }
                     dlg.Dispose();
 
                     uint lerr = 0;
 
                     // for 1.0
-                    ProcessStartInfo GameClientProcessInfo;
+                    //ProcessStartInfo GameClientProcessInfo;
+                    
                     // for 1.2+
                     PROCESS_INFORMATION pi = new PROCESS_INFORMATION();
                     STARTUPINFO si = new STARTUPINFO();
 
                     try
                     {
+                        // Mutex experimental stuff
                         //Mutex myMut = new Mutex(false,"archeage_auth_ticket_event");
 
-                        if (cbUse1_2.Checked)
+                        if (true) // (cbUse1_2.Checked)
                         {
 
                             bool isCreated = CreateProcess(
@@ -554,15 +558,19 @@ namespace AAEmu.Launcher
                                     return;
                                 }
                             }
-                        } else
+                        }
+                        /*
+                        else
                         {
                             // 1.0 loading
                             GameClientProcessInfo = new ProcessStartInfo(Setting.PathToGame, LoginArg + HShield);
                             GameClientProcessInfo.UseShellExecute = true;
                             Process.Start(GameClientProcessInfo);
                         }
+                        */
 
                         /*
+                        // Mutex experimental stuff
                         try
                         {
                             if (!myMut.WaitOne(30000)) // try waiting 30s before releasing the mutex
@@ -601,7 +609,7 @@ namespace AAEmu.Launcher
                 MessageBox.Show("Error: No game path set");
                 // MessageBox.Show("Не указан путь размещения клиента игры!");
             }
-            Application.UseWaitCursor = false;
+
         }
 
         private void ButSettingSave_Click(object sender, EventArgs e)
@@ -725,7 +733,9 @@ namespace AAEmu.Launcher
 
         private void btnPlay_Click(object sender, EventArgs e)
         {
+            Application.UseWaitCursor = true;
             StartGame();
+            Application.UseWaitCursor = false;
         }
 
         private void btnPlay_MouseEnter(object sender, EventArgs e)
