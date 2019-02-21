@@ -583,13 +583,9 @@ namespace AAEmu.Launcher
                             );
 
                         lerr = GetLastError();
+
                         if (isCreated == false)
                         {
-                            
-                            bool isCreated = CreateProcess(
-                                Setting.PathToGame, // app
-                                "\"" + Setting.PathToGame + "\" " + LoginArg + HShield, //cmdline
-                                IntPtr.Zero, // ProcAttrib
                             if (lerr == 740) // 0x2E4
                             {
                                 MessageBox.Show("Elevation required ! Please run the launcher with admin rights.");
