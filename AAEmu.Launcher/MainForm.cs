@@ -372,17 +372,21 @@ namespace AAEmu.Launcher
 
         private static string CreateHandleIDs(string user, string pass, string passHash)
         {
-            uint HandleID1 = 0;
-            uint HandleID2 = 0;
 
-            string ticketData = "";
-            ticketData += "<?xml version=\"1.0\" encoding=\"UTF - 8\" standalone=\"yes\"?>";
-            ticketData += "<authTicket version = \"1.2\">";
-            ticketData += "<storeToken>1</storeToken>";
-            ticketData += "<username>" + user + "</username>";
-            ticketData += "<password>" + passHash + "</password>";
-            ticketData += "</authTicket>";
+            string stringForSignature = "Signature 1:\n";
 
+            uint handleID1 = 0;
+            uint handleID2 = 0;
+
+            string stringForTicket = stringForSignature;
+            stringForTicket += "<?xml version=\"1.0\" encoding=\"UTF - 8\" standalone=\"yes\"?>";
+            stringForTicket += "<authTicket version = \"1.2\">";
+            stringForTicket += "<storeToken>1</storeToken>";
+            stringForTicket += "<username>" + user + "</username>";
+            stringForTicket += "<password>" + passHash + "</password>";
+            stringForTicket += "</authTicket>";
+
+            /*
             byte[] buffer4 = Encoding.UTF8.GetBytes(user);
             byte[] buffer5 = Encoding.UTF8.GetBytes(pass); // not sure what to pass to this
             byte[] buffer6 = new byte[(buffer4.Length + 1) + buffer5.Length];
@@ -390,9 +394,20 @@ namespace AAEmu.Launcher
             buffer6[buffer5.Length] = 10; // put a LF between the two
             Array.Copy(buffer4, 0, buffer6, buffer5.Length + 1, buffer4.Length);
             bool genRes = false;
+            */
+            byte[] bufferIntPtrID1 = Encoding.UTF8.GetBytes(stringForSignature);
+            byte[] bufferIntPtrID2 = Encoding.UTF8.GetBytes(stringForTicket);
+            byte[] bufferTotal = new byte[(bufferIntPtrID2.Length + 1) + bufferIntPtrID1.Length];
+            Array.Copy(bufferIntPtrID1, 0, bufferTotal, 0, bufferIntPtrID1.Length);
+            bufferTotal[bufferIntPtrID1.Length] = 10;
+            Array.Copy(bufferIntPtrID2, 0, bufferTotal, bufferIntPtrID1.Length + 1, bufferIntPtrID2.Length);
+            bool genRes = false ;
+            // A complex way of doing IntPtrID1 + LF + IntPtrID2
             try
             {
-                genRes = generateInitStr(buffer6, buffer6.Length, buffer5, buffer5.Length, ref HandleID1, ref HandleID2);
+                genRes = generateInitStr(bufferTotal, bufferTotal.Length, bufferIntPtrID1, bufferIntPtrID1.Length, ref handleID1, ref handleID2);
+                //genRes = generateInitStr(buffer6, buffer6.Length, buffer5, buffer5.Length, ref HandleID1, ref HandleID2);
+
             }
             catch
             {
@@ -408,7 +423,7 @@ namespace AAEmu.Launcher
             {
             }
 
-            return HandleID1.ToString("X8") + ":" + HandleID2.ToString("X8");
+            return handleID1.ToString("X8") + ":" + handleID2.ToString("X8");
         }
 
         private string CreateArgs_1_0(string user, string pass)
@@ -507,7 +522,7 @@ namespace AAEmu.Launcher
 
                     uint lerr = 0;
 
-                    // for 1.0
+                    // for old 1.0
                     //ProcessStartInfo GameClientProcessInfo;
                     
                     // for 1.2+
@@ -522,6 +537,7 @@ namespace AAEmu.Launcher
                         if (true) // (cbUse1_2.Checked)
                         {
 
+                            
                             bool isCreated = CreateProcess(
                                 Setting.PathToGame, // app
                                 "\"" + Setting.PathToGame + "\" " + LoginArg + HShield, //cmdline
