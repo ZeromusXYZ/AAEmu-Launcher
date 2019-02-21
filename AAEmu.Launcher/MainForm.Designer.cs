@@ -62,6 +62,8 @@
             this.btnGithub = new System.Windows.Forms.PictureBox();
             this.btnLangChange = new System.Windows.Forms.PictureBox();
             this.imgBigNews = new System.Windows.Forms.PictureBox();
+            this.cbUseDebugMode = new System.Windows.Forms.CheckBox();
+            this.cbLoginType = new System.Windows.Forms.ComboBox();
             this.cmsAAEmuButton.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.btnSystem)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnDiscord)).BeginInit();
@@ -482,6 +484,34 @@
             this.imgBigNews.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
             this.imgBigNews.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
             // 
+            // cbUseDebugMode
+            // 
+            this.cbUseDebugMode.AutoSize = true;
+            this.cbUseDebugMode.BackColor = System.Drawing.Color.Transparent;
+            this.cbUseDebugMode.ForeColor = System.Drawing.Color.Red;
+            this.cbUseDebugMode.Location = new System.Drawing.Point(699, 7);
+            this.cbUseDebugMode.Name = "cbUseDebugMode";
+            this.cbUseDebugMode.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.cbUseDebugMode.Size = new System.Drawing.Size(130, 22);
+            this.cbUseDebugMode.TabIndex = 37;
+            this.cbUseDebugMode.Text = "\"Debug Mode\"";
+            this.cbUseDebugMode.UseVisualStyleBackColor = false;
+            // 
+            // cbLoginType
+            // 
+            this.cbLoginType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(45)))), ((int)(((byte)(65)))));
+            this.cbLoginType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbLoginType.ForeColor = System.Drawing.Color.White;
+            this.cbLoginType.FormattingEnabled = true;
+            this.cbLoginType.Items.AddRange(new object[] {
+            "Client 1.0 Auth",
+            "Trino Auth"});
+            this.cbLoginType.Location = new System.Drawing.Point(303, 284);
+            this.cbLoginType.Name = "cbLoginType";
+            this.cbLoginType.Size = new System.Drawing.Size(179, 26);
+            this.cbLoginType.TabIndex = 38;
+            this.cbLoginType.SelectedIndexChanged += new System.EventHandler(this.cbLoginType_SelectedIndexChanged);
+            // 
             // LauncherForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -489,6 +519,8 @@
             this.BackColor = System.Drawing.Color.Fuchsia;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(950, 510);
+            this.Controls.Add(this.cbLoginType);
+            this.Controls.Add(this.cbUseDebugMode);
             this.Controls.Add(this.cbLoginList);
             this.Controls.Add(this.eLogin);
             this.Controls.Add(this.cbSaveUser);
@@ -577,6 +609,8 @@
         private System.Windows.Forms.Label lSkipIntro;
         private System.Windows.Forms.Label cbSaveUser;
         private System.Windows.Forms.Label lSaveUser;
+        private System.Windows.Forms.CheckBox cbUseDebugMode;
+        private System.Windows.Forms.ComboBox cbLoginType;
     }
 }
 
