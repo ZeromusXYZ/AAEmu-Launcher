@@ -547,17 +547,18 @@ namespace AAEmu.Launcher
 
                     string HShield = " +acpxmk";
 
-                    /*
-                    DebugHelperForm dlg = new DebugHelperForm();
-                    dlg.eArgs.Text = LoginArg;
-                    dlg.eHackShieldArg.Text = HShield;
-                    if (dlg.ShowDialog() == DialogResult.OK)
+                    if (cbUseDebugMode.Checked)
                     {
-                        LoginArg = dlg.eArgs.Text;
-                        HShield = dlg.eHackShieldArg.Text;
+                        DebugHelperForm dlg = new DebugHelperForm();
+                        dlg.eArgs.Text = LoginArg;
+                        dlg.eHackShieldArg.Text = HShield;
+                        if (dlg.ShowDialog() == DialogResult.OK)
+                        {
+                            LoginArg = dlg.eArgs.Text;
+                            HShield = dlg.eHackShieldArg.Text;
+                        }
+                        dlg.Dispose();
                     }
-                    dlg.Dispose();
-                    */
 
 
                     /*
