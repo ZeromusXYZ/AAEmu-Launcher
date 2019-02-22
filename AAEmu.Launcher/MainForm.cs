@@ -377,7 +377,7 @@ namespace AAEmu.Launcher
                 Setting.LastLoginPass = "test";
                 Setting.UserHistory = new List<string>();
                 Setting.UserHistory.Clear();
-                Setting.ClientLoginType = "mailru10";
+                Setting.ClientLoginType = stringMailRu_1_0;
             }
             finally
             {
