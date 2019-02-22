@@ -116,6 +116,9 @@ namespace AAEmu.Launcher
             [JsonProperty("loginType")]
             public string ClientLoginType { get; set; }
 
+            [JsonProperty("updateLocale")]
+            public string UpdateLocale { get; set; }
+
             [JsonProperty("userHistory")]
             public List<string> UserHistory { get; set; }
 
@@ -131,6 +134,22 @@ namespace AAEmu.Launcher
         const string urlWebsite = "https://aaemu.info/";
         // const string urlNews = "https://cl2.widgetbot.io/channels/479677351618281472/481782245087248400";
         const string dx9downloadURL = "https://www.microsoft.com/en-us/download/confirmation.aspx?id=35";
+
+        // Some strings for our language settings
+        private const string settingsLangRU = "ru";
+        private const string settingsLangEN = "en_us";
+        private const string settingsLangDE = "de";
+        private const string settingsLangFR = "fr";
+        // unused for now
+        private const string settingsLangKR = "kr";
+        private const string settingsLangJP = "jp";
+        private const string settingsLangCH = "ch";
+
+        // launcher protocol indentifiers
+        private const string stringMailRu_1_0 = "mailru_1_0";
+        private const string stringTrino_1_2 = "trino_1_2";
+
+        // Stuff for dragable form
         private bool formMouseDown;
         private Point lastLocation;
 
@@ -195,12 +214,14 @@ namespace AAEmu.Launcher
             cbHideSplash.Visible = (panelID == 1);
             lSaveUser.Visible = (panelID == 1);
             cbSaveUser.Visible = (panelID == 1);
-            lSkipIntro.Visible = (panelID == 1);
-            cbSkipIntro.Visible = (panelID == 1);
-            cbLoginType.Visible = (panelID == 1);
+            lSkipIntro.Visible = false; // (panelID == 1); // Currently disabled/unused
+            cbSkipIntro.Visible = false; // (panelID == 1);
+            lGameClientType.Visible = (panelID == 1);
+            lUpdateLocale.Visible = (panelID == 1);
+            cbUpdateLocale.Visible = (panelID == 1);
 
 
-            switch(panelID)
+            switch (panelID)
             {
                 case 0:
                     BackgroundImage = Properties.Resources.bg_login;
@@ -220,7 +241,7 @@ namespace AAEmu.Launcher
 
             switch (Setting.Lang)
             {
-                case "ru":
+                case settingsLangRU:
                     btnLangChange.Image = Properties.Resources.But_Lang_Ru;
                     lLogin.Text = "Логин";
                     lPassword.Text = "Пароль";
@@ -234,8 +255,9 @@ namespace AAEmu.Launcher
                     btnSettings.Text = "Настройки";
                     btnWebsite.Text = "сайт";
                     btnPlay.Text = "играть";
+                    lUpdateLocale.Text = "обновить locale";
                     break;
-                case "de":
+                case settingsLangDE:
                     btnLangChange.Image = Properties.Resources.But_Lang_De;
                     lLogin.Text = "Benutzername";
                     lPassword.Text = "Passwort";
@@ -249,10 +271,11 @@ namespace AAEmu.Launcher
                     btnSettings.Text = "Einstellungen";
                     btnWebsite.Text = "Website";
                     btnPlay.Text = "Spielen" ;
+                    lUpdateLocale.Text = "locale aktualisieren";
                     break;
-                case "en":
+                case settingsLangEN:
                 default:
-                    Setting.Lang = "en";
+                    Setting.Lang = settingsLangEN;
                     btnLangChange.Image = Properties.Resources.But_Lang_En;
                     lLogin.Text = "Username";
                     lPassword.Text = "Password";
@@ -266,6 +289,7 @@ namespace AAEmu.Launcher
                     btnSettings.Text = "Settings";
                     btnWebsite.Text = "Website";
                     btnPlay.Text = "Play";
+                    lUpdateLocale.Text = "Update locale";
                     break;
             }
 
@@ -277,14 +301,14 @@ namespace AAEmu.Launcher
         {
             switch(Setting.Lang)
             {
-                case "ru":
-                    Setting.Lang = "en";
+                case settingsLangRU:
+                    Setting.Lang = settingsLangEN;
                     break;
-                case "en":
-                    Setting.Lang = "de";
+                case settingsLangEN:
+                    Setting.Lang = settingsLangDE;
                     break;
-                case "de":
-                    Setting.Lang = "ru";
+                case settingsLangDE:
+                    Setting.Lang = settingsLangRU;
                     break;
             }
             Console.WriteLine("Updating Language: {0}",Setting.Lang);
@@ -348,7 +372,7 @@ namespace AAEmu.Launcher
                 // If loading fails, just put in some defaults instead
                 Setting.PathToGame = "";
                 Setting.ServerIpAddress = "127.0.0.1";
-                Setting.Lang = "en";
+                Setting.Lang = settingsLangEN;
                 Setting.LastLoginUser = "test";
                 Setting.LastLoginPass = "test";
                 Setting.UserHistory = new List<string>();
@@ -376,22 +400,14 @@ namespace AAEmu.Launcher
             eLogin.Text = Setting.LastLoginUser;
             ePassword.Text = Setting.LastLoginPass;
 
-            switch(Setting.ClientLoginType)
-            {
-                case "trino_1_2":
-                    cbLoginType.SelectedIndex = 1;
-                    break;
-                case "mailru_1_0":
-                default:
-                    cbLoginType.SelectedIndex = 0;
-                    break;
-            }
+            updateGameClientTypeLabel();
 
             UpdateFormLanguageElements();
 
             SetCustomCheckBox(cbSaveUser, Setting.SaveLoginAndPassword);
             SetCustomCheckBox(cbSkipIntro, Setting.SkipIntro);
             SetCustomCheckBox(cbHideSplash, Setting.HideSplashLogo);
+            SetCustomCheckBox(cbUpdateLocale, Setting.UpdateLocale);
         }
 
         private static string CreateTrinoHandleIDs(string user, string pass)
@@ -402,7 +418,8 @@ namespace AAEmu.Launcher
             uint handleID1 = 0;
             uint handleID2 = 0;
 
-            string stringForSignature = "Signature 1:\n";
+            string stringForSignature = "dGVzdA==\n";
+            // string stringForSignature = "Signature 1:\n";
 
             string stringForTicket = stringForSignature;
             stringForTicket += "<?xml version=\"1.0\" encoding=\"UTF - 8\" standalone=\"yes\"?>";
@@ -458,19 +475,19 @@ namespace AAEmu.Launcher
             string gameProviderArg, languageArg;
             switch(Setting.Lang)
             {
-                case "ru":
+                case settingsLangRU:
                     gameProviderArg = "-r ";
                     languageArg = "";
                     break;
-                case "fr":
+                case settingsLangFR:
                     gameProviderArg = "-r ";
                     languageArg = "";
                     break;
-                case "de":
+                case settingsLangDE:
                     gameProviderArg = "-r ";
                     languageArg = "";
                     break;
-                case "en":
+                case settingsLangEN:
                 default:
                     gameProviderArg = "-r ";
                     languageArg = "";
@@ -486,20 +503,20 @@ namespace AAEmu.Launcher
             switch (Setting.Lang)
             {
                 /*
-                case "ru":
+                case settingsLangRU:
                     gameProviderArg = "-r ";
                     languageArg = "";
                     break;
                 */
-                case "fr":
+                case settingsLangFR:
                     gameProviderArg = "-t ";
                     languageArg = " -lang fr";
                     break;
-                case "de":
+                case settingsLangDE:
                     gameProviderArg = "-t ";
                     languageArg = " -lang de";
                     break;
-                case "en":
+                case settingsLangEN:
                 default:
                     gameProviderArg = "-t ";
                     languageArg = " -lang en_us";
@@ -526,18 +543,26 @@ namespace AAEmu.Launcher
                     if (Setting.SaveLoginAndPassword == "true")
                         SaveSettings();
 
+                    if (Setting.UpdateLocale == "True")
+                    {
+                        UpdateGameConfigLocale(Setting.Lang);
+                    }
+
                     string LoginArg = "";
 
                     switch(Setting.ClientLoginType)
                     {
-                        case "trino_1_2":
+                        case stringTrino_1_2:
                             // Trion style auth ticket with handles, generated by ToolsA.dll
                             LoginArg = CreateArgsTrino_1_2(eLogin.Text, ePassword.Text);
                             break;
-                        case "mailru_1_0":
-                        default:
+                        case stringMailRu_1_0:
+                            // Original style using uid and hashed password as token
                             LoginArg = CreateArgs_1_0(eLogin.Text, ePassword.Text);
                             break;
+                        default:
+                            MessageBox.Show("Unknown launcher protocol: "+Setting.ClientLoginType);
+                            return;
                     }
 
                     if (Setting.HideSplashLogo == "True")
@@ -878,18 +903,90 @@ namespace AAEmu.Launcher
             ePassword.Text = "";
         }
 
-        private void cbLoginType_SelectedIndexChanged(object sender, EventArgs e)
+        private void cbUpdateLocale_Click(object sender, EventArgs e)
         {
-            switch(cbLoginType.SelectedIndex)
+            Setting.UpdateLocale = ToggleSettingCheckBox(cbUpdateLocale, Setting.UpdateLocale);
+        }
+
+        private void updateGameClientTypeLabel()
+        {
+            switch (Setting.ClientLoginType)
             {
-                case 1:
-                    Setting.ClientLoginType = "trino_1_2";
+                case stringMailRu_1_0:
+                    lGameClientType.Text = "Mail.ru 1.0 Auth (-r)";
                     break;
-                case 0:
+                case stringTrino_1_2:
+                    lGameClientType.Text = "Trion 1.2 Auth (-t)";
+                    break;
                 default:
-                    Setting.ClientLoginType = "mailru_1_0";
+                    lGameClientType.Text = "???: " + Setting.ClientLoginType ;
                     break;
             }
         }
+
+        private void lGameClientType_Click(object sender, EventArgs e)
+        {
+            // toggle client types
+            switch (Setting.ClientLoginType)
+            {
+                case stringMailRu_1_0:
+                    Setting.ClientLoginType = stringTrino_1_2;
+                    break;
+                case stringTrino_1_2:
+                default:
+                    Setting.ClientLoginType = stringMailRu_1_0;
+                    break;
+            }
+
+            updateGameClientTypeLabel();
+        }
+
+        private void UpdateGameConfigLocale(string locale)
+        {
+            // C:\ArcheAge\Documents => UserHomeFolder\ArcheAge
+            string configFileName = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ArcheAge\\system.cfg";
+            const string localeField = "locale = ";
+
+            List<string> lines = new List<string>();
+            List<string> newLines = new List<string>();
+
+            bool updatedLocale = false;
+
+            if (File.Exists(configFileName) == true)
+            {
+                lines = File.ReadAllLines(configFileName).ToList();
+
+                foreach (string line in lines)
+                {
+                    if (line.IndexOf(localeField) >= 0)
+                    {
+                        // replace here
+                        if (updatedLocale == false)
+                        {
+                            newLines.Add(localeField + locale);
+                        }
+                        updatedLocale = true;
+                    }
+                    else
+                    {
+                        newLines.Add(line);
+                    }
+                }
+            }
+            if (updatedLocale == false)
+            {
+                newLines.Add(localeField + locale);
+            }
+
+            try
+            {
+                File.WriteAllLines(configFileName, newLines);
+            } catch
+            {
+                MessageBox.Show("ERROR updating " + configFileName);
+            }
+
+        }
+
     }
 }
