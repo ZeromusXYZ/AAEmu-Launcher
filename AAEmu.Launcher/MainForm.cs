@@ -141,9 +141,10 @@ namespace AAEmu.Launcher
         private const string settingsLangDE = "de";
         private const string settingsLangFR = "fr";
         // unused for now
-        private const string settingsLangKR = "kr";
-        private const string settingsLangJP = "jp";
-        private const string settingsLangCH = "ch";
+        private const string settingsLangKR = "ko";
+        private const string settingsLangJP = "ja";
+        private const string settingsLangCH = "zh_cn";
+        private const string settingsLangTW = "zh_tw";
 
         // launcher protocol indentifiers
         private const string stringMailRu_1_0 = "mailru_1_0";
@@ -236,7 +237,7 @@ namespace AAEmu.Launcher
             
         }
 
-        private void UpdateFormLanguageElements()
+        private void UpdateFormLanguageElements(string localeOverride)
         {
 
             switch (Setting.Lang)
@@ -295,6 +296,11 @@ namespace AAEmu.Launcher
 
             btnLangChange.Refresh();
 
+            if (localeOverride != "")
+            {
+                Setting.Lang = localeOverride;
+            }
+
         }
 
         private void PicButLangChange_Click(object sender, EventArgs e)
@@ -312,7 +318,7 @@ namespace AAEmu.Launcher
                     break;
             }
             Console.WriteLine("Updating Language: {0}",Setting.Lang);
-            UpdateFormLanguageElements();
+            UpdateFormLanguageElements("");
             btnLangChange.Refresh();
         }
 
@@ -402,7 +408,7 @@ namespace AAEmu.Launcher
 
             updateGameClientTypeLabel();
 
-            UpdateFormLanguageElements();
+            UpdateFormLanguageElements("");
 
             SetCustomCheckBox(cbSaveUser, Setting.SaveLoginAndPassword);
             SetCustomCheckBox(cbSkipIntro, Setting.SkipIntro);
@@ -418,38 +424,28 @@ namespace AAEmu.Launcher
             uint handleID1 = 0;
             uint handleID2 = 0;
 
-            string stringForSignature = "dGVzdA==\n";
-            // string stringForSignature = "Signature 1:\n";
+            string stringForSignature = "dGVzdA==";
+            //string stringForSignature = "Signature 1:";
 
-            string stringForTicket = stringForSignature;
-            stringForTicket += "<?xml version=\"1.0\" encoding=\"UTF - 8\" standalone=\"yes\"?>";
+            string stringForTicket = "<?xml version=\"1.0\" encoding=\"UTF - 8\" standalone=\"yes\"?>";
             stringForTicket += "<authTicket version = \"1.2\">";
             stringForTicket += "<storeToken>1</storeToken>";
             stringForTicket += "<username>" + user + "</username>";
-            stringForTicket += "<password>" + passHash + "</password>";
+            stringForTicket += "<password>" + BitConverter.ToString(passHash).Replace("-", "").ToLower() + "</password>";
             stringForTicket += "</authTicket>";
 
-            /*
-            byte[] buffer4 = Encoding.UTF8.GetBytes(user);
-            byte[] buffer5 = Encoding.UTF8.GetBytes(pass); // not sure what to pass to this
-            byte[] buffer6 = new byte[(buffer4.Length + 1) + buffer5.Length];
-            Array.Copy(buffer5, 0, buffer6, 0, buffer5.Length);
-            buffer6[buffer5.Length] = 10; // put a LF between the two
-            Array.Copy(buffer4, 0, buffer6, buffer5.Length + 1, buffer4.Length);
-            bool genRes = false;
-            */
+            // Basically A complex way of doing stringForSignature + LineFeed + stringForTicket in a byte array
             byte[] bufferIntPtrID1 = Encoding.UTF8.GetBytes(stringForSignature);
             byte[] bufferIntPtrID2 = Encoding.UTF8.GetBytes(stringForTicket);
             byte[] bufferTotal = new byte[(bufferIntPtrID2.Length + 1) + bufferIntPtrID1.Length];
             Array.Copy(bufferIntPtrID1, 0, bufferTotal, 0, bufferIntPtrID1.Length);
             bufferTotal[bufferIntPtrID1.Length] = 10;
             Array.Copy(bufferIntPtrID2, 0, bufferTotal, bufferIntPtrID1.Length + 1, bufferIntPtrID2.Length);
+
             bool genRes = false ;
-            // A complex way of doing IntPtrID1 + LF + IntPtrID2
             try
             {
                 genRes = generateInitStr(bufferTotal, bufferTotal.Length, bufferIntPtrID1, bufferIntPtrID1.Length, ref handleID1, ref handleID2);
-                //genRes = generateInitStr(buffer6, buffer6.Length, buffer5, buffer5.Length, ref HandleID1, ref HandleID2);
             }
             catch
             {
@@ -502,24 +498,17 @@ namespace AAEmu.Launcher
             string gameProviderArg, languageArg;
             switch (Setting.Lang)
             {
-                /*
+                // This will likely need some tweaking in the future
                 case settingsLangRU:
-                    gameProviderArg = "-r ";
-                    languageArg = "";
-                    break;
-                */
                 case settingsLangFR:
-                    gameProviderArg = "-t ";
-                    languageArg = " -lang fr";
-                    break;
                 case settingsLangDE:
-                    gameProviderArg = "-t ";
-                    languageArg = " -lang de";
-                    break;
                 case settingsLangEN:
+                    gameProviderArg = "-t ";
+                    languageArg = " -lang "+Setting.Lang ;
+                    break;
                 default:
                     gameProviderArg = "-t ";
-                    languageArg = " -lang en_us";
+                    languageArg = "";
                     break;
             }
 
@@ -988,5 +977,10 @@ namespace AAEmu.Launcher
 
         }
 
+        private void cbLocaleSelect_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //Setting.Lang = cbLocaleSelect.Text;
+            //UpdateFormLanguageElements(cbLocaleSelect.Text);
+        }
     }
 }

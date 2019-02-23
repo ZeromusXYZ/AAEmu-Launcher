@@ -66,6 +66,7 @@
             this.lGameClientType = new System.Windows.Forms.Label();
             this.cbUpdateLocale = new System.Windows.Forms.Label();
             this.lUpdateLocale = new System.Windows.Forms.Label();
+            this.cbLocaleSelect = new System.Windows.Forms.ComboBox();
             this.cmsAAEmuButton.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.btnSystem)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnDiscord)).BeginInit();
@@ -541,6 +542,31 @@
             this.lUpdateLocale.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lUpdateLocale.Click += new System.EventHandler(this.cbUpdateLocale_Click);
             // 
+            // cbLocaleSelect
+            // 
+            this.cbLocaleSelect.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.cbLocaleSelect.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cbLocaleSelect.BackColor = System.Drawing.Color.White;
+            this.cbLocaleSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbLocaleSelect.ForeColor = System.Drawing.Color.Black;
+            this.cbLocaleSelect.FormattingEnabled = true;
+            this.cbLocaleSelect.Items.AddRange(new object[] {
+            "de",
+            "en_us",
+            "fr",
+            "ja",
+            "ko",
+            "ru",
+            "zh_cn",
+            "zh_tw"});
+            this.cbLocaleSelect.Location = new System.Drawing.Point(586, 7);
+            this.cbLocaleSelect.Name = "cbLocaleSelect";
+            this.cbLocaleSelect.Size = new System.Drawing.Size(107, 26);
+            this.cbLocaleSelect.Sorted = true;
+            this.cbLocaleSelect.TabIndex = 42;
+            this.cbLocaleSelect.Visible = false;
+            this.cbLocaleSelect.SelectedIndexChanged += new System.EventHandler(this.cbLocaleSelect_SelectedIndexChanged);
+            // 
             // LauncherForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -549,6 +575,7 @@
             this.BackgroundImage = global::AAEmu.Launcher.Properties.Resources.bg_setup;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(950, 510);
+            this.Controls.Add(this.cbLocaleSelect);
             this.Controls.Add(this.cbUpdateLocale);
             this.Controls.Add(this.lUpdateLocale);
             this.Controls.Add(this.lGameClientType);
@@ -645,6 +672,7 @@
         private System.Windows.Forms.Label lGameClientType;
         private System.Windows.Forms.Label cbUpdateLocale;
         private System.Windows.Forms.Label lUpdateLocale;
+        private System.Windows.Forms.ComboBox cbLocaleSelect;
     }
 }
 
