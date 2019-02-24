@@ -53,6 +53,11 @@
             this.lSkipIntro = new System.Windows.Forms.Label();
             this.cbSaveUser = new System.Windows.Forms.Label();
             this.lSaveUser = new System.Windows.Forms.Label();
+            this.cbUseDebugMode = new System.Windows.Forms.CheckBox();
+            this.lGameClientType = new System.Windows.Forms.Label();
+            this.cbUpdateLocale = new System.Windows.Forms.Label();
+            this.lUpdateLocale = new System.Windows.Forms.Label();
+            this.cbLocaleSelect = new System.Windows.Forms.ComboBox();
             this.btnSystem = new System.Windows.Forms.PictureBox();
             this.btnWebsite = new System.Windows.Forms.Label();
             this.btnSettings = new System.Windows.Forms.Label();
@@ -62,17 +67,19 @@
             this.btnGithub = new System.Windows.Forms.PictureBox();
             this.btnLangChange = new System.Windows.Forms.PictureBox();
             this.imgBigNews = new System.Windows.Forms.PictureBox();
-            this.cbUseDebugMode = new System.Windows.Forms.CheckBox();
-            this.lGameClientType = new System.Windows.Forms.Label();
-            this.cbUpdateLocale = new System.Windows.Forms.Label();
-            this.lUpdateLocale = new System.Windows.Forms.Label();
-            this.cbLocaleSelect = new System.Windows.Forms.ComboBox();
+            this.cbAllowUpdates = new System.Windows.Forms.Label();
+            this.lAllowUpdates = new System.Windows.Forms.Label();
+            this.cmsGitHub = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.aAEmuServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aAEmuLauncherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lLoadedConfig = new System.Windows.Forms.Label();
             this.cmsAAEmuButton.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.btnSystem)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnDiscord)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnGithub)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnLangChange)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgBigNews)).BeginInit();
+            this.cmsGitHub.SuspendLayout();
             this.SuspendLayout();
             // 
             // eLogin
@@ -110,7 +117,7 @@
             // 
             // pb1
             // 
-            this.pb1.Location = new System.Drawing.Point(145, 25);
+            this.pb1.Location = new System.Drawing.Point(16, 29);
             this.pb1.Name = "pb1";
             this.pb1.Size = new System.Drawing.Size(277, 13);
             this.pb1.TabIndex = 3;
@@ -123,7 +130,7 @@
             // 
             // pb2
             // 
-            this.pb2.Location = new System.Drawing.Point(146, 7);
+            this.pb2.Location = new System.Drawing.Point(16, 48);
             this.pb2.Name = "pb2";
             this.pb2.Size = new System.Drawing.Size(276, 9);
             this.pb2.TabIndex = 4;
@@ -279,7 +286,7 @@
             this.lHideSplash.BackColor = System.Drawing.Color.Transparent;
             this.lHideSplash.Font = new System.Drawing.Font("Georgia", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lHideSplash.ForeColor = System.Drawing.Color.White;
-            this.lHideSplash.Location = new System.Drawing.Point(300, 243);
+            this.lHideSplash.Location = new System.Drawing.Point(300, 240);
             this.lHideSplash.Name = "lHideSplash";
             this.lHideSplash.Size = new System.Drawing.Size(145, 30);
             this.lHideSplash.TabIndex = 31;
@@ -293,7 +300,7 @@
             this.cbHideSplash.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cbHideSplash.Font = new System.Drawing.Font("Georgia", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbHideSplash.ForeColor = System.Drawing.Color.White;
-            this.cbHideSplash.Location = new System.Drawing.Point(451, 246);
+            this.cbHideSplash.Location = new System.Drawing.Point(450, 240);
             this.cbHideSplash.Name = "cbHideSplash";
             this.cbHideSplash.Size = new System.Drawing.Size(31, 24);
             this.cbHideSplash.TabIndex = 32;
@@ -307,13 +314,12 @@
             this.cbSkipIntro.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cbSkipIntro.Font = new System.Drawing.Font("Georgia", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbSkipIntro.ForeColor = System.Drawing.Color.White;
-            this.cbSkipIntro.Location = new System.Drawing.Point(451, 293);
+            this.cbSkipIntro.Location = new System.Drawing.Point(450, 290);
             this.cbSkipIntro.Name = "cbSkipIntro";
             this.cbSkipIntro.Size = new System.Drawing.Size(31, 24);
             this.cbSkipIntro.TabIndex = 34;
             this.cbSkipIntro.Text = "✓";
             this.cbSkipIntro.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.cbSkipIntro.Visible = false;
             this.cbSkipIntro.Click += new System.EventHandler(this.cbSkipIntro_Click);
             // 
             // lSkipIntro
@@ -327,7 +333,6 @@
             this.lSkipIntro.TabIndex = 33;
             this.lSkipIntro.Text = "Skip Intro";
             this.lSkipIntro.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lSkipIntro.Visible = false;
             this.lSkipIntro.Click += new System.EventHandler(this.cbSkipIntro_Click);
             // 
             // cbSaveUser
@@ -336,7 +341,7 @@
             this.cbSaveUser.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cbSaveUser.Font = new System.Drawing.Font("Georgia", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbSaveUser.ForeColor = System.Drawing.Color.White;
-            this.cbSaveUser.Location = new System.Drawing.Point(451, 141);
+            this.cbSaveUser.Location = new System.Drawing.Point(450, 140);
             this.cbSaveUser.Name = "cbSaveUser";
             this.cbSaveUser.Size = new System.Drawing.Size(31, 24);
             this.cbSaveUser.TabIndex = 36;
@@ -349,13 +354,91 @@
             this.lSaveUser.BackColor = System.Drawing.Color.Transparent;
             this.lSaveUser.Font = new System.Drawing.Font("Georgia", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lSaveUser.ForeColor = System.Drawing.Color.White;
-            this.lSaveUser.Location = new System.Drawing.Point(300, 138);
+            this.lSaveUser.Location = new System.Drawing.Point(300, 140);
             this.lSaveUser.Name = "lSaveUser";
             this.lSaveUser.Size = new System.Drawing.Size(145, 30);
             this.lSaveUser.TabIndex = 35;
             this.lSaveUser.Text = "Save credentials";
             this.lSaveUser.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lSaveUser.Click += new System.EventHandler(this.cbSaveUser_Click);
+            // 
+            // cbUseDebugMode
+            // 
+            this.cbUseDebugMode.AutoSize = true;
+            this.cbUseDebugMode.BackColor = System.Drawing.Color.Transparent;
+            this.cbUseDebugMode.ForeColor = System.Drawing.Color.Red;
+            this.cbUseDebugMode.Location = new System.Drawing.Point(699, 7);
+            this.cbUseDebugMode.Name = "cbUseDebugMode";
+            this.cbUseDebugMode.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.cbUseDebugMode.Size = new System.Drawing.Size(130, 22);
+            this.cbUseDebugMode.TabIndex = 37;
+            this.cbUseDebugMode.Text = "\"Debug Mode\"";
+            this.cbUseDebugMode.UseVisualStyleBackColor = false;
+            // 
+            // lGameClientType
+            // 
+            this.lGameClientType.AutoSize = true;
+            this.lGameClientType.BackColor = System.Drawing.Color.Transparent;
+            this.lGameClientType.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lGameClientType.ForeColor = System.Drawing.Color.White;
+            this.lGameClientType.Location = new System.Drawing.Point(24, 302);
+            this.lGameClientType.Name = "lGameClientType";
+            this.lGameClientType.Size = new System.Drawing.Size(104, 18);
+            this.lGameClientType.TabIndex = 39;
+            this.lGameClientType.Text = "-Client Type-";
+            this.lGameClientType.Click += new System.EventHandler(this.lGameClientType_Click);
+            // 
+            // cbUpdateLocale
+            // 
+            this.cbUpdateLocale.BackColor = System.Drawing.Color.Transparent;
+            this.cbUpdateLocale.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cbUpdateLocale.Font = new System.Drawing.Font("Georgia", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbUpdateLocale.ForeColor = System.Drawing.Color.White;
+            this.cbUpdateLocale.Location = new System.Drawing.Point(450, 190);
+            this.cbUpdateLocale.Name = "cbUpdateLocale";
+            this.cbUpdateLocale.Size = new System.Drawing.Size(31, 24);
+            this.cbUpdateLocale.TabIndex = 41;
+            this.cbUpdateLocale.Text = "✓";
+            this.cbUpdateLocale.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.cbUpdateLocale.Click += new System.EventHandler(this.cbUpdateLocale_Click);
+            // 
+            // lUpdateLocale
+            // 
+            this.lUpdateLocale.BackColor = System.Drawing.Color.Transparent;
+            this.lUpdateLocale.Font = new System.Drawing.Font("Georgia", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lUpdateLocale.ForeColor = System.Drawing.Color.White;
+            this.lUpdateLocale.Location = new System.Drawing.Point(300, 190);
+            this.lUpdateLocale.Name = "lUpdateLocale";
+            this.lUpdateLocale.Size = new System.Drawing.Size(145, 30);
+            this.lUpdateLocale.TabIndex = 40;
+            this.lUpdateLocale.Text = "Update Locale";
+            this.lUpdateLocale.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lUpdateLocale.Click += new System.EventHandler(this.cbUpdateLocale_Click);
+            // 
+            // cbLocaleSelect
+            // 
+            this.cbLocaleSelect.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.cbLocaleSelect.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cbLocaleSelect.BackColor = System.Drawing.Color.White;
+            this.cbLocaleSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbLocaleSelect.ForeColor = System.Drawing.Color.Black;
+            this.cbLocaleSelect.FormattingEnabled = true;
+            this.cbLocaleSelect.Items.AddRange(new object[] {
+            "de",
+            "en_us",
+            "fr",
+            "ja",
+            "ko",
+            "ru",
+            "zh_cn",
+            "zh_tw"});
+            this.cbLocaleSelect.Location = new System.Drawing.Point(586, 7);
+            this.cbLocaleSelect.Name = "cbLocaleSelect";
+            this.cbLocaleSelect.Size = new System.Drawing.Size(107, 26);
+            this.cbLocaleSelect.Sorted = true;
+            this.cbLocaleSelect.TabIndex = 42;
+            this.cbLocaleSelect.Visible = false;
+            this.cbLocaleSelect.SelectedIndexChanged += new System.EventHandler(this.cbLocaleSelect_SelectedIndexChanged);
             // 
             // btnSystem
             // 
@@ -481,100 +564,84 @@
             this.imgBigNews.Image = ((System.Drawing.Image)(resources.GetObject("imgBigNews.Image")));
             this.imgBigNews.Location = new System.Drawing.Point(25, 85);
             this.imgBigNews.Name = "imgBigNews";
-            this.imgBigNews.Size = new System.Drawing.Size(573, 243);
-            this.imgBigNews.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.imgBigNews.Size = new System.Drawing.Size(243, 24);
             this.imgBigNews.TabIndex = 27;
             this.imgBigNews.TabStop = false;
             this.imgBigNews.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseDown);
             this.imgBigNews.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
             this.imgBigNews.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
             // 
-            // cbUseDebugMode
+            // cbAllowUpdates
             // 
-            this.cbUseDebugMode.AutoSize = true;
-            this.cbUseDebugMode.BackColor = System.Drawing.Color.Transparent;
-            this.cbUseDebugMode.ForeColor = System.Drawing.Color.Red;
-            this.cbUseDebugMode.Location = new System.Drawing.Point(699, 7);
-            this.cbUseDebugMode.Name = "cbUseDebugMode";
-            this.cbUseDebugMode.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.cbUseDebugMode.Size = new System.Drawing.Size(130, 22);
-            this.cbUseDebugMode.TabIndex = 37;
-            this.cbUseDebugMode.Text = "\"Debug Mode\"";
-            this.cbUseDebugMode.UseVisualStyleBackColor = false;
+            this.cbAllowUpdates.BackColor = System.Drawing.Color.Transparent;
+            this.cbAllowUpdates.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cbAllowUpdates.Font = new System.Drawing.Font("Georgia", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbAllowUpdates.ForeColor = System.Drawing.Color.Gray;
+            this.cbAllowUpdates.Location = new System.Drawing.Point(450, 340);
+            this.cbAllowUpdates.Name = "cbAllowUpdates";
+            this.cbAllowUpdates.Size = new System.Drawing.Size(31, 24);
+            this.cbAllowUpdates.TabIndex = 44;
+            this.cbAllowUpdates.Text = "✓";
+            this.cbAllowUpdates.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.cbAllowUpdates.Visible = false;
+            this.cbAllowUpdates.Click += new System.EventHandler(this.cbAllowUpdates_Click);
             // 
-            // lGameClientType
+            // lAllowUpdates
             // 
-            this.lGameClientType.AutoSize = true;
-            this.lGameClientType.BackColor = System.Drawing.Color.Transparent;
-            this.lGameClientType.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lGameClientType.ForeColor = System.Drawing.Color.White;
-            this.lGameClientType.Location = new System.Drawing.Point(24, 302);
-            this.lGameClientType.Name = "lGameClientType";
-            this.lGameClientType.Size = new System.Drawing.Size(104, 18);
-            this.lGameClientType.TabIndex = 39;
-            this.lGameClientType.Text = "-Client Type-";
-            this.lGameClientType.Click += new System.EventHandler(this.lGameClientType_Click);
+            this.lAllowUpdates.BackColor = System.Drawing.Color.Transparent;
+            this.lAllowUpdates.Font = new System.Drawing.Font("Georgia", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lAllowUpdates.ForeColor = System.Drawing.Color.Gray;
+            this.lAllowUpdates.Location = new System.Drawing.Point(300, 340);
+            this.lAllowUpdates.Name = "lAllowUpdates";
+            this.lAllowUpdates.Size = new System.Drawing.Size(145, 30);
+            this.lAllowUpdates.TabIndex = 43;
+            this.lAllowUpdates.Text = "Allow Updates";
+            this.lAllowUpdates.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lAllowUpdates.Visible = false;
+            this.lAllowUpdates.Click += new System.EventHandler(this.cbAllowUpdates_Click);
             // 
-            // cbUpdateLocale
+            // cmsGitHub
             // 
-            this.cbUpdateLocale.BackColor = System.Drawing.Color.Transparent;
-            this.cbUpdateLocale.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.cbUpdateLocale.Font = new System.Drawing.Font("Georgia", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbUpdateLocale.ForeColor = System.Drawing.Color.White;
-            this.cbUpdateLocale.Location = new System.Drawing.Point(451, 196);
-            this.cbUpdateLocale.Name = "cbUpdateLocale";
-            this.cbUpdateLocale.Size = new System.Drawing.Size(31, 24);
-            this.cbUpdateLocale.TabIndex = 41;
-            this.cbUpdateLocale.Text = "✓";
-            this.cbUpdateLocale.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.cbUpdateLocale.Click += new System.EventHandler(this.cbUpdateLocale_Click);
+            this.cmsGitHub.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aAEmuServerToolStripMenuItem,
+            this.aAEmuLauncherToolStripMenuItem});
+            this.cmsGitHub.Name = "cmsGitHub";
+            this.cmsGitHub.Size = new System.Drawing.Size(167, 48);
             // 
-            // lUpdateLocale
+            // aAEmuServerToolStripMenuItem
             // 
-            this.lUpdateLocale.BackColor = System.Drawing.Color.Transparent;
-            this.lUpdateLocale.Font = new System.Drawing.Font("Georgia", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lUpdateLocale.ForeColor = System.Drawing.Color.White;
-            this.lUpdateLocale.Location = new System.Drawing.Point(300, 193);
-            this.lUpdateLocale.Name = "lUpdateLocale";
-            this.lUpdateLocale.Size = new System.Drawing.Size(145, 30);
-            this.lUpdateLocale.TabIndex = 40;
-            this.lUpdateLocale.Text = "Update Locale";
-            this.lUpdateLocale.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lUpdateLocale.Click += new System.EventHandler(this.cbUpdateLocale_Click);
+            this.aAEmuServerToolStripMenuItem.Name = "aAEmuServerToolStripMenuItem";
+            this.aAEmuServerToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.aAEmuServerToolStripMenuItem.Text = "AAEmu Server";
+            this.aAEmuServerToolStripMenuItem.Click += new System.EventHandler(this.aAEmuServerToolStripMenuItem_Click);
             // 
-            // cbLocaleSelect
+            // aAEmuLauncherToolStripMenuItem
             // 
-            this.cbLocaleSelect.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            this.cbLocaleSelect.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.cbLocaleSelect.BackColor = System.Drawing.Color.White;
-            this.cbLocaleSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbLocaleSelect.ForeColor = System.Drawing.Color.Black;
-            this.cbLocaleSelect.FormattingEnabled = true;
-            this.cbLocaleSelect.Items.AddRange(new object[] {
-            "de",
-            "en_us",
-            "fr",
-            "ja",
-            "ko",
-            "ru",
-            "zh_cn",
-            "zh_tw"});
-            this.cbLocaleSelect.Location = new System.Drawing.Point(586, 7);
-            this.cbLocaleSelect.Name = "cbLocaleSelect";
-            this.cbLocaleSelect.Size = new System.Drawing.Size(107, 26);
-            this.cbLocaleSelect.Sorted = true;
-            this.cbLocaleSelect.TabIndex = 42;
-            this.cbLocaleSelect.Visible = false;
-            this.cbLocaleSelect.SelectedIndexChanged += new System.EventHandler(this.cbLocaleSelect_SelectedIndexChanged);
+            this.aAEmuLauncherToolStripMenuItem.Name = "aAEmuLauncherToolStripMenuItem";
+            this.aAEmuLauncherToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.aAEmuLauncherToolStripMenuItem.Text = "AAEmu Launcher";
+            this.aAEmuLauncherToolStripMenuItem.Click += new System.EventHandler(this.aAEmuLauncherToolStripMenuItem_Click);
+            // 
+            // lLoadedConfig
+            // 
+            this.lLoadedConfig.AutoSize = true;
+            this.lLoadedConfig.BackColor = System.Drawing.Color.Transparent;
+            this.lLoadedConfig.Location = new System.Drawing.Point(14, 7);
+            this.lLoadedConfig.Name = "lLoadedConfig";
+            this.lLoadedConfig.Size = new System.Drawing.Size(190, 18);
+            this.lLoadedConfig.TabIndex = 46;
+            this.lLoadedConfig.Text = "Loaded Server Config File";
             // 
             // LauncherForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.Fuchsia;
-            this.BackgroundImage = global::AAEmu.Launcher.Properties.Resources.bg_setup;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(950, 510);
+            this.Controls.Add(this.lLoadedConfig);
+            this.Controls.Add(this.cbAllowUpdates);
+            this.Controls.Add(this.lAllowUpdates);
             this.Controls.Add(this.cbLocaleSelect);
             this.Controls.Add(this.cbUpdateLocale);
             this.Controls.Add(this.lUpdateLocale);
@@ -630,6 +697,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.btnGithub)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnLangChange)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgBigNews)).EndInit();
+            this.cmsGitHub.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -673,6 +741,12 @@
         private System.Windows.Forms.Label cbUpdateLocale;
         private System.Windows.Forms.Label lUpdateLocale;
         private System.Windows.Forms.ComboBox cbLocaleSelect;
+        private System.Windows.Forms.Label cbAllowUpdates;
+        private System.Windows.Forms.Label lAllowUpdates;
+        private System.Windows.Forms.ContextMenuStrip cmsGitHub;
+        private System.Windows.Forms.ToolStripMenuItem aAEmuServerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aAEmuLauncherToolStripMenuItem;
+        private System.Windows.Forms.Label lLoadedConfig;
     }
 }
 

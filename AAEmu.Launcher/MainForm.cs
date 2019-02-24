@@ -86,6 +86,9 @@ namespace AAEmu.Launcher
 
         public partial class Settings
         {
+            [JsonProperty("configName")]
+            public string configName { get; set; }
+
             [JsonProperty("lang")]
             public string Lang { get; set; }
 
@@ -110,25 +113,47 @@ namespace AAEmu.Launcher
             [JsonProperty("lastLoginPass")]
             public string LastLoginPass { get; set; }
 
-            [JsonProperty("allowGameUpdates")]
-            public string AllowGameUpdates { get; set; }
-
             [JsonProperty("loginType")]
             public string ClientLoginType { get; set; }
 
             [JsonProperty("updateLocale")]
             public string UpdateLocale { get; set; }
 
+            [JsonProperty("allowGameUpdates")]
+            public string AllowGameUpdates { get; set; }
+
+            [JsonProperty("serverGameUpdateURL")]
+            public string ServerGameUpdateURL { get; set; }
+
+            [JsonProperty("serverWebsiteURL")]
+            public string ServerWebSiteURL { get; set; }
+
+            [JsonProperty("serverNewsFeedURL")]
+            public string ServerNewsFeedURL { get; set; }
+
             [JsonProperty("userHistory")]
             public List<string> UserHistory { get; set; }
-
-
         }
 
-        public Settings Setting = new Settings();
+        public partial class ClientLookupHelper
+        {
+            [JsonProperty("serverName")]
+            public List<string> serverNames { get; set; }
 
-        const string launcherConfigFile = "launcher.config";
-        const string urlGitHub = "https://github.com/atel0/AAEmu";
+            [JsonProperty("clientLocation")]
+            public List<string> clientLocations { get; set; }
+        }
+
+
+        public Settings Setting = new Settings();
+        public ClientLookupHelper ClientLookup = new ClientLookupHelper();
+
+        const string archeAgeEXE = "archeage.exe";
+        const string launcherDefaultConfigFile = "settings.aelcf"; // .aelcf = ArcheAge Emu Launcher Configuration File
+        const string clientLookupDefaultFile = "clientslist.json";
+        string launcherOpenedConfigFile = "";
+        const string urlAAEmuGitHub = "https://github.com/atel0/AAEmu";
+        const string urlLauncherGitHub = "https://github.com/ZeromusXYZ/AAEmu-Launcher";
         const string urlDiscordInvite = "https://discord.gg/vn8E8E6";
         const string urlNews = "https://aaemu.pw/updater/";
         const string urlWebsite = "https://aaemu.info/";
@@ -215,11 +240,27 @@ namespace AAEmu.Launcher
             cbHideSplash.Visible = (panelID == 1);
             lSaveUser.Visible = (panelID == 1);
             cbSaveUser.Visible = (panelID == 1);
-            lSkipIntro.Visible = false; // (panelID == 1); // Currently disabled/unused
-            cbSkipIntro.Visible = false; // (panelID == 1);
+            lSkipIntro.Visible = (panelID == 1); // Currently disabled/unused
+            cbSkipIntro.Visible = (panelID == 1);
             lGameClientType.Visible = (panelID == 1);
             lUpdateLocale.Visible = (panelID == 1);
             cbUpdateLocale.Visible = (panelID == 1);
+
+            lAllowUpdates.Visible = (panelID == 1);
+            cbAllowUpdates.Visible = (panelID == 1);
+            // Gray out this setting if no update url is set
+            if ((Setting.ServerGameUpdateURL != null) && (Setting.ServerGameUpdateURL != ""))
+            {
+                lAllowUpdates.ForeColor = Color.White;
+                cbAllowUpdates.ForeColor = Color.White;
+                cbAllowUpdates.Cursor = Cursors.Hand;
+            }
+            else
+            {
+                lAllowUpdates.ForeColor = Color.Gray;
+                cbAllowUpdates.ForeColor = Color.Gray;
+                cbAllowUpdates.Cursor = Cursors.No;
+            }
 
 
             switch (panelID)
@@ -344,7 +385,8 @@ namespace AAEmu.Launcher
 
         private void PicButGithub_Click(object sender, EventArgs e)
         {
-            Process.Start(urlGitHub);
+            cmsGitHub.Show(btnGithub, new Point(0, btnGithub.Height));
+            // Process.Start(urlAAEmuGitHub);
         }
 
         private void PicButDiscord_Click(object sender, EventArgs e)
@@ -354,36 +396,148 @@ namespace AAEmu.Launcher
 
         private void LauncherForm_Load(object sender, EventArgs e)
         {
-            LoadSettings();
-            UpdateControlsForPanel(0);
-            eLogin.Focus();
-            eLogin.SelectionStart = 0;
-            eLogin.SelectionLength = 0;
+
+            // Helps to keep the editing window cleaner
+            imgBigNews.SizeMode = PictureBoxSizeMode.Normal;
+            imgBigNews.Size = imgBigNews.Image.Size ;
+            imgBigNews.Invalidate();
+
+            string openCommandLineSettingsFile = "";
+            string[] args = Environment.GetCommandLineArgs();
+            foreach (string arg in args)
+            {
+                // No additional possible settings yet, only check if a argument is a valid file
+                if (File.Exists(arg))
+                {
+                    openCommandLineSettingsFile = arg;
+                }
+            }
+
+            LoadClientLookup();
+
+            if (openCommandLineSettingsFile != "")
+            {
+                if (!LoadSettings(openCommandLineSettingsFile)) openCommandLineSettingsFile = "";
+            }
+            // Load local settings file if no external config specified, or if it failed to load
+            if (openCommandLineSettingsFile == "")
+            {
+                LoadSettings(Application.StartupPath + "\\" + launcherDefaultConfigFile);
+            }
+
+            if ((Setting.PathToGame == null) || (Setting.PathToGame == "") || (File.Exists(Setting.PathToGame) == false))
+            {
+                Setting.PathToGame = "";
+                TryAutoFindGameExe();
+            }
+
+            if ((Setting.PathToGame == "") || (File.Exists(Setting.PathToGame) == false))
+            {
+                // open settings if no valid game file
+                UpdateControlsForPanel(1);
+            }
+            else 
+            {
+                UpdateControlsForPanel(0);
+                if (eLogin.Text != "")
+                {
+                    ePassword.Focus();
+                    ePassword.SelectionStart = 0;
+                    ePassword.SelectionLength = 0;
+                }
+                else
+                {
+                    eLogin.Focus();
+                    eLogin.SelectionStart = 0;
+                    eLogin.SelectionLength = 0;
+                }
+
+            }
         }
 
-        private void LoadSettings()
-        { 
-            StreamReader reader = null ;
-            Console.WriteLine(Application.StartupPath + "\\" + launcherConfigFile);
+        private bool LoadClientLookup()
+        {
+            bool res = false;
+            string configFileName = Application.StartupPath + "\\" + clientLookupDefaultFile;
+
+            StreamReader reader = null;
+            Console.WriteLine(configFileName);
             try
             {
-                reader = new StreamReader(Application.StartupPath + "\\" + launcherConfigFile);
+                reader = new StreamReader(configFileName);
+                var ConfigFile = reader.ReadToEnd();
+                Console.Write(ConfigFile.ToString());
+
+                ClientLookup = JsonConvert.DeserializeObject<ClientLookupHelper>(ConfigFile);
+                res = true;
+            }
+            catch
+            {
+                ClientLookup.serverNames = new List<string>();
+                ClientLookup.clientLocations = new List<string>();
+            }
+            finally
+            {
+                // Make sure we close our stream so the file won't be in use when we need to save it
+                if (reader != null)
+                {
+                    reader.Close();
+                }
+            }
+
+            return res;
+        }
+
+        private bool LoadSettings(string configFileName)
+        {
+            bool res = false;
+
+            StreamReader reader = null ;
+            Console.WriteLine(configFileName);
+            try
+            {
+                reader = new StreamReader(configFileName);
                 var ConfigFile = reader.ReadToEnd();
                 Console.Write(ConfigFile.ToString());
 
                 Setting = JsonConvert.DeserializeObject<Settings>(ConfigFile);
+                res = true;
+                launcherOpenedConfigFile = configFileName;
+
+                if (launcherOpenedConfigFile == Application.StartupPath + "\\" + launcherDefaultConfigFile)
+                {
+                    lLoadedConfig.Text = "";
+                } else if ((Setting.configName == null) || (Setting.configName == ""))
+                {
+                    lLoadedConfig.Text = Path.GetFileNameWithoutExtension(launcherOpenedConfigFile);
+                }
+                else
+                {
+                    lLoadedConfig.Text = Setting.configName;
+                }
             }
             catch
             {
+                lLoadedConfig.Text = "";
                 // If loading fails, just put in some defaults instead
+                Setting.configName = ""; // Local setting doesn't display a name
                 Setting.PathToGame = "";
                 Setting.ServerIpAddress = "127.0.0.1";
                 Setting.Lang = settingsLangEN;
+                Setting.SaveLoginAndPassword = "True";
+                Setting.SkipIntro = "False";
+                Setting.HideSplashLogo = "False";
                 Setting.LastLoginUser = "test";
                 Setting.LastLoginPass = "test";
                 Setting.UserHistory = new List<string>();
                 Setting.UserHistory.Clear();
                 Setting.ClientLoginType = stringMailRu_1_0;
+                Setting.UpdateLocale = "False";
+                Setting.AllowGameUpdates = "False";
+                Setting.ServerGameUpdateURL = ""; // Not allowed without a server settings file by default
+                Setting.ServerWebSiteURL = urlWebsite; // default to aaemu.info
+                Setting.ServerNewsFeedURL = ""; // Not implemented yet
+
             }
             finally
             {
@@ -406,6 +560,11 @@ namespace AAEmu.Launcher
             eLogin.Text = Setting.LastLoginUser;
             ePassword.Text = Setting.LastLoginPass;
 
+            if (((Setting.ServerGameUpdateURL == null)) || (Setting.ServerGameUpdateURL == ""))
+            {
+                Setting.AllowGameUpdates = "False";
+            }
+
             updateGameClientTypeLabel();
 
             UpdateFormLanguageElements("");
@@ -414,6 +573,9 @@ namespace AAEmu.Launcher
             SetCustomCheckBox(cbSkipIntro, Setting.SkipIntro);
             SetCustomCheckBox(cbHideSplash, Setting.HideSplashLogo);
             SetCustomCheckBox(cbUpdateLocale, Setting.UpdateLocale);
+            SetCustomCheckBox(cbAllowUpdates, Setting.AllowGameUpdates);
+
+            return res;
         }
 
         private static string CreateTrinoHandleIDs(string user, string pass)
@@ -733,9 +895,40 @@ namespace AAEmu.Launcher
             SaveSettings();
         }
 
+        private void SaveClientLookups()
+        {
+            string configFileName = Application.StartupPath + "\\" + clientLookupDefaultFile;
+
+            if ((Setting.configName != null) && (Setting.configName != ""))
+            {
+                string findExe = TryAutoFindFromLookup();
+                if ((findExe == "") && File.Exists(Setting.PathToGame))
+                {
+                    ClientLookup.serverNames.Add(Setting.configName);
+                    ClientLookup.clientLocations.Add(Setting.PathToGame);
+                }
+                else
+                {
+                    return;
+                }
+                var ClientLookupJson = JsonConvert.SerializeObject(ClientLookup);
+                try
+                {
+                    File.WriteAllText(configFileName, ClientLookupJson);
+                }
+                catch
+                {
+                    Console.Write("Unable to save client lookup data to :\n" + launcherOpenedConfigFile);
+                }
+            }
+        }
+
         private void SaveSettings()
         {
             Setting.PathToGame = lGamePath.Text;
+            // Try saving lookups after we set the path
+            SaveClientLookups();
+
             Setting.ServerIpAddress = eServerIP.Text;
             // Setting.SaveLoginAndPassword = cbSaveLogin.Checked.ToString();
             // Setting.SkipIntro = cbSkipIntro.Checked.ToString();
@@ -764,8 +957,20 @@ namespace AAEmu.Launcher
                 Setting.UserHistory.Add(cbLoginList.GetItemText(o));
 
             var SettingJson = JsonConvert.SerializeObject(Setting);
-            Console.Write("Saving Settings:\n" + SettingJson);
-            File.WriteAllText(Application.StartupPath + "\\" + launcherConfigFile, SettingJson);
+
+            if ((launcherOpenedConfigFile == null) || (launcherOpenedConfigFile == "") || (File.Exists(launcherOpenedConfigFile) == false))
+            {
+                launcherOpenedConfigFile = Application.StartupPath + "\\" + launcherDefaultConfigFile;
+            }
+            Console.Write("Saving Settings to "+ launcherOpenedConfigFile +" :\n" + SettingJson);
+            try
+            {
+                File.WriteAllText(launcherOpenedConfigFile, SettingJson);
+            }
+            catch 
+            {
+                Console.Write("Unable to save settings to :\n" + launcherOpenedConfigFile);
+            }
         }
 
         private void txtLoginList_SelectedValueChanged(object sender, EventArgs e)
@@ -818,7 +1023,14 @@ namespace AAEmu.Launcher
 
         private void btnWebsite_Click(object sender, EventArgs e)
         {
-            Process.Start(urlWebsite);
+            if ((Setting.ServerWebSiteURL != null) && (Setting.ServerWebSiteURL != ""))
+            {
+                Process.Start(Setting.ServerWebSiteURL);
+            }
+            else
+            {
+                Process.Start(urlWebsite);
+            }
         }
 
         private void LauncherForm_BackgroundImageChanged(object sender, EventArgs e)
@@ -858,7 +1070,7 @@ namespace AAEmu.Launcher
             {
                 openFileDialog.InitialDirectory = "C:\\ArcheAge\\Working\\Bin32";
             }
-            openFileDialog.Filter = "ArcheAge Game|archeage.exe|Executeable|*.exe|All files (*.*)|*.*";
+            openFileDialog.Filter = "ArcheAge Game|"+ archeAgeEXE +"|Executeable|*.exe|All files (*.*)|*.*";
             openFileDialog.FilterIndex = 1;
             openFileDialog.RestoreDirectory = true;
 
@@ -982,5 +1194,130 @@ namespace AAEmu.Launcher
             //Setting.Lang = cbLocaleSelect.Text;
             //UpdateFormLanguageElements(cbLocaleSelect.Text);
         }
+
+        private void aAEmuServerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start(urlAAEmuGitHub);
+        }
+
+        private void aAEmuLauncherToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start(urlLauncherGitHub);
+        }
+
+        private void cbAllowUpdates_Click(object sender, EventArgs e)
+        {
+            if ((Setting.ServerGameUpdateURL != null) && (Setting.ServerGameUpdateURL != ""))
+            {
+                Setting.AllowGameUpdates = ToggleSettingCheckBox(cbAllowUpdates, Setting.AllowGameUpdates);
+            }
+            else
+            {
+                Setting.AllowGameUpdates = "False";
+                SetCustomCheckBox(cbAllowUpdates, Setting.AllowGameUpdates);
+            }
+        }
+
+        private string TryAutoFindInDir(string dirName, string fileName,int depth)
+        {
+            pb1.PerformStep();
+            pb1.Refresh();
+
+            // Don't search too deep, 5 deep should be enough to be in range of what we want
+            if (depth >= 5)
+            {
+                return "";
+            }
+
+            DirectoryInfo di = new DirectoryInfo(dirName);
+            FileInfo[] files = di.GetFiles(fileName);
+            foreach(FileInfo fi in files)
+            {
+                if (fi.Name.ToLower() == fileName.ToLower() && (File.Exists(dirName+fi.Name)))
+                {
+                    return dirName + fi.Name;
+                }
+            }
+
+            DirectoryInfo[] dirs = di.GetDirectories();
+            pb1.Maximum = pb1.Maximum + dirs.Length ;
+            foreach (DirectoryInfo downDir in dirs)
+            {
+                string dirRes = TryAutoFindInDir(dirName + downDir.Name + "\\", fileName,depth+1);
+                if (dirRes != "")
+                {
+                    return dirRes;
+                }
+            }
+
+            return "";
+        }
+
+        private string TryAutoFindFromLookup()
+        {
+            if (ClientLookup.serverNames.Count != ClientLookup.clientLocations.Count)
+            {
+                Console.WriteLine("Error in client lookup file, array size mismatch ! Clearing settings");
+                ClientLookup.serverNames.Clear();
+                ClientLookup.clientLocations.Clear();
+            }
+            for (int i = 0;i < ClientLookup.serverNames.Count();i++)
+            {
+                if (ClientLookup.serverNames[i] == Setting.configName)
+                {
+                    return ClientLookup.clientLocations[i];
+                }
+            }
+            return "";
+        }
+
+        private void TryAutoFindGameExe()
+        {
+            Application.UseWaitCursor = true;
+
+            string exeFile = "";
+
+            if ((Setting.configName != null) && (Setting.configName != ""))
+            {
+                // If we loaded a named config, try to pick from a saved list first
+                exeFile = TryAutoFindFromLookup();
+                if (exeFile != "")
+                {
+                    Setting.PathToGame = exeFile;
+                    lGamePath.Text = Setting.PathToGame;
+                    Application.UseWaitCursor = false;
+                    return;
+                }
+            }
+
+            string configPath = Path.GetDirectoryName(launcherOpenedConfigFile);
+            // Yes I know this trim looks silly, but it's to prevent stuff like "C:\\\\directory\\pathtogame.exe"
+            configPath = configPath.TrimEnd('\\') + "\\" ;
+
+            pb1.Visible = true;
+            pb1.Minimum = 0;
+            pb1.Maximum = 2;
+            pb1.Value = 0;
+            pb1.Step = 1;
+
+            // Let's put a big old try/catch around this to prevent any file system shananigans
+            try
+            {
+                exeFile = TryAutoFindInDir(configPath, archeAgeEXE, 0);
+                if ((exeFile != "") && (File.Exists(exeFile)))
+                {
+                    Setting.PathToGame = exeFile;
+                    lGamePath.Text = Setting.PathToGame;
+                }
+            }
+            catch
+            {
+                // actually do nothing with this, user doesn't need to know
+            }
+            pb1.Visible = false;
+            Application.UseWaitCursor = false;
+        }
+
+
     }
 }
