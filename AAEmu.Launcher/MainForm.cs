@@ -17,6 +17,7 @@ using System.Threading;
 using System.Security.AccessControl;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Net.Sockets;
 
 
 namespace AAEmu.Launcher
@@ -179,6 +180,10 @@ namespace AAEmu.Launcher
         private bool formMouseDown;
         private Point lastLocation;
 
+        private int currentPanel = 0;
+        private int nextServerCheck = -1;
+        private int serverCheckStatus = 2; // 0 = Offline ; 1 = Online ; 2 = Unknown (not checked)
+
         public LauncherForm()
         {
             InitializeComponent();
@@ -275,7 +280,8 @@ namespace AAEmu.Launcher
                     BackgroundImage = Properties.Resources.bg;
                     break;
             }
-            
+
+            currentPanel = panelID;
         }
 
         private void UpdateFormLanguageElements(string localeOverride)
@@ -453,6 +459,8 @@ namespace AAEmu.Launcher
                 }
 
             }
+
+            nextServerCheck = 1000 * 1;
         }
 
         private bool LoadClientLookup()
@@ -1003,17 +1011,12 @@ namespace AAEmu.Launcher
 
         private void btnPlay_MouseEnter(object sender, EventArgs e)
         {
-            btnPlay.Image = Properties.Resources.btn_green_a;
+            updatePlayButton(serverCheckStatus, true);
         }
 
         private void btnPlay_MouseLeave(object sender, EventArgs e)
         {
-            btnPlay.Image = Properties.Resources.btn_green;
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
+            updatePlayButton(serverCheckStatus, false);
         }
 
         private void btnSettings_Click(object sender, EventArgs e)
@@ -1318,6 +1321,126 @@ namespace AAEmu.Launcher
             Application.UseWaitCursor = false;
         }
 
+        private void updatePlayButton(int serverState, bool isMouseOver)
+        {
 
+            if (isMouseOver == true)
+            {
+                switch (serverState)
+                {
+                    case 0: // offline
+                        btnPlay.Image = Properties.Resources.btn_red;
+                        btnPlay.Text = "Offline";
+                        break;
+                    case 1:
+                        btnPlay.Image = Properties.Resources.btn_green_a;
+                        btnPlay.Text = "Play";
+                        break;
+                    case 2:
+                    default:
+                        btnPlay.Image = Properties.Resources.btn_green;
+                        btnPlay.Text = "Play";
+                        break;
+                }
+            }
+            else
+            {
+                switch (serverState)
+                {
+                    case 0: // offline
+                        btnPlay.Image = Properties.Resources.btn_red;
+                        btnPlay.Text = "Offline";
+                        break;
+                    case 1:
+                        btnPlay.Image = Properties.Resources.btn_green;
+                        btnPlay.Text = "Play";
+                        break;
+                    case 2:
+                    default:
+                        btnPlay.Image = Properties.Resources.btn_green_d;
+                        btnPlay.Text = "Play";
+                        break;
+                }
+
+            }
+
+        }
+
+        private void timerGeneral_Tick(object sender, EventArgs e)
+        {
+            if (nextServerCheck > 0)
+            {
+                if (pb2.Maximum < nextServerCheck)
+                {
+                    pb2.Maximum = nextServerCheck;
+                }
+                pb2.Value = nextServerCheck;
+
+                nextServerCheck -= timerGeneral.Interval;
+                if (nextServerCheck <= 0)
+                {
+                    nextServerCheck += 1000 * 60 * 1 ; // 1 minute
+                    checkServerStatus();
+
+                    updatePlayButton(serverCheckStatus, false);
+                }
+            }
+
+
+        }
+
+        private void checkServerStatus()
+        {
+            if ((Setting.ServerIpAddress == null) || (Setting.ServerIpAddress == ""))
+            {
+                serverCheckStatus = 2;
+                return;
+            }
+
+            TcpClient testCon = null;
+            try
+            {
+                testCon = new TcpClientWithTimeout(Setting.ServerIpAddress, 1237, 5000).Connect();
+                if (testCon.Connected)
+                {
+                    serverCheckStatus = 1;
+                    nextServerCheck = (1000 * 60 * 2); // check every 2 minutes when connected
+
+                }
+            }
+            catch
+            {
+                serverCheckStatus = 0;
+                nextServerCheck = (1000 * 60 * 5); // check every 5 minutes when offline
+            }
+            finally
+            {
+                if ((testCon != null) && (testCon.Connected == true))
+                {
+                    testCon.Close();
+                    testCon.Dispose();
+                }
+            }
+
+            /*
+            // connect with a 5 second timeout on the connection
+            TcpClient connection = new TcpClientWithTimeout("www.google.com", 80, 5000).Connect();
+            NetworkStream stream = connection.GetStream();
+
+            // Send 10 bytes
+            byte[] to_send = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0xa };
+            stream.Write(to_send, 0, to_send.Length);
+
+            // Receive 10 bytes
+            byte[] readbuf = new byte[10]; // you must allocate space first
+            stream.ReadTimeout = 10000; // 10 second timeout on the read
+            stream.Read(readbuf, 0, 10); // read
+
+            // Disconnect nicely
+            stream.Close(); // workaround for a .net bug: http://support.microsoft.com/kb/821625
+            connection.Close();
+            */
+
+        }
     }
 }

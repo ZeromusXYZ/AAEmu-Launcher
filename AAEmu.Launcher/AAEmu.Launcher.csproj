@@ -91,6 +91,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TcpClientWithTimeout.cs" />
     <Compile Include="DebugHelperForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -197,6 +198,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="aaemu.ico" />
+    <None Include="Res\btn_red.png" />
     <Content Include="ToolsA.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -33,7 +33,7 @@
             this.eLogin = new System.Windows.Forms.TextBox();
             this.ePassword = new System.Windows.Forms.TextBox();
             this.pb1 = new System.Windows.Forms.ProgressBar();
-            this.timerProgressBar = new System.Windows.Forms.Timer(this.components);
+            this.timerGeneral = new System.Windows.Forms.Timer(this.components);
             this.pb2 = new System.Windows.Forms.ProgressBar();
             this.eServerIP = new System.Windows.Forms.TextBox();
             this.lPathToGameLabel = new System.Windows.Forms.Label();
@@ -58,6 +58,12 @@
             this.cbUpdateLocale = new System.Windows.Forms.Label();
             this.lUpdateLocale = new System.Windows.Forms.Label();
             this.cbLocaleSelect = new System.Windows.Forms.ComboBox();
+            this.cbAllowUpdates = new System.Windows.Forms.Label();
+            this.lAllowUpdates = new System.Windows.Forms.Label();
+            this.cmsGitHub = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.aAEmuServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aAEmuLauncherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lLoadedConfig = new System.Windows.Forms.Label();
             this.btnSystem = new System.Windows.Forms.PictureBox();
             this.btnWebsite = new System.Windows.Forms.Label();
             this.btnSettings = new System.Windows.Forms.Label();
@@ -67,19 +73,13 @@
             this.btnGithub = new System.Windows.Forms.PictureBox();
             this.btnLangChange = new System.Windows.Forms.PictureBox();
             this.imgBigNews = new System.Windows.Forms.PictureBox();
-            this.cbAllowUpdates = new System.Windows.Forms.Label();
-            this.lAllowUpdates = new System.Windows.Forms.Label();
-            this.cmsGitHub = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.aAEmuServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aAEmuLauncherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.lLoadedConfig = new System.Windows.Forms.Label();
             this.cmsAAEmuButton.SuspendLayout();
+            this.cmsGitHub.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.btnSystem)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnDiscord)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnGithub)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnLangChange)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgBigNews)).BeginInit();
-            this.cmsGitHub.SuspendLayout();
             this.SuspendLayout();
             // 
             // eLogin
@@ -123,10 +123,11 @@
             this.pb1.TabIndex = 3;
             this.pb1.Visible = false;
             // 
-            // timerProgressBar
+            // timerGeneral
             // 
-            this.timerProgressBar.Enabled = true;
-            this.timerProgressBar.Interval = 200;
+            this.timerGeneral.Enabled = true;
+            this.timerGeneral.Interval = 250;
+            this.timerGeneral.Tick += new System.EventHandler(this.timerGeneral_Tick);
             // 
             // pb2
             // 
@@ -134,7 +135,6 @@
             this.pb2.Name = "pb2";
             this.pb2.Size = new System.Drawing.Size(276, 9);
             this.pb2.TabIndex = 4;
-            this.pb2.Visible = false;
             // 
             // eServerIP
             // 
@@ -440,6 +440,67 @@
             this.cbLocaleSelect.Visible = false;
             this.cbLocaleSelect.SelectedIndexChanged += new System.EventHandler(this.cbLocaleSelect_SelectedIndexChanged);
             // 
+            // cbAllowUpdates
+            // 
+            this.cbAllowUpdates.BackColor = System.Drawing.Color.Transparent;
+            this.cbAllowUpdates.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cbAllowUpdates.Font = new System.Drawing.Font("Georgia", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbAllowUpdates.ForeColor = System.Drawing.Color.Gray;
+            this.cbAllowUpdates.Location = new System.Drawing.Point(450, 340);
+            this.cbAllowUpdates.Name = "cbAllowUpdates";
+            this.cbAllowUpdates.Size = new System.Drawing.Size(31, 24);
+            this.cbAllowUpdates.TabIndex = 44;
+            this.cbAllowUpdates.Text = "✓";
+            this.cbAllowUpdates.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.cbAllowUpdates.Visible = false;
+            this.cbAllowUpdates.Click += new System.EventHandler(this.cbAllowUpdates_Click);
+            // 
+            // lAllowUpdates
+            // 
+            this.lAllowUpdates.BackColor = System.Drawing.Color.Transparent;
+            this.lAllowUpdates.Font = new System.Drawing.Font("Georgia", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lAllowUpdates.ForeColor = System.Drawing.Color.Gray;
+            this.lAllowUpdates.Location = new System.Drawing.Point(300, 340);
+            this.lAllowUpdates.Name = "lAllowUpdates";
+            this.lAllowUpdates.Size = new System.Drawing.Size(145, 30);
+            this.lAllowUpdates.TabIndex = 43;
+            this.lAllowUpdates.Text = "Allow Updates";
+            this.lAllowUpdates.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lAllowUpdates.Visible = false;
+            this.lAllowUpdates.Click += new System.EventHandler(this.cbAllowUpdates_Click);
+            // 
+            // cmsGitHub
+            // 
+            this.cmsGitHub.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aAEmuServerToolStripMenuItem,
+            this.aAEmuLauncherToolStripMenuItem});
+            this.cmsGitHub.Name = "cmsGitHub";
+            this.cmsGitHub.Size = new System.Drawing.Size(167, 48);
+            // 
+            // aAEmuServerToolStripMenuItem
+            // 
+            this.aAEmuServerToolStripMenuItem.Name = "aAEmuServerToolStripMenuItem";
+            this.aAEmuServerToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.aAEmuServerToolStripMenuItem.Text = "AAEmu Server";
+            this.aAEmuServerToolStripMenuItem.Click += new System.EventHandler(this.aAEmuServerToolStripMenuItem_Click);
+            // 
+            // aAEmuLauncherToolStripMenuItem
+            // 
+            this.aAEmuLauncherToolStripMenuItem.Name = "aAEmuLauncherToolStripMenuItem";
+            this.aAEmuLauncherToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.aAEmuLauncherToolStripMenuItem.Text = "AAEmu Launcher";
+            this.aAEmuLauncherToolStripMenuItem.Click += new System.EventHandler(this.aAEmuLauncherToolStripMenuItem_Click);
+            // 
+            // lLoadedConfig
+            // 
+            this.lLoadedConfig.AutoSize = true;
+            this.lLoadedConfig.BackColor = System.Drawing.Color.Transparent;
+            this.lLoadedConfig.Location = new System.Drawing.Point(14, 7);
+            this.lLoadedConfig.Name = "lLoadedConfig";
+            this.lLoadedConfig.Size = new System.Drawing.Size(190, 18);
+            this.lLoadedConfig.TabIndex = 46;
+            this.lLoadedConfig.Text = "Loaded Server Config File";
+            // 
             // btnSystem
             // 
             this.btnSystem.BackColor = System.Drawing.Color.Transparent;
@@ -507,7 +568,7 @@
             this.btnPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPlay.Font = new System.Drawing.Font("Georgia", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPlay.ForeColor = System.Drawing.Color.White;
-            this.btnPlay.Image = global::AAEmu.Launcher.Properties.Resources.btn_green;
+            this.btnPlay.Image = global::AAEmu.Launcher.Properties.Resources.btn_green_d;
             this.btnPlay.Location = new System.Drawing.Point(679, 373);
             this.btnPlay.Name = "btnPlay";
             this.btnPlay.Size = new System.Drawing.Size(227, 67);
@@ -571,72 +632,11 @@
             this.imgBigNews.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
             this.imgBigNews.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
             // 
-            // cbAllowUpdates
-            // 
-            this.cbAllowUpdates.BackColor = System.Drawing.Color.Transparent;
-            this.cbAllowUpdates.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.cbAllowUpdates.Font = new System.Drawing.Font("Georgia", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbAllowUpdates.ForeColor = System.Drawing.Color.Gray;
-            this.cbAllowUpdates.Location = new System.Drawing.Point(450, 340);
-            this.cbAllowUpdates.Name = "cbAllowUpdates";
-            this.cbAllowUpdates.Size = new System.Drawing.Size(31, 24);
-            this.cbAllowUpdates.TabIndex = 44;
-            this.cbAllowUpdates.Text = "✓";
-            this.cbAllowUpdates.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.cbAllowUpdates.Visible = false;
-            this.cbAllowUpdates.Click += new System.EventHandler(this.cbAllowUpdates_Click);
-            // 
-            // lAllowUpdates
-            // 
-            this.lAllowUpdates.BackColor = System.Drawing.Color.Transparent;
-            this.lAllowUpdates.Font = new System.Drawing.Font("Georgia", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lAllowUpdates.ForeColor = System.Drawing.Color.Gray;
-            this.lAllowUpdates.Location = new System.Drawing.Point(300, 340);
-            this.lAllowUpdates.Name = "lAllowUpdates";
-            this.lAllowUpdates.Size = new System.Drawing.Size(145, 30);
-            this.lAllowUpdates.TabIndex = 43;
-            this.lAllowUpdates.Text = "Allow Updates";
-            this.lAllowUpdates.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lAllowUpdates.Visible = false;
-            this.lAllowUpdates.Click += new System.EventHandler(this.cbAllowUpdates_Click);
-            // 
-            // cmsGitHub
-            // 
-            this.cmsGitHub.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aAEmuServerToolStripMenuItem,
-            this.aAEmuLauncherToolStripMenuItem});
-            this.cmsGitHub.Name = "cmsGitHub";
-            this.cmsGitHub.Size = new System.Drawing.Size(167, 48);
-            // 
-            // aAEmuServerToolStripMenuItem
-            // 
-            this.aAEmuServerToolStripMenuItem.Name = "aAEmuServerToolStripMenuItem";
-            this.aAEmuServerToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
-            this.aAEmuServerToolStripMenuItem.Text = "AAEmu Server";
-            this.aAEmuServerToolStripMenuItem.Click += new System.EventHandler(this.aAEmuServerToolStripMenuItem_Click);
-            // 
-            // aAEmuLauncherToolStripMenuItem
-            // 
-            this.aAEmuLauncherToolStripMenuItem.Name = "aAEmuLauncherToolStripMenuItem";
-            this.aAEmuLauncherToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
-            this.aAEmuLauncherToolStripMenuItem.Text = "AAEmu Launcher";
-            this.aAEmuLauncherToolStripMenuItem.Click += new System.EventHandler(this.aAEmuLauncherToolStripMenuItem_Click);
-            // 
-            // lLoadedConfig
-            // 
-            this.lLoadedConfig.AutoSize = true;
-            this.lLoadedConfig.BackColor = System.Drawing.Color.Transparent;
-            this.lLoadedConfig.Location = new System.Drawing.Point(14, 7);
-            this.lLoadedConfig.Name = "lLoadedConfig";
-            this.lLoadedConfig.Size = new System.Drawing.Size(190, 18);
-            this.lLoadedConfig.TabIndex = 46;
-            this.lLoadedConfig.Text = "Loaded Server Config File";
-            // 
             // LauncherForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.BackColor = System.Drawing.Color.Fuchsia;
+            this.BackColor = System.Drawing.Color.DimGray;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(950, 510);
             this.Controls.Add(this.lLoadedConfig);
@@ -692,12 +692,12 @@
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
             this.cmsAAEmuButton.ResumeLayout(false);
+            this.cmsGitHub.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.btnSystem)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnDiscord)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnGithub)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnLangChange)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgBigNews)).EndInit();
-            this.cmsGitHub.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -707,7 +707,7 @@
         private System.Windows.Forms.TextBox eLogin;
         private System.Windows.Forms.TextBox ePassword;
         private System.Windows.Forms.ProgressBar pb1;
-        private System.Windows.Forms.Timer timerProgressBar;
+        private System.Windows.Forms.Timer timerGeneral;
         private System.Windows.Forms.ProgressBar pb2;
         private System.Windows.Forms.PictureBox btnLangChange;
         private System.Windows.Forms.PictureBox btnGithub;

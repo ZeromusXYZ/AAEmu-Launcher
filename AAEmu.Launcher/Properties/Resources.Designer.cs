@@ -213,6 +213,16 @@ namespace AAEmu.Launcher.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap btn_red {
+            get {
+                object obj = ResourceManager.GetObject("btn_red", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap btn_red_small {
             get {
                 object obj = ResourceManager.GetObject("btn_red_small", resourceCulture);
