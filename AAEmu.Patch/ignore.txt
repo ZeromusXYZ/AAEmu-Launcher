@@ -1,0 +1,6 @@
+﻿.
+..
+.git
+.patch
+patchfiles.csv
+patchfiles.ver
