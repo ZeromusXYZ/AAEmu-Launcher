@@ -135,6 +135,7 @@
             this.pb2.Name = "pb2";
             this.pb2.Size = new System.Drawing.Size(276, 9);
             this.pb2.TabIndex = 4;
+            this.pb2.Visible = false;
             // 
             // eServerIP
             // 

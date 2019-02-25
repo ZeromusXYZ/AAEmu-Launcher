@@ -147,6 +147,7 @@ namespace AAEmu.Launcher
 
 
         public Settings Setting = new Settings();
+        public Settings RemoteSetting = new Settings();
         public ClientLookupHelper ClientLookup = new ClientLookupHelper();
 
         const string archeAgeEXE = "archeage.exe";
@@ -162,15 +163,16 @@ namespace AAEmu.Launcher
         const string dx9downloadURL = "https://www.microsoft.com/en-us/download/confirmation.aspx?id=35";
 
         // Some strings for our language settings
-        private const string settingsLangRU = "ru";
-        private const string settingsLangEN = "en_us";
-        private const string settingsLangDE = "de";
-        private const string settingsLangFR = "fr";
-        // unused for now
-        private const string settingsLangKR = "ko";
-        private const string settingsLangJP = "ja";
-        private const string settingsLangCH = "zh_cn";
-        private const string settingsLangTW = "zh_tw";
+        private const string settingsLangEN_US = "en_us"; // English US
+        private const string settingsLangRU = "ru"; // Russian
+        private const string settingsLangDE = "de"; // German
+        // unused for launcher
+        private const string settingsLangFR = "fr"; // French
+        // unused in launcher
+        private const string settingsLangKR = "ko"; // Korean
+        private const string settingsLangJP = "ja"; // Japanese
+        private const string settingsLangZH_CN = "zh_cn"; // Chinese simplified
+        private const string settingsLangZH_TW = "zh_tw"; // Chinese traditional // Not sure how I'd do this with flags if ever
 
         // launcher protocol indentifiers
         private const string stringMailRu_1_0 = "mailru_1_0";
@@ -284,7 +286,7 @@ namespace AAEmu.Launcher
             currentPanel = panelID;
         }
 
-        private void UpdateFormLanguageElements(string localeOverride)
+        private void UpdateLanguage(string localeOverride)
         {
 
             switch (Setting.Lang)
@@ -321,9 +323,9 @@ namespace AAEmu.Launcher
                     btnPlay.Text = "Spielen" ;
                     lUpdateLocale.Text = "locale aktualisieren";
                     break;
-                case settingsLangEN:
+                case settingsLangEN_US:
                 default:
-                    Setting.Lang = settingsLangEN;
+                    Setting.Lang = settingsLangEN_US;
                     btnLangChange.Image = Properties.Resources.But_Lang_En;
                     lLogin.Text = "Username";
                     lPassword.Text = "Password";
@@ -355,9 +357,9 @@ namespace AAEmu.Launcher
             switch(Setting.Lang)
             {
                 case settingsLangRU:
-                    Setting.Lang = settingsLangEN;
+                    Setting.Lang = settingsLangEN_US;
                     break;
-                case settingsLangEN:
+                case settingsLangEN_US:
                     Setting.Lang = settingsLangDE;
                     break;
                 case settingsLangDE:
@@ -365,7 +367,7 @@ namespace AAEmu.Launcher
                     break;
             }
             Console.WriteLine("Updating Language: {0}",Setting.Lang);
-            UpdateFormLanguageElements("");
+            UpdateLanguage("");
             btnLangChange.Refresh();
         }
 
@@ -531,7 +533,7 @@ namespace AAEmu.Launcher
                 Setting.configName = ""; // Local setting doesn't display a name
                 Setting.PathToGame = "";
                 Setting.ServerIpAddress = "127.0.0.1";
-                Setting.Lang = settingsLangEN;
+                Setting.Lang = settingsLangEN_US;
                 Setting.SaveLoginAndPassword = "True";
                 Setting.SkipIntro = "False";
                 Setting.HideSplashLogo = "False";
@@ -575,7 +577,7 @@ namespace AAEmu.Launcher
 
             updateGameClientTypeLabel();
 
-            UpdateFormLanguageElements("");
+            UpdateLanguage("");
 
             SetCustomCheckBox(cbSaveUser, Setting.SaveLoginAndPassword);
             SetCustomCheckBox(cbSkipIntro, Setting.SkipIntro);
@@ -653,7 +655,7 @@ namespace AAEmu.Launcher
                     gameProviderArg = "-r ";
                     languageArg = "";
                     break;
-                case settingsLangEN:
+                case settingsLangEN_US:
                 default:
                     gameProviderArg = "-r ";
                     languageArg = "";
@@ -672,7 +674,7 @@ namespace AAEmu.Launcher
                 case settingsLangRU:
                 case settingsLangFR:
                 case settingsLangDE:
-                case settingsLangEN:
+                case settingsLangEN_US:
                     gameProviderArg = "-t ";
                     languageArg = " -lang "+Setting.Lang ;
                     break;
@@ -1370,11 +1372,13 @@ namespace AAEmu.Launcher
         {
             if (nextServerCheck > 0)
             {
+                /*
                 if (pb2.Maximum < nextServerCheck)
                 {
                     pb2.Maximum = nextServerCheck;
                 }
                 pb2.Value = nextServerCheck;
+                */
 
                 nextServerCheck -= timerGeneral.Interval;
                 if (nextServerCheck <= 0)
