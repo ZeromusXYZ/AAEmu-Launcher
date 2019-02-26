@@ -1062,6 +1062,9 @@ namespace AAEmu.Launcher
         {
             SaveSettings();
             UpdateControlsForPanel(0);
+            serverCheckStatus = 2;
+            nextServerCheck = 1000;
+            updatePlayButton(serverCheckStatus, false);
         }
 
         private void lGamePath_Click(object sender, EventArgs e)
@@ -1402,6 +1405,7 @@ namespace AAEmu.Launcher
             }
 
             TcpClient testCon = null;
+            Application.UseWaitCursor = true;
             try
             {
                 testCon = new TcpClientWithTimeout(Setting.ServerIpAddress, 1237, 5000).Connect();
@@ -1419,12 +1423,16 @@ namespace AAEmu.Launcher
             }
             finally
             {
-                if ((testCon != null) && (testCon.Connected == true))
+                if (testCon != null)
                 {
-                    testCon.Close();
+                    if (testCon.Connected == true)
+                    {
+                        testCon.Close();
+                    }
                     testCon.Dispose();
                 }
             }
+            Application.UseWaitCursor = false;
 
             /*
             // connect with a 5 second timeout on the connection
