@@ -73,6 +73,11 @@
             this.btnGithub = new System.Windows.Forms.PictureBox();
             this.btnLangChange = new System.Windows.Forms.PictureBox();
             this.imgBigNews = new System.Windows.Forms.PictureBox();
+            this.cmsLanguage = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.englishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.russianToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.germanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.frenchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsAAEmuButton.SuspendLayout();
             this.cmsGitHub.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.btnSystem)).BeginInit();
@@ -80,6 +85,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.btnGithub)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnLangChange)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgBigNews)).BeginInit();
+            this.cmsLanguage.SuspendLayout();
             this.SuspendLayout();
             // 
             // eLogin
@@ -508,7 +514,7 @@
             this.btnSystem.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.btnSystem.ContextMenuStrip = this.cmsAAEmuButton;
             this.btnSystem.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSystem.Image = global::AAEmu.Launcher.Properties.Resources.aaemu_logo;
+            this.btnSystem.Image = global::AAEmu.Launcher.Properties.Resources.aaemu_logo ;
             this.btnSystem.Location = new System.Drawing.Point(898, 2);
             this.btnSystem.Name = "btnSystem";
             this.btnSystem.Size = new System.Drawing.Size(40, 40);
@@ -612,13 +618,13 @@
             // 
             this.btnLangChange.BackColor = System.Drawing.Color.Transparent;
             this.btnLangChange.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnLangChange.Image = global::AAEmu.Launcher.Properties.Resources.But_Lang_Ru;
+            this.btnLangChange.Image = global::AAEmu.Launcher.Properties.Resources.flag_english;
             this.btnLangChange.Location = new System.Drawing.Point(850, 2);
             this.btnLangChange.Name = "btnLangChange";
             this.btnLangChange.Size = new System.Drawing.Size(40, 40);
             this.btnLangChange.TabIndex = 8;
             this.btnLangChange.TabStop = false;
-            this.btnLangChange.Click += new System.EventHandler(this.PicButLangChange_Click);
+            this.btnLangChange.Click += new System.EventHandler(this.btnLangChange_Click);
             // 
             // imgBigNews
             // 
@@ -632,6 +638,52 @@
             this.imgBigNews.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseDown);
             this.imgBigNews.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
             this.imgBigNews.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
+            // 
+            // cmsLanguage
+            // 
+            this.cmsLanguage.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.englishToolStripMenuItem,
+            this.russianToolStripMenuItem,
+            this.germanToolStripMenuItem,
+            this.frenchToolStripMenuItem});
+            this.cmsLanguage.Name = "cmsLanguage";
+            this.cmsLanguage.Size = new System.Drawing.Size(120, 92);
+            // 
+            // englishToolStripMenuItem
+            // 
+            this.englishToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_english;
+            this.englishToolStripMenuItem.Name = "englishToolStripMenuItem";
+            this.englishToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.englishToolStripMenuItem.Tag = "en_us";
+            this.englishToolStripMenuItem.Text = "English";
+            this.englishToolStripMenuItem.Click += new System.EventHandler(this.swapLanguageToolStripMenuItem_Click);
+            // 
+            // russianToolStripMenuItem
+            // 
+            this.russianToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_ru;
+            this.russianToolStripMenuItem.Name = "russianToolStripMenuItem";
+            this.russianToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.russianToolStripMenuItem.Tag = "ru";
+            this.russianToolStripMenuItem.Text = "Русский";
+            this.russianToolStripMenuItem.Click += new System.EventHandler(this.swapLanguageToolStripMenuItem_Click);
+            // 
+            // germanToolStripMenuItem
+            // 
+            this.germanToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_de;
+            this.germanToolStripMenuItem.Name = "germanToolStripMenuItem";
+            this.germanToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.germanToolStripMenuItem.Tag = "de";
+            this.germanToolStripMenuItem.Text = "Deutsch";
+            this.germanToolStripMenuItem.Click += new System.EventHandler(this.swapLanguageToolStripMenuItem_Click);
+            // 
+            // frenchToolStripMenuItem
+            // 
+            this.frenchToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_fr;
+            this.frenchToolStripMenuItem.Name = "frenchToolStripMenuItem";
+            this.frenchToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.frenchToolStripMenuItem.Tag = "fr";
+            this.frenchToolStripMenuItem.Text = "Français";
+            this.frenchToolStripMenuItem.Click += new System.EventHandler(this.swapLanguageToolStripMenuItem_Click);
             // 
             // LauncherForm
             // 
@@ -699,6 +751,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.btnGithub)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnLangChange)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgBigNews)).EndInit();
+            this.cmsLanguage.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -748,6 +801,11 @@
         private System.Windows.Forms.ToolStripMenuItem aAEmuServerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aAEmuLauncherToolStripMenuItem;
         private System.Windows.Forms.Label lLoadedConfig;
+        private System.Windows.Forms.ContextMenuStrip cmsLanguage;
+        private System.Windows.Forms.ToolStripMenuItem englishToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem russianToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem germanToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem frenchToolStripMenuItem;
     }
 }
 

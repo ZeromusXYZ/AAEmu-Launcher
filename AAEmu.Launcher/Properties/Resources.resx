@@ -118,57 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="But_Lang_De" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\But_Lang_De.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="But_Lang_En" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\But_Lang_En.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="But_Lang_Ru" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\But_Lang_Ru.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Discord_Logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Discord_Logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Discord_Logo_Active" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Discord_Logo_Active.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Discord_Logo_Only" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Discord_Logo_Only.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Discord_Logo_Only_Active" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Discord_Logo_Only_Active.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="GitHub_Logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\GitHub_Logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="GitHub_Logo_Active" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\GitHub_Logo_Active.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="GitHub_Logo_Only" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\GitHub_Logo_Only.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="GitHub_Logo_Only_Active" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\GitHub_Logo_Only_Active.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btn_conf" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_conf.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btn_conf_a" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_conf_a.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btn_pickup" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_pickup.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btn_pickup_a" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_pickup_a.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btn_portal_exit" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_portal_exit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="btn_portal_exit_a" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\btn_portal_exit_a.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="bg" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Res\bg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -187,9 +136,6 @@
   <data name="btn_green_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Res\btn_green_small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="aaemu_logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Res\aaemu_logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="bg_login" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Res\bg_login.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -201,5 +147,65 @@
   </data>
   <data name="btn_red" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Res\btn_red.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="flag_ch" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\flag_ch.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="flag_de" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\flag_de.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="flag_english" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\flag_english.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="flag_eu" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\flag_eu.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="flag_fr" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\flag_fr.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="flag_jp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\flag_jp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="flag_ko" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\flag_ko.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="flag_ru" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\flag_ru.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="flag_tw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\flag_tw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="flag_us" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\flag_us.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="flag_xx" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\flag_xx.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="aaemu_logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\aaemu_logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Discord_Logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\Discord_Logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Discord_Logo_Active" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\Discord_Logo_Active.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Discord_Logo_Only" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\Discord_Logo_Only.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Discord_Logo_Only_Active" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\Discord_Logo_Only_Active.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GitHub_Logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\GitHub_Logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GitHub_Logo_Active" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\GitHub_Logo_Active.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GitHub_Logo_Only" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\GitHub_Logo_Only.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GitHub_Logo_Only_Active" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\GitHub_Logo_Only_Active.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

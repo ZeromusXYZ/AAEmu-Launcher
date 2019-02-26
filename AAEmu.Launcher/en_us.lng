@@ -1,0 +1,23 @@
+﻿{
+"lang":"en_us",
+"username":"Username",
+"password":"Password",
+"serveraddress":"Server Address",
+"pathtogame":"Path to Game",
+"savecredentials":"Save Credentials",
+"skipintro":"Skip Intro",
+"hidesplashscreen":"Hide Splash Screen",
+"savesettings":"Save",
+"cancel":"Cancel",
+"settings":"Settings",
+"website":"Website",
+"play":"Play",
+"online":"Online",
+"offline":"Offline",
+"updatelocale":"Update locale",
+"toolsafailed":"Failed to load ToolsA.DLL, you might have a debugger open, if so, please close it and restart the launcher",
+"unknownlauncherprotocol":"Unknown launcher protocol: {0}",
+"nouserorpassword":"Please enter a username and password",
+"missinggame":"No valid game path set!",
+"errorupdatingfile":"ERROR updating {0}"
+}

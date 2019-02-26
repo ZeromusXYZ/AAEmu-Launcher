@@ -84,6 +84,7 @@ namespace AAEmu.Launcher
         public static extern bool generateInitStr(byte[] byte_0, int int_28, byte[] byte_1, int int_29, ref uint uint_0, ref uint uint_1);
         //------------------------------------------------------------------------------------------------------
 
+        
 
         public partial class Settings
         {
@@ -145,9 +146,92 @@ namespace AAEmu.Launcher
             public List<string> clientLocations { get; set; }
         }
 
+        // Some strings for our language settings
+        private const string settingsLangEN_US = "en_us"; // English US
+        private const string settingsLangRU = "ru"; // Russian
+        private const string settingsLangDE = "de"; // German
+        // unused for launcher
+        private const string settingsLangFR = "fr"; // French
+        // unused in launcher
+        private const string settingsLangKR = "ko"; // Korean
+        private const string settingsLangJP = "ja"; // Japanese
+        private const string settingsLangZH_CN = "zh_cn"; // Chinese simplified
+        private const string settingsLangZH_TW = "zh_tw"; // Chinese traditional // Not sure how I'd do this with flags if ever
+
+        public partial class LanguageSettings
+        {
+            [JsonProperty("lang")]
+            public string Lang { get; set; }
+
+            [JsonProperty("username")]
+            public string Username { get; set; }
+
+            [JsonProperty("password")]
+            public string Password { get; set; }
+
+            [JsonProperty("serveraddress")]
+            public string ServerAddress { get; set; }
+
+            [JsonProperty("pathtogame")]
+            public string PathToGame { get; set; }
+
+            [JsonProperty("savecredentials")]
+            public string SaveCredentials { get; set; }
+
+            [JsonProperty("skipintro")]
+            public string SkipIntro { get; set; }
+
+            [JsonProperty("hidesplashscreen")]
+            public string HideSplashScreen { get; set; }
+
+            [JsonProperty("saveSettings")]
+            public string SaveSettings { get; set; }
+
+            [JsonProperty("cancel")]
+            public string Cancel { get; set; }
+
+            [JsonProperty("settings")]
+            public string Settings { get; set; }
+
+            [JsonProperty("website")]
+            public string Website { get; set; }
+
+            [JsonProperty("play")]
+            public string Play { get; set; }
+
+            [JsonProperty("online")]
+            public string Online { get; set; }
+
+            [JsonProperty("offline")]
+            public string Offline { get; set; }
+
+            [JsonProperty("updatelocale")]
+            public string UpdateLocale { get; set; }
+
+            [JsonProperty("allowupdates")]
+            public string AllowUpdates { get; set; }
+
+            [JsonProperty("toolsafailed")]
+            public string ToolsAFailed { get; set; }
+
+            [JsonProperty("unknownlauncherprotocol")]
+            public string UnknownLauncherProtocol { get; set; }
+
+            [JsonProperty("nouserorpassword")]
+            public string NoUserOrPassword { get; set; }
+
+            [JsonProperty("missinggame")]
+            public string MissingGame { get; set; }
+
+            [JsonProperty("errorupdatingfile")]
+            public string ErrorUpdatingFile { get; set; }
+
+        }
+
 
         public Settings Setting = new Settings();
         public Settings RemoteSetting = new Settings();
+        public static LanguageSettings L = new LanguageSettings();
         public ClientLookupHelper ClientLookup = new ClientLookupHelper();
 
         const string archeAgeEXE = "archeage.exe";
@@ -162,17 +246,6 @@ namespace AAEmu.Launcher
         // const string urlNews = "https://cl2.widgetbot.io/channels/479677351618281472/481782245087248400";
         const string dx9downloadURL = "https://www.microsoft.com/en-us/download/confirmation.aspx?id=35";
 
-        // Some strings for our language settings
-        private const string settingsLangEN_US = "en_us"; // English US
-        private const string settingsLangRU = "ru"; // Russian
-        private const string settingsLangDE = "de"; // German
-        // unused for launcher
-        private const string settingsLangFR = "fr"; // French
-        // unused in launcher
-        private const string settingsLangKR = "ko"; // Korean
-        private const string settingsLangJP = "ja"; // Japanese
-        private const string settingsLangZH_CN = "zh_cn"; // Chinese simplified
-        private const string settingsLangZH_TW = "zh_tw"; // Chinese traditional // Not sure how I'd do this with flags if ever
 
         // launcher protocol indentifiers
         private const string stringMailRu_1_0 = "mailru_1_0";
@@ -189,6 +262,69 @@ namespace AAEmu.Launcher
         public LauncherForm()
         {
             InitializeComponent();
+        }
+
+        private void InitDefaultLanguage()
+        {
+            L.Lang = settingsLangEN_US;
+            btnLangChange.Image = Properties.Resources.flag_english;
+            L.Username = "Username";
+            L.Password = "Password";
+            L.ServerAddress = "Server Address";
+            L.PathToGame = "Path to Game";
+            L.SaveCredentials = "Save Credentials";
+            L.SkipIntro = "Skip Intro";
+            L.HideSplashScreen = "Hide Splash Screen";
+            L.SaveSettings = "Save";
+            L.Cancel = "Cancel";
+            L.Settings = "Settings";
+            L.Website = "Website";
+            L.Play = "Play";
+            L.Online = "Online";
+            L.Offline = "Offline";
+            L.UpdateLocale = "Update locale";
+            L.AllowUpdates = "Allow Updates";
+            L.ToolsAFailed = "Failed to load ToolsA.DLL, you might have a debugger open, if so, please close it and restart the launcher";
+            L.UnknownLauncherProtocol = "Unknown launcher protocol: {0}";
+            L.NoUserOrPassword = "Please enter a username and password";
+            L.MissingGame = "No valid game path set!";
+            L.ErrorUpdatingFile = "ERROR updating {0}";
+        }
+
+        private void LoadLanguageFromFile(string languageID)
+        {
+            bool res = false;
+
+            string lngFileName = Application.StartupPath + "\\lng\\" + languageID + ".lng";
+
+            StreamReader reader = null;
+            Console.WriteLine(lngFileName);
+            try
+            {
+                reader = new StreamReader(lngFileName);
+                var ConfigFile = reader.ReadToEnd();
+                Console.Write(ConfigFile.ToString());
+
+                L = JsonConvert.DeserializeObject<LanguageSettings>(ConfigFile);
+                res = true;
+            }
+            catch
+            {
+                res = false;
+            }
+            finally
+            {
+                // Make sure we close our stream so the file won't be in use when we need to save it
+                if (reader != null)
+                {
+                    reader.Close();
+                }
+            }
+            if (res == false)
+            {
+                InitDefaultLanguage();
+            }
+
         }
 
         private void SetCustomCheckBox(Label targetLabel, string checkState)
@@ -292,56 +428,35 @@ namespace AAEmu.Launcher
             switch (Setting.Lang)
             {
                 case settingsLangRU:
-                    btnLangChange.Image = Properties.Resources.But_Lang_Ru;
-                    lLogin.Text = "Логин";
-                    lPassword.Text = "Пароль";
-                    lIPAddress.Text = "адрес сервера";
-                    lPathToGameLabel.Text = "Путь к игровому";
-                    lSaveUser.Text = "Сохранять учетные данные";
-                    lSkipIntro.Text = "Пропустить заставку";
-                    lHideSplash.Text = "Показывать логотип загрузки";
-                    lSettingsBack.Text = "Сохранить";
-                    //btnSettingsCancel.Text = "Отмена";
-                    btnSettings.Text = "Настройки";
-                    btnWebsite.Text = "сайт";
-                    btnPlay.Text = "играть";
-                    lUpdateLocale.Text = "обновить locale";
+                    btnLangChange.Image = Properties.Resources.flag_ru;
                     break;
                 case settingsLangDE:
-                    btnLangChange.Image = Properties.Resources.But_Lang_De;
-                    lLogin.Text = "Benutzername";
-                    lPassword.Text = "Passwort";
-                    lIPAddress.Text = "Server Adresse";
-                    lPathToGameLabel.Text = "Pfad zum Game";
-                    lSaveUser.Text = "Anmeldeinformationen speichern";
-                    lSkipIntro.Text = "Intro überspringen";
-                    lHideSplash.Text = "Begrüßungsbildschirm ausblenden";
-                    lSettingsBack.Text = "Speichern";
-                    //btnSettingsCancel.Text = "Abbrechen";
-                    btnSettings.Text = "Einstellungen";
-                    btnWebsite.Text = "Website";
-                    btnPlay.Text = "Spielen" ;
-                    lUpdateLocale.Text = "locale aktualisieren";
+                    btnLangChange.Image = Properties.Resources.flag_de;
+                    break;
+                case settingsLangFR:
+                    btnLangChange.Image = Properties.Resources.flag_fr;
                     break;
                 case settingsLangEN_US:
                 default:
                     Setting.Lang = settingsLangEN_US;
-                    btnLangChange.Image = Properties.Resources.But_Lang_En;
-                    lLogin.Text = "Username";
-                    lPassword.Text = "Password";
-                    lIPAddress.Text = "Server Address";
-                    lPathToGameLabel.Text = "Path to Game";
-                    lSaveUser.Text = "Save Credentials";
-                    lSkipIntro.Text = "Skip Intro";
-                    lHideSplash.Text = "Hide Splash Screen";
-                    lSettingsBack.Text = "Save";
-                    //btnSettingsCancel.Text = "Cancel";
-                    btnSettings.Text = "Settings";
-                    btnWebsite.Text = "Website";
-                    btnPlay.Text = "Play";
-                    lUpdateLocale.Text = "Update locale";
+                    btnLangChange.Image = Properties.Resources.flag_english;
                     break;
             }
+            LoadLanguageFromFile(Setting.Lang);
+
+            lLogin.Text = L.Username ;
+            lPassword.Text = L.Password ;
+            lIPAddress.Text = L.ServerAddress;
+            lPathToGameLabel.Text = L.PathToGame;
+            lSaveUser.Text = L.SaveCredentials ;
+            lSkipIntro.Text = L.SkipIntro;
+            lHideSplash.Text = L.HideSplashScreen;
+            lSettingsBack.Text = L.SaveSettings;
+            btnSettings.Text = L.Settings;
+            btnWebsite.Text = L.Website;
+            lUpdateLocale.Text = L.UpdateLocale ;
+            lAllowUpdates.Text = L.AllowUpdates;
+            updatePlayButton(serverCheckStatus, false);
 
             btnLangChange.Refresh();
 
@@ -404,6 +519,8 @@ namespace AAEmu.Launcher
 
         private void LauncherForm_Load(object sender, EventArgs e)
         {
+            Application.UseWaitCursor = true;
+            InitDefaultLanguage();
 
             // Helps to keep the editing window cleaner
             imgBigNews.SizeMode = PictureBoxSizeMode.Normal;
@@ -462,7 +579,16 @@ namespace AAEmu.Launcher
 
             }
 
-            nextServerCheck = 1000 * 1;
+            if ((Setting.ServerIpAddress != null) && (Setting.ServerIpAddress != ""))
+            {
+                nextServerCheck = 1000 * 1;
+                // the next server check will put the wait cursor off
+            }
+            else
+            {
+                nextServerCheck = -1;
+                Application.UseWaitCursor = false;
+            }
         }
 
         private bool LoadClientLookup()
@@ -621,7 +747,7 @@ namespace AAEmu.Launcher
             }
             catch
             {
-                MessageBox.Show("Failed to load ToolsA.DLL, you might have a debugger open, if so, please close it and restart the launcher");
+                MessageBox.Show(L.ToolsAFailed);
             }
             if (genRes == false)
             {
@@ -722,7 +848,7 @@ namespace AAEmu.Launcher
                             LoginArg = CreateArgs_1_0(eLogin.Text, ePassword.Text);
                             break;
                         default:
-                            MessageBox.Show("Unknown launcher protocol: "+Setting.ClientLoginType);
+                            MessageBox.Show(L.UnknownLauncherProtocol,Setting.ClientLoginType);
                             return;
                     }
 
@@ -807,8 +933,8 @@ namespace AAEmu.Launcher
                     }
                     */
 
-                    // Loading using Process.Start();
-                    ProcessStartInfo GameClientProcessInfo;
+            // Loading using Process.Start();
+            ProcessStartInfo GameClientProcessInfo;
                     GameClientProcessInfo = new ProcessStartInfo(Setting.PathToGame, LoginArg + HShield);
                     GameClientProcessInfo.UseShellExecute = true;
                     GameClientProcessInfo.Verb = "runas";
@@ -831,12 +957,12 @@ namespace AAEmu.Launcher
                 }
                 else
                 {
-                    MessageBox.Show("Please enter a username and password");
+                    MessageBox.Show(L.NoUserOrPassword);
                     // MessageBox.Show("Логин и пароль должны быть заполнены!");
                 }
             } else
             {
-                MessageBox.Show("Error: No game path set");
+                MessageBox.Show(L.MissingGame);
                 // MessageBox.Show("Не указан путь размещения клиента игры!");
             }
 
@@ -1192,7 +1318,7 @@ namespace AAEmu.Launcher
                 File.WriteAllLines(configFileName, newLines);
             } catch
             {
-                MessageBox.Show("ERROR updating " + configFileName);
+                MessageBox.Show(L.ErrorUpdatingFile,configFileName);
             }
 
         }
@@ -1335,16 +1461,16 @@ namespace AAEmu.Launcher
                 {
                     case 0: // offline
                         btnPlay.Image = Properties.Resources.btn_red;
-                        btnPlay.Text = "Offline";
+                        btnPlay.Text = L.Offline;
                         break;
                     case 1:
                         btnPlay.Image = Properties.Resources.btn_green_a;
-                        btnPlay.Text = "Play";
+                        btnPlay.Text = L.Play ;
                         break;
                     case 2:
                     default:
                         btnPlay.Image = Properties.Resources.btn_green;
-                        btnPlay.Text = "Play";
+                        btnPlay.Text = L.Play ;
                         break;
                 }
             }
@@ -1354,16 +1480,16 @@ namespace AAEmu.Launcher
                 {
                     case 0: // offline
                         btnPlay.Image = Properties.Resources.btn_red;
-                        btnPlay.Text = "Offline";
+                        btnPlay.Text = L.Offline ;
                         break;
                     case 1:
                         btnPlay.Image = Properties.Resources.btn_green;
-                        btnPlay.Text = "Play";
+                        btnPlay.Text = L.Play ;
                         break;
                     case 2:
                     default:
                         btnPlay.Image = Properties.Resources.btn_green_d;
-                        btnPlay.Text = "Play";
+                        btnPlay.Text = L.Play ;
                         break;
                 }
 
@@ -1452,6 +1578,24 @@ namespace AAEmu.Launcher
             stream.Close(); // workaround for a .net bug: http://support.microsoft.com/kb/821625
             connection.Close();
             */
+
+        }
+
+        private void btnLangChange_Click(object sender, EventArgs e)
+        {
+            foreach(ToolStripMenuItem mi in cmsLanguage.Items)
+            {
+                mi.Enabled = (mi.Tag.ToString() != Setting.Lang);
+            }
+            cmsLanguage.Show(btnLangChange, new Point(0, btnLangChange.Height));
+        }
+
+        private void swapLanguageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Setting.Lang = ((ToolStripMenuItem)sender).Tag.ToString() ;
+            Console.WriteLine("Updating Language: {0}", Setting.Lang);
+            UpdateLanguage("");
+            btnLangChange.Refresh();
 
         }
     }
