@@ -148,9 +148,6 @@
   <data name="btn_red" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Res\btn_red.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="flag_ch" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Res\flag_ch.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="flag_de" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Res\flag_de.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -207,5 +204,29 @@
   </data>
   <data name="GitHub_Logo_Only_Active" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Res\GitHub_Logo_Only_Active.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="flag_cn" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\flag_cn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="mini_locale_cn" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\mini_locale_cn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="mini_locale_de" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\mini_locale_de.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="mini_locale_en_us" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\mini_locale_en_us.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="mini_locale_fr" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\mini_locale_fr.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="mini_locale_jp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\mini_locale_jp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="mini_locale_kr" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\mini_locale_kr.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="mini_locale_ru" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\mini_locale_ru.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

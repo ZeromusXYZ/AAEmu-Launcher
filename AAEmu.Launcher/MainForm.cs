@@ -94,6 +94,9 @@ namespace AAEmu.Launcher
             [JsonProperty("lang")]
             public string Lang { get; set; }
 
+            [JsonProperty("launcherLang")]
+            public string LauncherLang { get; set; }
+
             [JsonProperty("pathToGame")]
             public string PathToGame { get; set; }
 
@@ -267,7 +270,7 @@ namespace AAEmu.Launcher
         private void InitDefaultLanguage()
         {
             L.Lang = settingsLangEN_US;
-            btnLangChange.Image = Properties.Resources.flag_english;
+            btnLauncherLangChange.Image = Properties.Resources.flag_english;
             L.Username = "Username";
             L.Password = "Password";
             L.ServerAddress = "Server Address";
@@ -355,7 +358,7 @@ namespace AAEmu.Launcher
             return s;
         }
 
-        private void UpdateControlsForPanel(byte panelID)
+        private void ShowPanelControls(byte panelID)
         {
             // The reason for doing things this way is because drawing reliable transparent stuff
             // onto a panel is hard as hell. It's easier to just put EVERYTHING on the form, and
@@ -388,6 +391,7 @@ namespace AAEmu.Launcher
             lGameClientType.Visible = (panelID == 1);
             lUpdateLocale.Visible = (panelID == 1);
             cbUpdateLocale.Visible = (panelID == 1);
+            btnLocaleLang.Visible = (panelID == 1);
 
             lAllowUpdates.Visible = (panelID == 1);
             cbAllowUpdates.Visible = (panelID == 1);
@@ -422,27 +426,28 @@ namespace AAEmu.Launcher
             currentPanel = panelID;
         }
 
-        private void UpdateLanguage(string localeOverride)
+        private void UpdateLauncherLanguage()
         {
 
-            switch (Setting.Lang)
+            switch (Setting.LauncherLang)
             {
+                // Add new launcher languages here
                 case settingsLangRU:
-                    btnLangChange.Image = Properties.Resources.flag_ru;
+                    btnLauncherLangChange.Image = Properties.Resources.flag_ru;
                     break;
                 case settingsLangDE:
-                    btnLangChange.Image = Properties.Resources.flag_de;
+                    btnLauncherLangChange.Image = Properties.Resources.flag_de;
                     break;
                 case settingsLangFR:
-                    btnLangChange.Image = Properties.Resources.flag_fr;
+                    btnLauncherLangChange.Image = Properties.Resources.flag_fr;
                     break;
                 case settingsLangEN_US:
                 default:
-                    Setting.Lang = settingsLangEN_US;
-                    btnLangChange.Image = Properties.Resources.flag_english;
+                    Setting.LauncherLang = settingsLangEN_US;
+                    btnLauncherLangChange.Image = Properties.Resources.flag_english;
                     break;
             }
-            LoadLanguageFromFile(Setting.Lang);
+            LoadLanguageFromFile(Setting.LauncherLang);
 
             lLogin.Text = L.Username ;
             lPassword.Text = L.Password ;
@@ -458,32 +463,55 @@ namespace AAEmu.Launcher
             lAllowUpdates.Text = L.AllowUpdates;
             updatePlayButton(serverCheckStatus, false);
 
-            btnLangChange.Refresh();
+            btnLauncherLangChange.Refresh();
+        }
 
-            if (localeOverride != "")
+        private void UpdateLocaleLanguage()
+        {
+
+            switch (Setting.Lang)
             {
-                Setting.Lang = localeOverride;
+                // Add new game languages here
+                case settingsLangKR:
+                    btnLocaleLang.Image = Properties.Resources.mini_locale_kr;
+                    break;
+                case settingsLangRU:
+                    btnLocaleLang.Image = Properties.Resources.mini_locale_ru;
+                    break;
+                case settingsLangDE:
+                    btnLocaleLang.Image = Properties.Resources.mini_locale_de;
+                    break;
+                case settingsLangFR:
+                    btnLocaleLang.Image = Properties.Resources.mini_locale_fr;
+                    break;
+                case settingsLangEN_US:
+                default:
+                    Setting.Lang = settingsLangEN_US;
+                    btnLocaleLang.Image = Properties.Resources.mini_locale_en_us;
+                    break;
             }
 
+            btnLocaleLang.Refresh();
         }
+
 
         private void PicButLangChange_Click(object sender, EventArgs e)
         {
-            switch(Setting.Lang)
+            switch(Setting.LauncherLang)
             {
                 case settingsLangRU:
-                    Setting.Lang = settingsLangEN_US;
+                    Setting.LauncherLang = settingsLangEN_US;
                     break;
                 case settingsLangEN_US:
-                    Setting.Lang = settingsLangDE;
+                    Setting.LauncherLang = settingsLangDE;
                     break;
                 case settingsLangDE:
-                    Setting.Lang = settingsLangRU;
+                    Setting.LauncherLang = settingsLangRU;
                     break;
             }
-            Console.WriteLine("Updating Language: {0}",Setting.Lang);
-            UpdateLanguage("");
-            btnLangChange.Refresh();
+            Console.WriteLine("Updating Language: {0}",Setting.LauncherLang);
+            UpdateLauncherLanguage();
+            btnLauncherLangChange.Refresh();
         }
 
         private void PicButGithub_MouseEnter(object sender, EventArgs e)
@@ -559,11 +587,11 @@ namespace AAEmu.Launcher
             if ((Setting.PathToGame == "") || (File.Exists(Setting.PathToGame) == false))
             {
                 // open settings if no valid game file
-                UpdateControlsForPanel(1);
+                ShowPanelControls(1);
             }
             else 
             {
-                UpdateControlsForPanel(0);
+                ShowPanelControls(0);
                 if (eLogin.Text != "")
                 {
                     ePassword.Focus();
@@ -660,6 +688,7 @@ namespace AAEmu.Launcher
                 Setting.PathToGame = "";
                 Setting.ServerIpAddress = "127.0.0.1";
                 Setting.Lang = settingsLangEN_US;
+                Setting.LauncherLang = settingsLangEN_US;
                 Setting.SaveLoginAndPassword = "True";
                 Setting.SkipIntro = "False";
                 Setting.HideSplashLogo = "False";
@@ -703,7 +732,8 @@ namespace AAEmu.Launcher
 
             updateGameClientTypeLabel();
 
-            UpdateLanguage("");
+            UpdateLauncherLanguage();
+            UpdateLocaleLanguage();
 
             SetCustomCheckBox(cbSaveUser, Setting.SaveLoginAndPassword);
             SetCustomCheckBox(cbSkipIntro, Setting.SkipIntro);
@@ -859,7 +889,7 @@ namespace AAEmu.Launcher
 
                     string HShield = " +acpxmk";
 
-                    if (cbUseDebugMode.Checked)
+                    if (debugModeToolStripMenuItem.Checked)
                     {
                         DebugHelperForm dlg = new DebugHelperForm();
                         dlg.eArgs.Text = LoginArg;
@@ -933,8 +963,8 @@ namespace AAEmu.Launcher
                     }
                     */
 
-            // Loading using Process.Start();
-            ProcessStartInfo GameClientProcessInfo;
+                    // Loading using Process.Start();
+                    ProcessStartInfo GameClientProcessInfo;
                     GameClientProcessInfo = new ProcessStartInfo(Setting.PathToGame, LoginArg + HShield);
                     GameClientProcessInfo.UseShellExecute = true;
                     GameClientProcessInfo.Verb = "runas";
@@ -953,7 +983,6 @@ namespace AAEmu.Launcher
                         WindowState = FormWindowState.Minimized;
                     }
 
-
                 }
                 else
                 {
@@ -971,12 +1000,12 @@ namespace AAEmu.Launcher
         private void ButSettingSave_Click(object sender, EventArgs e)
         {
             SaveSettings();
-            UpdateControlsForPanel(0); // Show Login
+            ShowPanelControls(0); // Show Login
         }
 
         private void ButSettingCancel_Click(object sender, EventArgs e)
         {
-            UpdateControlsForPanel(0); // Show Login
+            ShowPanelControls(0); // Show Login
         }
 
         private void LauncherForm_MouseDown(object sender, MouseEventArgs e)
@@ -1149,7 +1178,7 @@ namespace AAEmu.Launcher
 
         private void btnSettings_Click(object sender, EventArgs e)
         {
-            UpdateControlsForPanel(1); // Show settings
+            ShowPanelControls(1); // Show settings
         }
 
         private void btnWebsite_Click(object sender, EventArgs e)
@@ -1187,7 +1216,7 @@ namespace AAEmu.Launcher
         private void lSettingsBack_Click(object sender, EventArgs e)
         {
             SaveSettings();
-            UpdateControlsForPanel(0);
+            ShowPanelControls(0);
             serverCheckStatus = 2;
             nextServerCheck = 1000;
             updatePlayButton(serverCheckStatus, false);
@@ -1321,12 +1350,6 @@ namespace AAEmu.Launcher
                 MessageBox.Show(L.ErrorUpdatingFile,configFileName);
             }
 
-        }
-
-        private void cbLocaleSelect_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //Setting.Lang = cbLocaleSelect.Text;
-            //UpdateFormLanguageElements(cbLocaleSelect.Text);
         }
 
         private void aAEmuServerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1581,22 +1604,58 @@ namespace AAEmu.Launcher
 
         }
 
-        private void btnLangChange_Click(object sender, EventArgs e)
+        private void btnLauncherLangChange_Click(object sender, EventArgs e)
         {
-            foreach(ToolStripMenuItem mi in cmsLanguage.Items)
+            foreach(ToolStripMenuItem mi in cmsLauncherLanguage.Items)
             {
-                mi.Enabled = (mi.Tag.ToString() != Setting.Lang);
+                mi.Enabled = (mi.Tag.ToString() != Setting.LauncherLang);
             }
-            cmsLanguage.Show(btnLangChange, new Point(0, btnLangChange.Height));
+            cmsLauncherLanguage.Show(btnLauncherLangChange, new Point(0, btnLauncherLangChange.Height));
         }
 
         private void swapLanguageToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Setting.Lang = ((ToolStripMenuItem)sender).Tag.ToString() ;
-            Console.WriteLine("Updating Language: {0}", Setting.Lang);
-            UpdateLanguage("");
-            btnLangChange.Refresh();
+            Setting.LauncherLang = ((ToolStripMenuItem)sender).Tag.ToString() ;
+            Console.WriteLine("Updating Language: {0}", Setting.LauncherLang);
+            UpdateLauncherLanguage();
+            btnLauncherLangChange.Refresh();
+        }
 
+        private void btnSystem_DoubleClick(object sender, EventArgs e)
+        {
+            if (debugModeToolStripMenuItem.Visible == false)
+            {
+                debugModeToolStripMenuItem.Checked = true;
+                debugModeToolStripMenuItem.Visible = true;
+            }
+        }
+
+        private void debugModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            debugModeToolStripMenuItem.Checked = !debugModeToolStripMenuItem.Checked ;
+        }
+
+        private void btnLocaleLang_Click(object sender, EventArgs e)
+        {
+            foreach (ToolStripItem tsi in cmsLocaleLanguage.Items)
+            {
+                if (tsi is ToolStripMenuItem)
+                {
+                    ToolStripMenuItem mi = (ToolStripMenuItem)tsi;
+                    {
+                        mi.Enabled = (mi.Tag.ToString() != Setting.Lang);
+                    }
+                }
+            }
+            cmsLocaleLanguage.Show(btnLocaleLang, new Point(0, btnLocaleLang.Height));
+        }
+
+        private void miLocaleLanguageChange_Click(object sender, EventArgs e)
+        {
+            Setting.Lang = ((ToolStripMenuItem)sender).Tag.ToString();
+            Console.WriteLine("Updating Locale Language: {0}", Setting.Lang);
+            UpdateLocaleLanguage();
+            btnLocaleLang.Refresh();
         }
     }
 }

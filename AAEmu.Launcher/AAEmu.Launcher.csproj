@@ -180,7 +180,7 @@
   <ItemGroup>
     <Content Include="aaemu.ico" />
     <None Include="Res\btn_red.png" />
-    <None Include="Res\flag_ch.png" />
+    <None Include="Res\flag_cn.png" />
     <None Include="Res\flag_de.png" />
     <None Include="Res\flag_fr.png" />
     <None Include="Res\flag_jp.png" />
@@ -191,6 +191,13 @@
     <None Include="Res\flag_english.png" />
     <None Include="Res\flag_eu.png" />
     <None Include="Res\flag_xx.png" />
+    <None Include="Res\mini_locale_cn.png" />
+    <None Include="Res\mini_locale_de.png" />
+    <None Include="Res\mini_locale_en_us.png" />
+    <None Include="Res\mini_locale_fr.png" />
+    <None Include="Res\mini_locale_jp.png" />
+    <None Include="Res\mini_locale_kr.png" />
+    <None Include="Res\mini_locale_ru.png" />
     <Content Include="ToolsA.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

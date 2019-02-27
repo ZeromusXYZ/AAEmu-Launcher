@@ -43,6 +43,8 @@
             this.lPassword = new System.Windows.Forms.Label();
             this.cmsAAEmuButton = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.minimizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.debugModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lSettingsBack = new System.Windows.Forms.Label();
             this.lIPAddress = new System.Windows.Forms.Label();
@@ -53,17 +55,21 @@
             this.lSkipIntro = new System.Windows.Forms.Label();
             this.cbSaveUser = new System.Windows.Forms.Label();
             this.lSaveUser = new System.Windows.Forms.Label();
-            this.cbUseDebugMode = new System.Windows.Forms.CheckBox();
             this.lGameClientType = new System.Windows.Forms.Label();
             this.cbUpdateLocale = new System.Windows.Forms.Label();
             this.lUpdateLocale = new System.Windows.Forms.Label();
-            this.cbLocaleSelect = new System.Windows.Forms.ComboBox();
             this.cbAllowUpdates = new System.Windows.Forms.Label();
             this.lAllowUpdates = new System.Windows.Forms.Label();
             this.cmsGitHub = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.aAEmuServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aAEmuLauncherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lLoadedConfig = new System.Windows.Forms.Label();
+            this.cmsLauncherLanguage = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.cmsLocaleLanguage = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnLocaleLang = new System.Windows.Forms.PictureBox();
             this.btnSystem = new System.Windows.Forms.PictureBox();
             this.btnWebsite = new System.Windows.Forms.Label();
             this.btnSettings = new System.Windows.Forms.Label();
@@ -71,21 +77,28 @@
             this.btnPlay = new System.Windows.Forms.Label();
             this.btnDiscord = new System.Windows.Forms.PictureBox();
             this.btnGithub = new System.Windows.Forms.PictureBox();
-            this.btnLangChange = new System.Windows.Forms.PictureBox();
+            this.btnLauncherLangChange = new System.Windows.Forms.PictureBox();
             this.imgBigNews = new System.Windows.Forms.PictureBox();
-            this.cmsLanguage = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.englishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.russianToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.germanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.frenchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.miLocaleEnglish = new System.Windows.Forms.ToolStripMenuItem();
+            this.miLocaleGerman = new System.Windows.Forms.ToolStripMenuItem();
+            this.miLocaleFrench = new System.Windows.Forms.ToolStripMenuItem();
+            this.miLocaleRussian = new System.Windows.Forms.ToolStripMenuItem();
+            this.miLocaleKorean = new System.Windows.Forms.ToolStripMenuItem();
+            this.japaneseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsAAEmuButton.SuspendLayout();
             this.cmsGitHub.SuspendLayout();
+            this.cmsLauncherLanguage.SuspendLayout();
+            this.cmsLocaleLanguage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.btnLocaleLang)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnSystem)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnDiscord)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnGithub)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.btnLangChange)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnLauncherLangChange)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgBigNews)).BeginInit();
-            this.cmsLanguage.SuspendLayout();
             this.SuspendLayout();
             // 
             // eLogin
@@ -227,21 +240,36 @@
             // 
             this.cmsAAEmuButton.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.minimizeToolStripMenuItem,
+            this.debugModeToolStripMenuItem,
+            this.toolStripSeparator1,
             this.closeToolStripMenuItem});
             this.cmsAAEmuButton.Name = "cmsAAEmuButton";
-            this.cmsAAEmuButton.Size = new System.Drawing.Size(124, 48);
+            this.cmsAAEmuButton.Size = new System.Drawing.Size(144, 76);
             // 
             // minimizeToolStripMenuItem
             // 
             this.minimizeToolStripMenuItem.Name = "minimizeToolStripMenuItem";
-            this.minimizeToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.minimizeToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.minimizeToolStripMenuItem.Text = "Minimize";
             this.minimizeToolStripMenuItem.Click += new System.EventHandler(this.minimizeToolStripMenuItem_Click);
+            // 
+            // debugModeToolStripMenuItem
+            // 
+            this.debugModeToolStripMenuItem.Name = "debugModeToolStripMenuItem";
+            this.debugModeToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.debugModeToolStripMenuItem.Text = "Debug Mode";
+            this.debugModeToolStripMenuItem.Visible = false;
+            this.debugModeToolStripMenuItem.Click += new System.EventHandler(this.debugModeToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(140, 6);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
@@ -369,19 +397,6 @@
             this.lSaveUser.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lSaveUser.Click += new System.EventHandler(this.cbSaveUser_Click);
             // 
-            // cbUseDebugMode
-            // 
-            this.cbUseDebugMode.AutoSize = true;
-            this.cbUseDebugMode.BackColor = System.Drawing.Color.Transparent;
-            this.cbUseDebugMode.ForeColor = System.Drawing.Color.Red;
-            this.cbUseDebugMode.Location = new System.Drawing.Point(699, 7);
-            this.cbUseDebugMode.Name = "cbUseDebugMode";
-            this.cbUseDebugMode.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.cbUseDebugMode.Size = new System.Drawing.Size(130, 22);
-            this.cbUseDebugMode.TabIndex = 37;
-            this.cbUseDebugMode.Text = "\"Debug Mode\"";
-            this.cbUseDebugMode.UseVisualStyleBackColor = false;
-            // 
             // lGameClientType
             // 
             this.lGameClientType.AutoSize = true;
@@ -421,31 +436,6 @@
             this.lUpdateLocale.Text = "Update Locale";
             this.lUpdateLocale.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lUpdateLocale.Click += new System.EventHandler(this.cbUpdateLocale_Click);
-            // 
-            // cbLocaleSelect
-            // 
-            this.cbLocaleSelect.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            this.cbLocaleSelect.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.cbLocaleSelect.BackColor = System.Drawing.Color.White;
-            this.cbLocaleSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbLocaleSelect.ForeColor = System.Drawing.Color.Black;
-            this.cbLocaleSelect.FormattingEnabled = true;
-            this.cbLocaleSelect.Items.AddRange(new object[] {
-            "de",
-            "en_us",
-            "fr",
-            "ja",
-            "ko",
-            "ru",
-            "zh_cn",
-            "zh_tw"});
-            this.cbLocaleSelect.Location = new System.Drawing.Point(586, 7);
-            this.cbLocaleSelect.Name = "cbLocaleSelect";
-            this.cbLocaleSelect.Size = new System.Drawing.Size(107, 26);
-            this.cbLocaleSelect.Sorted = true;
-            this.cbLocaleSelect.TabIndex = 42;
-            this.cbLocaleSelect.Visible = false;
-            this.cbLocaleSelect.SelectedIndexChanged += new System.EventHandler(this.cbLocaleSelect_SelectedIndexChanged);
             // 
             // cbAllowUpdates
             // 
@@ -508,19 +498,75 @@
             this.lLoadedConfig.TabIndex = 46;
             this.lLoadedConfig.Text = "Loaded Server Config File";
             // 
+            // cmsLauncherLanguage
+            // 
+            this.cmsLauncherLanguage.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.englishToolStripMenuItem,
+            this.russianToolStripMenuItem,
+            this.germanToolStripMenuItem,
+            this.frenchToolStripMenuItem});
+            this.cmsLauncherLanguage.Name = "cmsLanguage";
+            this.cmsLauncherLanguage.Size = new System.Drawing.Size(120, 92);
+            // 
+            // cmsLocaleLanguage
+            // 
+            this.cmsLocaleLanguage.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.miLocaleEnglish,
+            this.miLocaleGerman,
+            this.miLocaleFrench,
+            this.toolStripSeparator2,
+            this.miLocaleRussian,
+            this.toolStripSeparator3,
+            this.miLocaleKorean,
+            this.toolStripSeparator4,
+            this.japaneseToolStripMenuItem});
+            this.cmsLocaleLanguage.Name = "cmsLanguage";
+            this.cmsLocaleLanguage.Size = new System.Drawing.Size(120, 154);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(116, 6);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator3.Visible = false;
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator4.Visible = false;
+            // 
+            // btnLocaleLang
+            // 
+            this.btnLocaleLang.BackColor = System.Drawing.Color.Transparent;
+            this.btnLocaleLang.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnLocaleLang.Image = global::AAEmu.Launcher.Properties.Resources.mini_locale_en_us;
+            this.btnLocaleLang.Location = new System.Drawing.Point(487, 199);
+            this.btnLocaleLang.Name = "btnLocaleLang";
+            this.btnLocaleLang.Size = new System.Drawing.Size(16, 11);
+            this.btnLocaleLang.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.btnLocaleLang.TabIndex = 47;
+            this.btnLocaleLang.TabStop = false;
+            this.btnLocaleLang.Click += new System.EventHandler(this.btnLocaleLang_Click);
+            // 
             // btnSystem
             // 
             this.btnSystem.BackColor = System.Drawing.Color.Transparent;
             this.btnSystem.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.btnSystem.ContextMenuStrip = this.cmsAAEmuButton;
             this.btnSystem.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSystem.Image = global::AAEmu.Launcher.Properties.Resources.aaemu_logo ;
+            this.btnSystem.Image = global::AAEmu.Launcher.Properties.Resources.aaemu_logo;
             this.btnSystem.Location = new System.Drawing.Point(898, 2);
             this.btnSystem.Name = "btnSystem";
             this.btnSystem.Size = new System.Drawing.Size(40, 40);
             this.btnSystem.TabIndex = 28;
             this.btnSystem.TabStop = false;
             this.btnSystem.Click += new System.EventHandler(this.btnSystem_Click);
+            this.btnSystem.DoubleClick += new System.EventHandler(this.btnSystem_DoubleClick);
             // 
             // btnWebsite
             // 
@@ -563,8 +609,8 @@
             this.lNewsFeed.Name = "lNewsFeed";
             this.lNewsFeed.Size = new System.Drawing.Size(201, 263);
             this.lNewsFeed.TabIndex = 24;
-            this.lNewsFeed.Text = "Launcher News\r\n\r\nNow able to launch the\r\ngame using -t\r\n\r\n\r\nHead 3\r\ntext 3\r\n\r\nHea" +
-    "d 4\r\ntext 4\r\n\r\n";
+            this.lNewsFeed.Text = "Launcher News\r\n\r\nNow able to launch the\r\ngame using -t\r\n\r\nYou are now able to set" +
+    "\r\nyour game language\r\ndifferent from the launcher\r\n\r\nHead 4\r\ntext 4\r\n";
             this.lNewsFeed.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // btnPlay
@@ -614,17 +660,17 @@
             this.btnGithub.MouseEnter += new System.EventHandler(this.PicButGithub_MouseEnter);
             this.btnGithub.MouseLeave += new System.EventHandler(this.PicButGithub_MouseLeave);
             // 
-            // btnLangChange
+            // btnLauncherLangChange
             // 
-            this.btnLangChange.BackColor = System.Drawing.Color.Transparent;
-            this.btnLangChange.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnLangChange.Image = global::AAEmu.Launcher.Properties.Resources.flag_english;
-            this.btnLangChange.Location = new System.Drawing.Point(850, 2);
-            this.btnLangChange.Name = "btnLangChange";
-            this.btnLangChange.Size = new System.Drawing.Size(40, 40);
-            this.btnLangChange.TabIndex = 8;
-            this.btnLangChange.TabStop = false;
-            this.btnLangChange.Click += new System.EventHandler(this.btnLangChange_Click);
+            this.btnLauncherLangChange.BackColor = System.Drawing.Color.Transparent;
+            this.btnLauncherLangChange.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnLauncherLangChange.Image = global::AAEmu.Launcher.Properties.Resources.flag_english;
+            this.btnLauncherLangChange.Location = new System.Drawing.Point(850, 2);
+            this.btnLauncherLangChange.Name = "btnLauncherLangChange";
+            this.btnLauncherLangChange.Size = new System.Drawing.Size(40, 40);
+            this.btnLauncherLangChange.TabIndex = 8;
+            this.btnLauncherLangChange.TabStop = false;
+            this.btnLauncherLangChange.Click += new System.EventHandler(this.btnLauncherLangChange_Click);
             // 
             // imgBigNews
             // 
@@ -638,16 +684,6 @@
             this.imgBigNews.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseDown);
             this.imgBigNews.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
             this.imgBigNews.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
-            // 
-            // cmsLanguage
-            // 
-            this.cmsLanguage.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.englishToolStripMenuItem,
-            this.russianToolStripMenuItem,
-            this.germanToolStripMenuItem,
-            this.frenchToolStripMenuItem});
-            this.cmsLanguage.Name = "cmsLanguage";
-            this.cmsLanguage.Size = new System.Drawing.Size(120, 92);
             // 
             // englishToolStripMenuItem
             // 
@@ -685,6 +721,62 @@
             this.frenchToolStripMenuItem.Text = "Français";
             this.frenchToolStripMenuItem.Click += new System.EventHandler(this.swapLanguageToolStripMenuItem_Click);
             // 
+            // miLocaleEnglish
+            // 
+            this.miLocaleEnglish.Image = global::AAEmu.Launcher.Properties.Resources.flag_us;
+            this.miLocaleEnglish.Name = "miLocaleEnglish";
+            this.miLocaleEnglish.Size = new System.Drawing.Size(119, 22);
+            this.miLocaleEnglish.Tag = "en_us";
+            this.miLocaleEnglish.Text = "English";
+            this.miLocaleEnglish.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
+            // 
+            // miLocaleGerman
+            // 
+            this.miLocaleGerman.Image = global::AAEmu.Launcher.Properties.Resources.flag_de;
+            this.miLocaleGerman.Name = "miLocaleGerman";
+            this.miLocaleGerman.Size = new System.Drawing.Size(119, 22);
+            this.miLocaleGerman.Tag = "de";
+            this.miLocaleGerman.Text = "Deutsch";
+            this.miLocaleGerman.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
+            // 
+            // miLocaleFrench
+            // 
+            this.miLocaleFrench.Image = global::AAEmu.Launcher.Properties.Resources.flag_fr;
+            this.miLocaleFrench.Name = "miLocaleFrench";
+            this.miLocaleFrench.Size = new System.Drawing.Size(119, 22);
+            this.miLocaleFrench.Tag = "fr";
+            this.miLocaleFrench.Text = "Français";
+            this.miLocaleFrench.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
+            // 
+            // miLocaleRussian
+            // 
+            this.miLocaleRussian.Image = global::AAEmu.Launcher.Properties.Resources.flag_ru;
+            this.miLocaleRussian.Name = "miLocaleRussian";
+            this.miLocaleRussian.Size = new System.Drawing.Size(119, 22);
+            this.miLocaleRussian.Tag = "ru";
+            this.miLocaleRussian.Text = "Русский";
+            this.miLocaleRussian.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
+            // 
+            // miLocaleKorean
+            // 
+            this.miLocaleKorean.Image = global::AAEmu.Launcher.Properties.Resources.flag_ko;
+            this.miLocaleKorean.Name = "miLocaleKorean";
+            this.miLocaleKorean.Size = new System.Drawing.Size(119, 22);
+            this.miLocaleKorean.Tag = "ko";
+            this.miLocaleKorean.Text = "한국어";
+            this.miLocaleKorean.Visible = false;
+            this.miLocaleKorean.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
+            // 
+            // japaneseToolStripMenuItem
+            // 
+            this.japaneseToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_jp;
+            this.japaneseToolStripMenuItem.Name = "japaneseToolStripMenuItem";
+            this.japaneseToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.japaneseToolStripMenuItem.Tag = "ja";
+            this.japaneseToolStripMenuItem.Text = "日本語";
+            this.japaneseToolStripMenuItem.Visible = false;
+            this.japaneseToolStripMenuItem.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
+            // 
             // LauncherForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -692,14 +784,13 @@
             this.BackColor = System.Drawing.Color.DimGray;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(950, 510);
+            this.Controls.Add(this.btnLocaleLang);
             this.Controls.Add(this.lLoadedConfig);
             this.Controls.Add(this.cbAllowUpdates);
             this.Controls.Add(this.lAllowUpdates);
-            this.Controls.Add(this.cbLocaleSelect);
             this.Controls.Add(this.cbUpdateLocale);
             this.Controls.Add(this.lUpdateLocale);
             this.Controls.Add(this.lGameClientType);
-            this.Controls.Add(this.cbUseDebugMode);
             this.Controls.Add(this.cbLoginList);
             this.Controls.Add(this.eLogin);
             this.Controls.Add(this.cbSaveUser);
@@ -724,7 +815,7 @@
             this.Controls.Add(this.lAppVersion);
             this.Controls.Add(this.btnDiscord);
             this.Controls.Add(this.btnGithub);
-            this.Controls.Add(this.btnLangChange);
+            this.Controls.Add(this.btnLauncherLangChange);
             this.Controls.Add(this.pb2);
             this.Controls.Add(this.pb1);
             this.Controls.Add(this.imgBigNews);
@@ -746,12 +837,14 @@
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
             this.cmsAAEmuButton.ResumeLayout(false);
             this.cmsGitHub.ResumeLayout(false);
+            this.cmsLauncherLanguage.ResumeLayout(false);
+            this.cmsLocaleLanguage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.btnLocaleLang)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnSystem)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnDiscord)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnGithub)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.btnLangChange)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnLauncherLangChange)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgBigNews)).EndInit();
-            this.cmsLanguage.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -763,7 +856,7 @@
         private System.Windows.Forms.ProgressBar pb1;
         private System.Windows.Forms.Timer timerGeneral;
         private System.Windows.Forms.ProgressBar pb2;
-        private System.Windows.Forms.PictureBox btnLangChange;
+        private System.Windows.Forms.PictureBox btnLauncherLangChange;
         private System.Windows.Forms.PictureBox btnGithub;
         private System.Windows.Forms.PictureBox btnDiscord;
         private System.Windows.Forms.TextBox eServerIP;
@@ -790,22 +883,33 @@
         private System.Windows.Forms.Label lSkipIntro;
         private System.Windows.Forms.Label cbSaveUser;
         private System.Windows.Forms.Label lSaveUser;
-        private System.Windows.Forms.CheckBox cbUseDebugMode;
         private System.Windows.Forms.Label lGameClientType;
         private System.Windows.Forms.Label cbUpdateLocale;
         private System.Windows.Forms.Label lUpdateLocale;
-        private System.Windows.Forms.ComboBox cbLocaleSelect;
         private System.Windows.Forms.Label cbAllowUpdates;
         private System.Windows.Forms.Label lAllowUpdates;
         private System.Windows.Forms.ContextMenuStrip cmsGitHub;
         private System.Windows.Forms.ToolStripMenuItem aAEmuServerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aAEmuLauncherToolStripMenuItem;
         private System.Windows.Forms.Label lLoadedConfig;
-        private System.Windows.Forms.ContextMenuStrip cmsLanguage;
+        private System.Windows.Forms.ContextMenuStrip cmsLauncherLanguage;
         private System.Windows.Forms.ToolStripMenuItem englishToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem russianToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem germanToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem frenchToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem debugModeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.PictureBox btnLocaleLang;
+        private System.Windows.Forms.ContextMenuStrip cmsLocaleLanguage;
+        private System.Windows.Forms.ToolStripMenuItem miLocaleEnglish;
+        private System.Windows.Forms.ToolStripMenuItem miLocaleRussian;
+        private System.Windows.Forms.ToolStripMenuItem miLocaleGerman;
+        private System.Windows.Forms.ToolStripMenuItem miLocaleFrench;
+        private System.Windows.Forms.ToolStripMenuItem miLocaleKorean;
+        private System.Windows.Forms.ToolStripMenuItem japaneseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
     }
 }
 
