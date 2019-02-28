@@ -1,0 +1,92 @@
+﻿using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Text;
+
+namespace AA.Trion.Launcher
+{
+    internal class Program
+    {
+        public static void Main(string[] args)
+        {
+            var credentialEvent = Win32.CreateEvent(IntPtr.Zero, false, false, null);
+            if (credentialEvent == IntPtr.Zero)
+            {
+                Console.WriteLine("Failed to create credential event");
+                return;
+            }
+
+            var credentialFileMap = CreateFileMappingHandle();
+            if (credentialFileMap == IntPtr.Zero)
+            {
+                // TODO ...
+                Win32.CloseHandle(credentialEvent);
+                return;
+            }
+
+            var credentials = $"{credentialFileMap.ToInt32():x8}:{credentialEvent.ToInt32():x8}";
+            var path = @"F:\[ArcheAge] Clients\[1.2][Tr2Ru] AA\Bin32\archeage.exe";
+            var startArgs = $"-t +auth_ip 127.0.0.1 -auth_port 1237 -handle {credentials} -lang en_us";
+
+
+            var game = new ProcessStartInfo(path, startArgs);
+            game.UseShellExecute = true;
+            game.Verb = "runas";
+            Process.Start(game);
+
+            // Win32.CloseHandle(credentialFileMap);
+            // Win32.CloseHandle(credentialEvent);
+        }
+
+        public static IntPtr CreateFileMappingHandle()
+        {
+            var credentialFileMap = Win32.CreateFileMapping(
+                Win32.INVALID_HANDLE_VALUE,
+                IntPtr.Zero,
+                FileMapProtection.PageReadWrite,
+                0,
+                0x20000, // TODO or 0x1000
+                null);
+
+            if (credentialFileMap == IntPtr.Zero)
+            {
+                Console.WriteLine("Failed to create credential file mapping");
+                return IntPtr.Zero;
+            }
+
+            var fileMapView = Win32.MapViewOfFile(credentialFileMap, FileMapAccess.FileMapAllAccessFull, 0, 0, 0);
+
+            if (fileMapView == IntPtr.Zero)
+            {
+                Console.WriteLine("Failed to create credential file mapping view");
+                Win32.CloseHandle(credentialFileMap);
+                return IntPtr.Zero;
+            }
+
+            EncryptFileMapData(fileMapView);
+
+            Win32.UnmapViewOfFile(fileMapView);
+            return credentialFileMap;
+        }
+
+        public static void EncryptFileMapData(IntPtr fileMapView) // TODO copy enc xml data to MMF
+        {
+            // var int_r = fileMapView.ToInt32();
+            // var long_r = fileMapView.ToInt64();
+
+            var key = BitConverter.GetBytes(fileMapView.ToInt64());
+
+            var encoder = new RC4(key);
+            var xml =
+                "123\n<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><authTicket version=\"1.2\"><storeToken>1</storeToken><password>test</password></authTicket>";
+            var xmlBytes = Encoding.ASCII.GetBytes(xml);
+            var result = encoder.Encode(xmlBytes, xmlBytes.Length);
+
+            var pointer = Marshal.AllocHGlobal(result.Length);
+            Marshal.Copy(result, 0, pointer, result.Length);
+            // TODO Marshal.FreeHGlobal(pointer);
+
+            Win32.MemCpy(fileMapView, pointer, (uint) result.Length);
+        }
+    }
+}

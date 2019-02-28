@@ -80,6 +80,7 @@ namespace AAEmu.Launcher
     }
 
 
+    /*
     public static class RC4
     {
         public static string Encrypt(string key, string data)
@@ -148,6 +149,6 @@ namespace AAEmu.Launcher
             s[j] = c;
         }
     }
-
+    */
 
 }

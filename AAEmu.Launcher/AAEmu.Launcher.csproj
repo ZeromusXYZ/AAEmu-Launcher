@@ -111,6 +111,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RC4.cs" />
+    <Compile Include="Win32.cs" />
     <EmbeddedResource Include="DebugHelperForm.resx">
       <DependentUpon>DebugHelperForm.cs</DependentUpon>
     </EmbeddedResource>

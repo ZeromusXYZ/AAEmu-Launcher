@@ -18,7 +18,7 @@ using System.Security.AccessControl;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Net.Sockets;
-
+using AA.Trion.Launcher;
 
 namespace AAEmu.Launcher
 {
@@ -82,6 +82,7 @@ namespace AAEmu.Launcher
         private static extern int ResumeThread(IntPtr hThread);
         */
 
+        /*
         [DllImport("kernel32.dll")]
         private static extern uint GetLastError();
 
@@ -111,12 +112,12 @@ namespace AAEmu.Launcher
 
         [DllImport("kernel32.dll")]
         private static extern bool CloseHandle(IntPtr hObject);
+        */
 
         public static int FILE_MAP_READ = 0x0004;
-        public static IntPtr INVALID_HANDLE_VALUE = (IntPtr)0xFFFFFFFF;
+        public static uint INVALID_HANDLE_VALUE = 0xFFFFFFFF;
         public static uint PAGE_READWRITE = 0x04;
         public static uint FILE_MAP_ALL_ACCESS = 0x04;
-
 
         //------------------------------------------------------------------------------------------------------
         // Imports for using ToolsA.dll, currently required to be able to use Trion-style login authentication
@@ -784,10 +785,86 @@ namespace AAEmu.Launcher
             return res;
         }
 
-        public static bool generateHandlesForTrionLogin(string ticketString, string signatureString, ref uint handle1, ref uint handle2)
+        public static void EncryptFileMapData(IntPtr fileMapView, string ticketString) // TODO copy enc xml data to MMF
+        {
+            // var int_r = fileMapView.ToInt32();
+            // var long_r = fileMapView.ToInt64();
+
+            var key = BitConverter.GetBytes(fileMapView.ToInt64());
+
+            var encoder = new RC4(key);
+            var xml = ticketString;
+            //    "123\n<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><authTicket version=\"1.2\"><storeToken>1</storeToken><password>test</password></authTicket>";
+            var xmlBytes = Encoding.ASCII.GetBytes(xml);
+            var result = encoder.Encode(xmlBytes, xmlBytes.Length);
+
+            var pointer = Marshal.AllocHGlobal(result.Length);
+            Marshal.Copy(result, 0, pointer, result.Length);
+            // TODO Marshal.FreeHGlobal(pointer);
+
+            Win32.MemCpy(fileMapView, pointer, (uint)result.Length);
+        }
+
+        public static IntPtr CreateFileMappingHandle(string ticketString)
+        {
+            var credentialFileMap = Win32.CreateFileMapping(
+                Win32.INVALID_HANDLE_VALUE,
+                IntPtr.Zero,
+                FileMapProtection.PageReadWrite,
+                0,
+                0x20000, // TODO or 0x1000
+                null);
+
+            if (credentialFileMap == IntPtr.Zero)
+            {
+                Console.WriteLine("Failed to create credential file mapping");
+                return IntPtr.Zero;
+            }
+
+            var fileMapView = Win32.MapViewOfFile(credentialFileMap, FileMapAccess.FileMapAllAccessFull, 0, 0, 0);
+
+            if (fileMapView == IntPtr.Zero)
+            {
+                Console.WriteLine("Failed to create credential file mapping view");
+                Win32.CloseHandle(credentialFileMap);
+                return IntPtr.Zero;
+            }
+
+            EncryptFileMapData(fileMapView,ticketString);
+
+            Win32.UnmapViewOfFile(fileMapView);
+            return credentialFileMap;
+        }
+
+        public static bool generateHandlesForTrionLogin(string ticketString, string signatureString, ref int handle1, ref int handle2)
         {
             handle1 = 0x00000000;
             handle2 = 0x00000000;
+
+            // from nikes's code sample
+
+
+            var credentialEvent = Win32.CreateEvent(IntPtr.Zero, false, false, null);
+            if (credentialEvent == IntPtr.Zero)
+            {
+                Console.WriteLine("Failed to create credential event");
+                return false;
+            }
+
+            var credentialFileMap = CreateFileMappingHandle(ticketString);
+            if (credentialFileMap == IntPtr.Zero)
+            {
+                // TODO ...
+                Win32.CloseHandle(credentialEvent);
+                return false;
+            }
+
+            handle1 = credentialFileMap.ToInt32();
+            handle2 = credentialEvent.ToInt32();
+            // var credentials = $"{credentialFileMap.ToInt32():x8}:{credentialEvent.ToInt32():x8}";
+
+
+            /*
             string fullTicketData = signatureString + "\n" + ticketString;
 
             string encryptedTicket = RC4.Encrypt(signatureString, fullTicketData);
@@ -795,7 +872,6 @@ namespace AAEmu.Launcher
             char[] file_mapping_seed = new char[4096];
 
             uint sillySizeValue = (((0x00000678 >> 16) + 2) << 16);
-
             IntPtr credentialFileMapHandle = CreateFileMapping(INVALID_HANDLE_VALUE, IntPtr.Zero, PAGE_READWRITE, 0, sillySizeValue, null);
 
             if (credentialFileMapHandle == null)
@@ -826,9 +902,8 @@ namespace AAEmu.Launcher
 
             handle1 = (uint)fileMapViewPointer;
             handle2 = (uint)credentialFileMapHandle;
-            
+            */
             return true;
-
         }
 
         private static string CreateTrinoHandleIDs(string user, string pass)
@@ -836,8 +911,8 @@ namespace AAEmu.Launcher
             byte[] data = Encoding.Default.GetBytes(pass);
             var passHash = new SHA256Managed().ComputeHash(data);
 
-            uint handleID1 = 0;
-            uint handleID2 = 0;
+            int handleID1 = 0;
+            int handleID2 = 0;
             bool genRes = false;
 
             string stringForSignature = "dGVzdA==";
