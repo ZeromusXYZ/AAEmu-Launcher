@@ -66,25 +66,65 @@ namespace AAEmu.Launcher
         }
 
         [DllImport("Kernel32.dll")]
-        private static extern bool CreateProcess(string lpApplicationName, string lpCommandLine, IntPtr lpProcessAttributes, IntPtr lpThreadAttributes, bool bInheritHandles, uint dwCreationFlags, IntPtr lpEnvironment, string lpCurrentDirectory, ref STARTUPINFO lpStartupInfo, out PROCESS_INFORMATION lpProcessInformation);
+        private static extern bool CreateProcess(
+            string lpApplicationName, 
+            string lpCommandLine, 
+            IntPtr lpProcessAttributes, 
+            IntPtr lpThreadAttributes, 
+            bool bInheritHandles, 
+            uint dwCreationFlags, 
+            IntPtr lpEnvironment, 
+            string lpCurrentDirectory, 
+            ref STARTUPINFO lpStartupInfo, 
+            out PROCESS_INFORMATION lpProcessInformation);
 
         [DllImport("Kernel32.dll")]
         private static extern int ResumeThread(IntPtr hThread);
-
-        [DllImport("Kernel32.dll")]
-        private static extern uint GetLastError();
-        //------------------------------------------------------------------------------------------------------
         */
+
+        [DllImport("kernel32.dll")]
+        private static extern uint GetLastError();
+
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr CreateFileMapping(
+            IntPtr hFile,
+            IntPtr lpFileMappingAttributes,
+            uint flProtect,
+            uint dwMaximumSizeHigh,
+            uint dwMaximumSizeLow,
+            StringBuilder lpName);
+            //[MarshalAs(UnmanagedType.LPStr)] string lpName);
+
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr OpenFileMapping(int dwDesiredAccess,
+            bool bInheritHandle, StringBuilder lpName);
+
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr MapViewOfFile(IntPtr hFileMapping,
+            uint dwDesiredAccess, 
+            uint dwFileOffsetHigh, 
+            uint dwFileOffsetLow,
+            uint dwNumberOfBytesToMap);
+
+        [DllImport("kernel32.dll")]
+        private static extern bool UnmapViewOfFile(IntPtr map);
+
+        [DllImport("kernel32.dll")]
+        private static extern bool CloseHandle(IntPtr hObject);
+
+        public static int FILE_MAP_READ = 0x0004;
+        public static IntPtr INVALID_HANDLE_VALUE = (IntPtr)0xFFFFFFFF;
+        public static uint PAGE_READWRITE = 0x04;
+        public static uint FILE_MAP_ALL_ACCESS = 0x04;
+
 
         //------------------------------------------------------------------------------------------------------
         // Imports for using ToolsA.dll, currently required to be able to use Trion-style login authentication
         //------------------------------------------------------------------------------------------------------
         // [DllImport("ToolsA.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "?_g3@@YA_NPAEH0HPAPAX1@Z")] // named entrypoint is ugly
         [DllImport("ToolsA.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "#15")]
-        public static extern bool generateInitStr(byte[] byte_0, int int_28, byte[] byte_1, int int_29, ref uint uint_0, ref uint uint_1);
+        public static extern bool generateHandlesWithToolsA(byte[] byte_0, int int_28, byte[] byte_1, int int_29, ref uint uint_0, ref uint uint_1);
         //------------------------------------------------------------------------------------------------------
-
-        
 
         public partial class Settings
         {
@@ -744,6 +784,53 @@ namespace AAEmu.Launcher
             return res;
         }
 
+        public static bool generateHandlesForTrionLogin(string ticketString, string signatureString, ref uint handle1, ref uint handle2)
+        {
+            handle1 = 0x00000000;
+            handle2 = 0x00000000;
+            string fullTicketData = signatureString + "\n" + ticketString;
+
+            string encryptedTicket = RC4.Encrypt(signatureString, fullTicketData);
+
+            char[] file_mapping_seed = new char[4096];
+
+            uint sillySizeValue = (((0x00000678 >> 16) + 2) << 16);
+
+            IntPtr credentialFileMapHandle = CreateFileMapping(INVALID_HANDLE_VALUE, IntPtr.Zero, PAGE_READWRITE, 0, sillySizeValue, null);
+
+            if (credentialFileMapHandle == null)
+            {
+                MessageBox.Show("Failed to create credential file mapping");
+                return false;
+            }
+
+            IntPtr fileMapViewPointer = MapViewOfFile(credentialFileMapHandle, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+
+            if (fileMapViewPointer == null)
+            {
+                CloseHandle(credentialFileMapHandle);
+                MessageBox.Show("Failed to create credential file mapping view");
+                return false;
+            }
+
+            char[] chars = encryptedTicket.ToCharArray();
+
+            for (int i = 0; i < chars.Length;i++)
+            {
+                char c = chars[i];
+                Marshal.WriteByte(fileMapViewPointer, i, (byte)c);
+            }
+            
+            //encrypt_file_map_data(file_map_view, file_mapping_seed);
+            UnmapViewOfFile(fileMapViewPointer);
+
+            handle1 = (uint)fileMapViewPointer;
+            handle2 = (uint)credentialFileMapHandle;
+            
+            return true;
+
+        }
+
         private static string CreateTrinoHandleIDs(string user, string pass)
         {
             byte[] data = Encoding.Default.GetBytes(pass);
@@ -751,6 +838,7 @@ namespace AAEmu.Launcher
 
             uint handleID1 = 0;
             uint handleID2 = 0;
+            bool genRes = false;
 
             string stringForSignature = "dGVzdA==";
             //string stringForSignature = "Signature 1:";
@@ -762,23 +850,30 @@ namespace AAEmu.Launcher
             stringForTicket += "<password>" + BitConverter.ToString(passHash).Replace("-", "").ToLower() + "</password>";
             stringForTicket += "</authTicket>";
 
-            // Basically A complex way of doing stringForSignature + LineFeed + stringForTicket in a byte array
-            byte[] bufferIntPtrID1 = Encoding.UTF8.GetBytes(stringForSignature);
-            byte[] bufferIntPtrID2 = Encoding.UTF8.GetBytes(stringForTicket);
-            byte[] bufferTotal = new byte[(bufferIntPtrID2.Length + 1) + bufferIntPtrID1.Length];
-            Array.Copy(bufferIntPtrID1, 0, bufferTotal, 0, bufferIntPtrID1.Length);
-            bufferTotal[bufferIntPtrID1.Length] = 10;
-            Array.Copy(bufferIntPtrID2, 0, bufferTotal, bufferIntPtrID1.Length + 1, bufferIntPtrID2.Length);
+            genRes = generateHandlesForTrionLogin(stringForTicket, stringForSignature, ref handleID1, ref handleID2);
 
-            bool genRes = false ;
+            /*
+            // Stuff to use ToolsA.DLL
+
+            // Basically A complex way of doing stringForSignature + LineFeed + stringForTicket in a byte array
+            byte[] bufferSignatureID1 = Encoding.UTF8.GetBytes(stringForSignature);
+            byte[] bufferTicketID2 = Encoding.UTF8.GetBytes(stringForTicket);
+            byte[] bufferTotal = new byte[(bufferTicketID2.Length + 1) + bufferSignatureID1.Length];
+            Array.Copy(bufferSignatureID1, 0, bufferTotal, 0, bufferSignatureID1.Length);
+            bufferTotal[bufferSignatureID1.Length] = 10;
+            Array.Copy(bufferTicketID2, 0, bufferTotal, bufferSignatureID1.Length + 1, bufferTicketID2.Length);
+
             try
             {
-                genRes = generateInitStr(bufferTotal, bufferTotal.Length, bufferIntPtrID1, bufferIntPtrID1.Length, ref handleID1, ref handleID2);
+                genRes = generateHandlesWithToolsA(bufferTotal, bufferTotal.Length, bufferIntPtrID1, bufferIntPtrID1.Length, ref handleID1, ref handleID2);
             }
             catch
             {
                 MessageBox.Show(L.ToolsAFailed);
             }
+            // End ToolsA.DLL stuff
+            */
+
             if (genRes == false)
             {
                 //MessageBox.Show("Error generating login handle");
