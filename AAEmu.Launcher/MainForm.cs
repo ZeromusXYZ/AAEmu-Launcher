@@ -19,6 +19,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Net.Sockets;
 using AA.Trion.Launcher;
+using System.IO.MemoryMappedFiles;
 
 namespace AAEmu.Launcher
 {
@@ -807,13 +808,27 @@ namespace AAEmu.Launcher
 
         public static IntPtr CreateFileMappingHandle(string ticketString)
         {
+
+            // MSDN Documentation says SECURITY_ATTRIBUTES needs to be set (not null) for child processes to be able to inherit the handle from CreateEvent
+            Win32.SECURITY_ATTRIBUTES sa = new Win32.SECURITY_ATTRIBUTES
+            {
+                nLength = Marshal.SizeOf(typeof(Win32.SECURITY_ATTRIBUTES)),
+                bInheritHandle = true,
+                lpSecurityDescriptor = IntPtr.Zero
+            };
+
+            IntPtr sa_pointer = Marshal.AllocHGlobal(sa.nLength);
+            Marshal.StructureToPtr(sa, sa_pointer, false);
+
             var credentialFileMap = Win32.CreateFileMapping(
                 Win32.INVALID_HANDLE_VALUE,
-                IntPtr.Zero,
+                sa_pointer,
                 FileMapProtection.PageReadWrite,
                 0,
-                0x20000, // TODO or 0x1000
+                0x1000, // TODO: 0x20000 or 0x1000
                 null);
+
+            Marshal.FreeHGlobal(sa_pointer);
 
             if (credentialFileMap == IntPtr.Zero)
             {
@@ -841,10 +856,21 @@ namespace AAEmu.Launcher
             handle1 = 0x00000000;
             handle2 = 0x00000000;
 
-            // from nikes's code sample
+            // edited with info from nikes's code sample
 
+            // MSDN Documentation says SECURITY_ATTRIBUTES needs to be set (not null) for child processes to be able to inherit the handle from CreateEvent
+            Win32.SECURITY_ATTRIBUTES sa = new Win32.SECURITY_ATTRIBUTES
+            {
+                nLength = Marshal.SizeOf(typeof(Win32.SECURITY_ATTRIBUTES)),
+                bInheritHandle = true,
+                lpSecurityDescriptor = IntPtr.Zero
+            };
 
-            var credentialEvent = Win32.CreateEvent(IntPtr.Zero, false, false, null);
+            IntPtr sa_pointer = Marshal.AllocHGlobal(sa.nLength);
+            Marshal.StructureToPtr(sa, sa_pointer, false);
+            var credentialEvent = Win32.CreateEvent(sa_pointer, false, false, null);
+            Marshal.FreeHGlobal(sa_pointer);
+
             if (credentialEvent == IntPtr.Zero)
             {
                 Console.WriteLine("Failed to create credential event");
@@ -855,9 +881,10 @@ namespace AAEmu.Launcher
             if (credentialFileMap == IntPtr.Zero)
             {
                 // TODO ...
-                Win32.CloseHandle(credentialEvent);
+                // Win32.CloseHandle(credentialEvent);
                 return false;
             }
+
 
             handle1 = credentialFileMap.ToInt32();
             handle2 = credentialEvent.ToInt32();

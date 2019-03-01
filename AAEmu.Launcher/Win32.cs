@@ -7,6 +7,14 @@ namespace AA.Trion.Launcher
     {
         internal static IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
 
+        [StructLayout(LayoutKind.Sequential)]
+        public struct SECURITY_ATTRIBUTES
+        {
+            public int nLength;
+            public IntPtr lpSecurityDescriptor;
+            public bool bInheritHandle;
+        }
+
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         internal static extern bool CreateProcess(
             string lpApplicationName,
