@@ -43,6 +43,10 @@
             this.lPassword = new System.Windows.Forms.Label();
             this.cmsAAEmuButton = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.minimizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteShaderCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteGameConfigurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteAllArcheAgeSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -89,10 +93,7 @@
             this.btnGithub = new System.Windows.Forms.PictureBox();
             this.btnLauncherLangChange = new System.Windows.Forms.PictureBox();
             this.imgBigNews = new System.Windows.Forms.PictureBox();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteShaderCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteGameConfigurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteAllArcheAgeSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.wbNews = new System.Windows.Forms.WebBrowser();
             this.cmsAAEmuButton.SuspendLayout();
             this.cmsGitHub.SuspendLayout();
             this.cmsLauncherLanguage.SuspendLayout();
@@ -249,19 +250,48 @@
             this.toolStripSeparator1,
             this.closeToolStripMenuItem});
             this.cmsAAEmuButton.Name = "cmsAAEmuButton";
-            this.cmsAAEmuButton.Size = new System.Drawing.Size(181, 120);
+            this.cmsAAEmuButton.Size = new System.Drawing.Size(145, 98);
             // 
             // minimizeToolStripMenuItem
             // 
             this.minimizeToolStripMenuItem.Name = "minimizeToolStripMenuItem";
-            this.minimizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.minimizeToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.minimizeToolStripMenuItem.Text = "Minimize";
             this.minimizeToolStripMenuItem.Click += new System.EventHandler(this.minimizeToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.deleteShaderCacheToolStripMenuItem,
+            this.deleteGameConfigurationToolStripMenuItem,
+            this.deleteAllArcheAgeSettingsToolStripMenuItem});
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(144, 22);
+            this.toolStripMenuItem1.Text = "Troubleshoot";
+            this.toolStripMenuItem1.Visible = false;
+            // 
+            // deleteShaderCacheToolStripMenuItem
+            // 
+            this.deleteShaderCacheToolStripMenuItem.Name = "deleteShaderCacheToolStripMenuItem";
+            this.deleteShaderCacheToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.deleteShaderCacheToolStripMenuItem.Text = "Delete Shader Cache";
+            // 
+            // deleteGameConfigurationToolStripMenuItem
+            // 
+            this.deleteGameConfigurationToolStripMenuItem.Name = "deleteGameConfigurationToolStripMenuItem";
+            this.deleteGameConfigurationToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.deleteGameConfigurationToolStripMenuItem.Text = "Delete game configuration";
+            // 
+            // deleteAllArcheAgeSettingsToolStripMenuItem
+            // 
+            this.deleteAllArcheAgeSettingsToolStripMenuItem.Name = "deleteAllArcheAgeSettingsToolStripMenuItem";
+            this.deleteAllArcheAgeSettingsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.deleteAllArcheAgeSettingsToolStripMenuItem.Text = "Delete all ArcheAge settings";
             // 
             // debugModeToolStripMenuItem
             // 
             this.debugModeToolStripMenuItem.Name = "debugModeToolStripMenuItem";
-            this.debugModeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.debugModeToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.debugModeToolStripMenuItem.Text = "Debug Mode";
             this.debugModeToolStripMenuItem.Visible = false;
             this.debugModeToolStripMenuItem.Click += new System.EventHandler(this.debugModeToolStripMenuItem_Click);
@@ -269,12 +299,12 @@
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(141, 6);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
@@ -782,34 +812,18 @@
             this.imgBigNews.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
             this.imgBigNews.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
             // 
-            // toolStripMenuItem1
+            // wbNews
             // 
-            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.deleteShaderCacheToolStripMenuItem,
-            this.deleteGameConfigurationToolStripMenuItem,
-            this.deleteAllArcheAgeSettingsToolStripMenuItem});
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
-            this.toolStripMenuItem1.Text = "Troubleshoot";
-            this.toolStripMenuItem1.Visible = false;
-            // 
-            // deleteShaderCacheToolStripMenuItem
-            // 
-            this.deleteShaderCacheToolStripMenuItem.Name = "deleteShaderCacheToolStripMenuItem";
-            this.deleteShaderCacheToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
-            this.deleteShaderCacheToolStripMenuItem.Text = "Delete Shader Cache";
-            // 
-            // deleteGameConfigurationToolStripMenuItem
-            // 
-            this.deleteGameConfigurationToolStripMenuItem.Name = "deleteGameConfigurationToolStripMenuItem";
-            this.deleteGameConfigurationToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
-            this.deleteGameConfigurationToolStripMenuItem.Text = "Delete game configuration";
-            // 
-            // deleteAllArcheAgeSettingsToolStripMenuItem
-            // 
-            this.deleteAllArcheAgeSettingsToolStripMenuItem.Name = "deleteAllArcheAgeSettingsToolStripMenuItem";
-            this.deleteAllArcheAgeSettingsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
-            this.deleteAllArcheAgeSettingsToolStripMenuItem.Text = "Delete all ArcheAge settings";
+            this.wbNews.IsWebBrowserContextMenuEnabled = false;
+            this.wbNews.Location = new System.Drawing.Point(685, 122);
+            this.wbNews.Margin = new System.Windows.Forms.Padding(0);
+            this.wbNews.MinimumSize = new System.Drawing.Size(20, 20);
+            this.wbNews.Name = "wbNews";
+            this.wbNews.Size = new System.Drawing.Size(201, 183);
+            this.wbNews.TabIndex = 48;
+            this.wbNews.Visible = false;
+            this.wbNews.WebBrowserShortcutsEnabled = false;
+            this.wbNews.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.wbNews_DocumentCompleted);
             // 
             // LauncherForm
             // 
@@ -818,6 +832,7 @@
             this.BackColor = System.Drawing.Color.DimGray;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(950, 510);
+            this.Controls.Add(this.wbNews);
             this.Controls.Add(this.btnLocaleLang);
             this.Controls.Add(this.lLoadedConfig);
             this.Controls.Add(this.cbAllowUpdates);
@@ -948,6 +963,7 @@
         private System.Windows.Forms.ToolStripMenuItem deleteShaderCacheToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteGameConfigurationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteAllArcheAgeSettingsToolStripMenuItem;
+        private System.Windows.Forms.WebBrowser wbNews;
     }
 }
 

@@ -111,6 +111,21 @@ namespace AAEmu.Launcher.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to iVBORw0KGgoAAAANSUhEUgAAAMkAAAC3CAYAAAC47nq0AAAH13pUWHRSYXcgcHJvZmlsZSB0eXBl
+        ///IGV4aWYAAHjarVdprjQpDvzPKeYI2GDAx2GV+gZ9/Am2zHpLf1KP5qVeFQXGS4RtSNP//muY/+CP
+        ///hb3xElPQECz+vHrljEGy+29/k/Xrc/1VPWv0dd6UeBYYUw7fbv8M/chnzMu7IfozX77Om1iPnnQU
+        ///nYWr0E3LPF05Th5Fjvc8nd/mepr9Rzjn38Wl4hH+/ttHgNEEk44Nd0fO4nNuZAcPnLqMb7c+me+M
+        ///c4JPcvF37Mwz/AZe19+xs/lIuK9QGBuOQPiG0Zkn+R27hdCnR3SH/HWhhicJfmA3Rktj9B1d9gFI
+        ///BXOCskfFGkGwAEq3tgU8Ef+CcVyP4kkIsQL0BjYLnmpIiYH2IE+NMg3q67tShYueO0d8M1d2ay65
+        ///yMp1keLnQ4MjyGjGJXBVwZrDND++0LKry16lBMuNIMkE [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string bgnews_b64 {
+            get {
+                return ResourceManager.GetString("bgnews_b64", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap btn_green {

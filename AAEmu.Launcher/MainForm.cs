@@ -261,6 +261,8 @@ namespace AAEmu.Launcher
         private int currentPanel = 0;
         private int nextServerCheck = -1;
         private int serverCheckStatus = 2; // 0 = Offline ; 1 = Online ; 2 = Unknown (not checked)
+        private bool checkNews = false;
+        AAEmuNewsFeed newsFeed = null ;
 
         public LauncherForm()
         {
@@ -375,6 +377,7 @@ namespace AAEmu.Launcher
             btnWebsite.Visible = (panelID == 0);
             lNewsFeed.Visible = (panelID == 0);
             imgBigNews.Visible = (panelID == 0);
+            wbNews.Visible = ((panelID == 0) && (wbNews.Tag != null) && (wbNews.Tag.ToString() == "1"));
 
             // 1: Settings "panel"
             lSettingsBack.Visible = (panelID == 1);
@@ -605,6 +608,11 @@ namespace AAEmu.Launcher
                     eLogin.SelectionLength = 0;
                 }
 
+            }
+
+            if ((Setting.ServerNewsFeedURL != null) && (Setting.ServerNewsFeedURL != ""))
+            {
+                checkNews = true;
             }
 
             if ((Setting.ServerIpAddress != null) && (Setting.ServerIpAddress != ""))
@@ -1522,6 +1530,21 @@ namespace AAEmu.Launcher
 
         private void timerGeneral_Tick(object sender, EventArgs e)
         {
+            if (checkNews == true)
+            {
+                checkNews = false;
+                lNewsFeed.Text = "Server News\n\n\n\nLoading ...";
+
+                try
+                {
+                    string newsString = WebHelper.SimpleGetURI(Setting.ServerNewsFeedURL);
+                    CreateNewsFeedFromJSON(newsString);
+                } catch
+                {
+                    lNewsFeed.Text = "Server News\n\n\n\nLoad Failed !";
+                }
+            }
+
             if (nextServerCheck > 0)
             {
                 /*
@@ -1656,6 +1679,69 @@ namespace AAEmu.Launcher
             Console.WriteLine("Updating Locale Language: {0}", Setting.Lang);
             UpdateLocaleLanguage();
             btnLocaleLang.Refresh();
+        }
+
+        private void CreateNewsFeedFromJSON(string URIResult)
+        {
+
+            try
+            {
+                newsFeed = JsonConvert.DeserializeObject<AAEmuNewsFeed>(URIResult);
+            }
+            catch
+            {
+                lNewsFeed.Text = "Load Failed\n\nFailed to load news. Are you offline ?";
+                return;
+            }
+            finally
+            {
+
+            }
+            if (newsFeed == null)
+            {
+                return;
+            }
+
+            string wns = "";
+            wns += "<html>";
+            wns += "<style>";
+            wns += "body { ";
+            wns += "  background-attachment: fixed;";
+            wns += "  background-repeat: no-repeat;";
+            wns += "}";
+            wns += "</style>";
+            wns += "<body bgcolor=\"#000000\" text=\"#FFFFFF\"  link=\"#EEEEFF\"  vlink=\"#FFEEFF\" ";
+            wns += "background =\"data:image/png;base64," + Properties.Resources.bgnews_b64 + "\">";
+
+            foreach (AAEmuNewsFeedDataItem i in newsFeed.data)
+            {
+                wns += "<p align=\"center\">";
+                if (i.itemAttributes.itemIsNew == "1")
+                {
+                    wns += "*new* ";
+                }
+                wns += "<a href=\"" + i.itemAttributes.itemLinks.self + "\" target=\"_new\">";
+                wns += i.itemAttributes.itemTitle;
+                wns += "</a><br>";
+                wns += "<div align=\"left\"><font size=\"1\">";
+                wns += i.itemAttributes.itemBody.Replace("\\r", "").Replace("\\n", "<br>");
+                wns += "</font></div></p>";
+            }
+            // wns += "<p align=\"center\"><a href=\"testlink\" target=\"_new\">Test</a></p>";
+            wns += "</body></html>";
+            wbNews.DocumentText = wns;
+            wbNews.Refresh();
+            File.WriteAllText("newscache.htm",wns);
+        }
+
+        /*
+            <div style="background-color:white;background-image:url(//www.html.am/images/backgrounds/background-image-3.gif);background-attachment:scroll;border:0px;width:200px;height:183px;font-size:18px;line-height:3em;overflow:scroll;"></div>
+         */
+
+        private void wbNews_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+            wbNews.Show();
+            wbNews.Tag = "1"; // We use this it indicate if we need to show/hide the browser when swapping panels
         }
     }
 }

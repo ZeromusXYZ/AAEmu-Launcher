@@ -5,6 +5,10 @@ using System.Text;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Net;
+using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace AAEmu.Launcher
 {
@@ -148,6 +152,68 @@ namespace AAEmu.Launcher
             s[j] = c;
         }
     }
+
+
+
+    public static class WebHelper
+    {
+        public static string SimpleGetURI(string uri)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            using (Stream stream = response.GetResponseStream())
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+    }
+
+    public struct AAEmuNewsFeedLinksItem
+    {
+        [JsonProperty("self")]
+        public string self { get; set; }
+    }
+
+    public struct AAEmuNewsFeedDataItemAttributes
+    {
+
+        [JsonProperty("picture")]
+        public string itemPicture { get; set; }
+        [JsonProperty("title")]
+        public string itemTitle { get; set; }
+        [JsonProperty("body")]
+        public string itemBody { get; set; }
+        [JsonProperty("new")]
+        public string itemIsNew { get; set; }
+        [JsonProperty("links")]
+        public AAEmuNewsFeedLinksItem itemLinks { get; set; }
+    }
+
+    public struct AAEmuNewsFeedDataItem
+    {
+        [JsonProperty("type")]
+        public string itemType { get; set; }
+
+        [JsonProperty("id")]
+        public int itemID { get; set; }
+
+        [JsonProperty("attributes")]
+        public AAEmuNewsFeedDataItemAttributes itemAttributes { get; set; }
+
+    }
+
+    public partial class AAEmuNewsFeed
+    {
+        [JsonProperty("data")]
+        public List<AAEmuNewsFeedDataItem> data { get; set; }
+
+        [JsonProperty("links")]
+        public AAEmuNewsFeedLinksItem links { get; set; }
+    }
+
 
 
 }

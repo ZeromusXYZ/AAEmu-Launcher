@@ -198,6 +198,7 @@
     <None Include="Res\mini_locale_jp.png" />
     <None Include="Res\mini_locale_kr.png" />
     <None Include="Res\mini_locale_ru.png" />
+    <None Include="Res\bgnews.b64.txt" />
     <Content Include="ToolsA.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
