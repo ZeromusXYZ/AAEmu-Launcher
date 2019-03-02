@@ -160,6 +160,7 @@ namespace AAEmu.Launcher
         public static string SimpleGetURI(string uri)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+            request.UserAgent = "AAEmu.Launcher";
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
 
             using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
