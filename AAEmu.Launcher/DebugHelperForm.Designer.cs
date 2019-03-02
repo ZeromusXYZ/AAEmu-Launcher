@@ -33,6 +33,7 @@
             this.eHackShieldArg = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // eArgs
@@ -45,7 +46,7 @@
             // btnContinue
             // 
             this.btnContinue.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnContinue.Location = new System.Drawing.Point(12, 116);
+            this.btnContinue.Location = new System.Drawing.Point(394, 143);
             this.btnContinue.Name = "btnContinue";
             this.btnContinue.Size = new System.Drawing.Size(75, 23);
             this.btnContinue.TabIndex = 1;
@@ -54,9 +55,9 @@
             // 
             // eHackShieldArg
             // 
-            this.eHackShieldArg.Location = new System.Drawing.Point(12, 67);
+            this.eHackShieldArg.Location = new System.Drawing.Point(12, 145);
             this.eHackShieldArg.Name = "eHackShieldArg";
-            this.eHackShieldArg.Size = new System.Drawing.Size(457, 20);
+            this.eHackShieldArg.Size = new System.Drawing.Size(142, 20);
             this.eHackShieldArg.TabIndex = 2;
             // 
             // label1
@@ -71,18 +72,29 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 51);
+            this.label2.Location = new System.Drawing.Point(12, 129);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(132, 13);
             this.label2.TabIndex = 4;
             this.label2.Text = "Disable HShield parameter";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 46);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(422, 39);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "Note:\r\nAdding \"-devmode\" as parameter will make the game give somewhat more usefu" +
+    "ll errors.\r\nBut will not generate a crash dump.\r\n";
             // 
             // DebugHelperForm
             // 
             this.AcceptButton = this.btnContinue;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(483, 155);
+            this.ClientSize = new System.Drawing.Size(483, 177);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.eHackShieldArg);
@@ -104,5 +116,6 @@
         public System.Windows.Forms.TextBox eHackShieldArg;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
     }
 }

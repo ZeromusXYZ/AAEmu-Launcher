@@ -120,12 +120,14 @@ namespace AAEmu.Launcher
         public static uint PAGE_READWRITE = 0x04;
         public static uint FILE_MAP_ALL_ACCESS = 0x04;
 
+        static int savedID1FileMap = -1 ;
+
         //------------------------------------------------------------------------------------------------------
         // Imports for using ToolsA.dll, currently required to be able to use Trion-style login authentication
         //------------------------------------------------------------------------------------------------------
         // [DllImport("ToolsA.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "?_g3@@YA_NPAEH0HPAPAX1@Z")] // named entrypoint is ugly
         [DllImport("ToolsA.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "#15")]
-        public static extern bool generateHandlesWithToolsA(byte[] byte_0, int int_28, byte[] byte_1, int int_29, ref uint uint_0, ref uint uint_1);
+        public static extern bool generateHandlesWithToolsA(byte[] byte_0, int int_28, byte[] byte_1, int int_29, ref int uint_0, ref int uint_1);
         //------------------------------------------------------------------------------------------------------
 
         public partial class Settings
@@ -791,13 +793,19 @@ namespace AAEmu.Launcher
             // var int_r = fileMapView.ToInt32();
             // var long_r = fileMapView.ToInt64();
 
-            var key = BitConverter.GetBytes(fileMapView.ToInt64());
+            string stringForSignature = "dGVzdA==";
 
-            var encoder = new RC4(key);
+            var key = Encoding.ASCII.GetBytes(stringForSignature);
+            //var key = BitConverter.GetBytes(fileMapView.ToInt64());
+
+            var rc4encoder = new RC4(key);
             var xml = ticketString;
-            //    "123\n<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><authTicket version=\"1.2\"><storeToken>1</storeToken><password>test</password></authTicket>";
-            var xmlBytes = Encoding.ASCII.GetBytes(xml);
-            var result = encoder.Encode(xmlBytes, xmlBytes.Length);
+                //"123\n<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><authTicket version=\"1.2\"><storeToken>1</storeToken><password>test</password></authTicket>";
+            //var xmlBytes = Encoding.ASCII.GetBytes(xml);
+            var xmlBytes = Encoding.Unicode.GetBytes(xml);
+            //File.WriteAllBytes("ticket-raw.txt", xmlBytes);
+            var result = rc4encoder.Encode(xmlBytes, xmlBytes.Length);
+            //File.WriteAllBytes("ticket-rc4.txt",result);
 
             var pointer = Marshal.AllocHGlobal(result.Length);
             Marshal.Copy(result, 0, pointer, result.Length);
@@ -813,20 +821,20 @@ namespace AAEmu.Launcher
             Win32.SECURITY_ATTRIBUTES sa = new Win32.SECURITY_ATTRIBUTES
             {
                 nLength = Marshal.SizeOf(typeof(Win32.SECURITY_ATTRIBUTES)),
-                bInheritHandle = true,
-                lpSecurityDescriptor = IntPtr.Zero
+                lpSecurityDescriptor = IntPtr.Zero,
+                bInheritHandle = true
             };
 
             IntPtr sa_pointer = Marshal.AllocHGlobal(sa.nLength);
             Marshal.StructureToPtr(sa, sa_pointer, false);
 
-            var credentialFileMap = Win32.CreateFileMapping(
+            var credentialFileMap = Win32.CreateFileMappingW(
                 Win32.INVALID_HANDLE_VALUE,
-                sa_pointer,
+                IntPtr.Zero, //sa_pointer,
                 FileMapProtection.PageReadWrite,
                 0,
-                0x1000, // TODO: 0x20000 or 0x1000
-                null);
+                4096, // TODO: 0x20000 or 0x1000
+                "archeage_auth_ticket_map");
 
             Marshal.FreeHGlobal(sa_pointer);
 
@@ -836,7 +844,7 @@ namespace AAEmu.Launcher
                 return IntPtr.Zero;
             }
 
-            var fileMapView = Win32.MapViewOfFile(credentialFileMap, FileMapAccess.FileMapAllAccessFull, 0, 0, 0);
+            var fileMapView = Win32.MapViewOfFile(credentialFileMap, FileMapAccess.FileMapAllAccessFull, 0, 0, 4096);
 
             if (fileMapView == IntPtr.Zero)
             {
@@ -858,30 +866,30 @@ namespace AAEmu.Launcher
 
             // edited with info from nikes's code sample
 
-            // MSDN Documentation says SECURITY_ATTRIBUTES needs to be set (not null) for child processes to be able to inherit the handle from CreateEvent
-            Win32.SECURITY_ATTRIBUTES sa = new Win32.SECURITY_ATTRIBUTES
-            {
-                nLength = Marshal.SizeOf(typeof(Win32.SECURITY_ATTRIBUTES)),
-                bInheritHandle = true,
-                lpSecurityDescriptor = IntPtr.Zero
-            };
-
-            IntPtr sa_pointer = Marshal.AllocHGlobal(sa.nLength);
-            Marshal.StructureToPtr(sa, sa_pointer, false);
-            var credentialEvent = Win32.CreateEvent(sa_pointer, false, false, null);
-            Marshal.FreeHGlobal(sa_pointer);
-
-            if (credentialEvent == IntPtr.Zero)
-            {
-                Console.WriteLine("Failed to create credential event");
-                return false;
-            }
-
             var credentialFileMap = CreateFileMappingHandle(ticketString);
             if (credentialFileMap == IntPtr.Zero)
             {
                 // TODO ...
                 // Win32.CloseHandle(credentialEvent);
+                return false;
+            }
+
+
+            // MSDN Documentation says SECURITY_ATTRIBUTES needs to be set (not null) for child processes to be able to inherit the handle from CreateEvent
+            Win32.SECURITY_ATTRIBUTES sa = new Win32.SECURITY_ATTRIBUTES
+            {
+                nLength = Marshal.SizeOf(typeof(Win32.SECURITY_ATTRIBUTES)),
+                lpSecurityDescriptor = IntPtr.Zero,
+                bInheritHandle = true
+            };
+            IntPtr sa_pointer = Marshal.AllocHGlobal(sa.nLength);
+            Marshal.StructureToPtr(sa, sa_pointer, false);
+            var credentialEvent = Win32.CreateEventW(sa_pointer, true, false, "archeage_auth_ticket_event");
+            Marshal.FreeHGlobal(sa_pointer);
+
+            if (credentialEvent == IntPtr.Zero)
+            {
+                Console.WriteLine("Failed to create credential event");
                 return false;
             }
 
@@ -938,8 +946,8 @@ namespace AAEmu.Launcher
             byte[] data = Encoding.Default.GetBytes(pass);
             var passHash = new SHA256Managed().ComputeHash(data);
 
-            int handleID1 = 0;
-            int handleID2 = 0;
+            int handleID1FileMap = 0;
+            int handleID2Event = 0;
             bool genRes = false;
 
             string stringForSignature = "dGVzdA==";
@@ -952,11 +960,10 @@ namespace AAEmu.Launcher
             stringForTicket += "<password>" + BitConverter.ToString(passHash).Replace("-", "").ToLower() + "</password>";
             stringForTicket += "</authTicket>";
 
-            genRes = generateHandlesForTrionLogin(stringForTicket, stringForSignature, ref handleID1, ref handleID2);
+            genRes = generateHandlesForTrionLogin(stringForTicket, stringForSignature, ref handleID1FileMap, ref handleID2Event);
 
             /*
             // Stuff to use ToolsA.DLL
-
             // Basically A complex way of doing stringForSignature + LineFeed + stringForTicket in a byte array
             byte[] bufferSignatureID1 = Encoding.UTF8.GetBytes(stringForSignature);
             byte[] bufferTicketID2 = Encoding.UTF8.GetBytes(stringForTicket);
@@ -965,9 +972,11 @@ namespace AAEmu.Launcher
             bufferTotal[bufferSignatureID1.Length] = 10;
             Array.Copy(bufferTicketID2, 0, bufferTotal, bufferSignatureID1.Length + 1, bufferTicketID2.Length);
 
+            File.WriteAllBytes("ticket-raw.txt", bufferTotal);
+            
             try
             {
-                genRes = generateHandlesWithToolsA(bufferTotal, bufferTotal.Length, bufferIntPtrID1, bufferIntPtrID1.Length, ref handleID1, ref handleID2);
+                genRes = generateHandlesWithToolsA(bufferTotal, bufferTotal.Length, bufferSignatureID1, bufferSignatureID1.Length, ref handleID1FileMap, ref handleID2Event);
             }
             catch
             {
@@ -976,6 +985,9 @@ namespace AAEmu.Launcher
             // End ToolsA.DLL stuff
             */
 
+            savedID1FileMap = handleID1FileMap;
+            //DumpMemFile(handleID1FileMap, "ticket-pre-1.txt");
+
             if (genRes == false)
             {
                 //MessageBox.Show("Error generating login handle");
@@ -983,7 +995,7 @@ namespace AAEmu.Launcher
             }
             else
             {
-                return handleID1.ToString("X8") + ":" + handleID2.ToString("X8");
+                return handleID1FileMap.ToString("X8") + ":" + handleID2Event.ToString("X8");
             }
 
         }
@@ -1084,12 +1096,12 @@ namespace AAEmu.Launcher
                         LoginArg += " -nosplash";
                     }
 
-                    string HShield = " +acpxmk";
+                    string HShield = " +acpxmk"; // client safely ignores this if no HackShield is present or disabled
 
                     if (debugModeToolStripMenuItem.Checked)
                     {
                         DebugHelperForm dlg = new DebugHelperForm();
-                        dlg.eArgs.Text = LoginArg;
+                        dlg.eArgs.Text = LoginArg + " -devmode";
                         dlg.eHackShieldArg.Text = HShield;
                         if (dlg.ShowDialog() == DialogResult.OK)
                         {
@@ -1174,6 +1186,10 @@ namespace AAEmu.Launcher
                     {
                         startOK = false;
                     }
+
+                    //DumpMemFile(savedID1FileMap, "ticket-post-1.txt");
+                    //DumpMemFile(savedID2, "ticket-post-2.txt");
+
                     // Minimize after launching AA
                     if (startOK)
                     {
@@ -1853,6 +1869,21 @@ namespace AAEmu.Launcher
             Console.WriteLine("Updating Locale Language: {0}", Setting.Lang);
             UpdateLocaleLanguage();
             btnLocaleLang.Refresh();
+        }
+
+        private static void DumpMemFile(int handle, string fname)
+        {
+            try
+            {
+                IntPtr testMemPtr = Win32.MapViewOfFile((IntPtr)handle, FileMapAccess.FileMapRead, 0, 0, 0);
+                string s = Marshal.PtrToStringUni(testMemPtr);
+                Win32.UnmapViewOfFile(testMemPtr);
+                File.WriteAllText(fname, s, Encoding.UTF8);
+            }
+            catch
+            {
+                MessageBox.Show("Error creating dump for " + fname);
+            }
         }
     }
 }

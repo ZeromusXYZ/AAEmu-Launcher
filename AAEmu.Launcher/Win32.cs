@@ -32,6 +32,9 @@ namespace AA.Trion.Launcher
         [DllImport("kernel32.dll")]
         internal static extern IntPtr CreateEvent(IntPtr lpEventAttributes, bool bManualReset, bool bInitialState, string lpName);
 
+        [DllImport("kernel32.dll")]
+        internal static extern IntPtr CreateEventW(IntPtr lpEventAttributes, bool bManualReset, bool bInitialState, [MarshalAs(UnmanagedType.LPWStr)]  string lpName);
+
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         internal static extern IntPtr CreateFileMapping(
             IntPtr hFile,
@@ -40,6 +43,15 @@ namespace AA.Trion.Launcher
             uint dwMaximumSizeHigh,
             uint dwMaximumSizeLow,
             [MarshalAs(UnmanagedType.LPStr)] string lpName);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        internal static extern IntPtr CreateFileMappingW(
+            IntPtr hFile,
+            IntPtr lpFileMappingAttributes,
+            FileMapProtection flProtect,
+            uint dwMaximumSizeHigh,
+            uint dwMaximumSizeLow,
+            [MarshalAs(UnmanagedType.LPWStr)] string lpName);
 
         [DllImport("kernel32.dll")]
         internal static extern IntPtr MapViewOfFile(IntPtr hFileMapping, FileMapAccess dwDesiredAccess, Int32 dwFileOffsetHigh,
