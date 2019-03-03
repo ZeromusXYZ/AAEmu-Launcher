@@ -157,7 +157,7 @@ namespace AAEmu.Launcher
 
     public static class WebHelper
     {
-        public static string SimpleGetURI(string uri)
+        public static string SimpleGetURIAsString(string uri)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
             request.UserAgent = "AAEmu.Launcher";
@@ -168,6 +168,22 @@ namespace AAEmu.Launcher
             using (StreamReader reader = new StreamReader(stream))
             {
                 return reader.ReadToEnd();
+            }
+        }
+
+        public static MemoryStream SimpleGetURIAsMemoryStream(string uri)
+        {
+            MemoryStream ms = new MemoryStream();
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+            request.UserAgent = "AAEmu.Launcher";
+            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            using (Stream stream = response.GetResponseStream())
+            {
+                stream.CopyTo(ms);
+                return ms ;
             }
         }
     }

@@ -263,6 +263,8 @@ namespace AAEmu.Launcher
         private int serverCheckStatus = 2; // 0 = Offline ; 1 = Online ; 2 = Unknown (not checked)
         private bool checkNews = false;
         AAEmuNewsFeed newsFeed = null ;
+        private int bigNewsIndex = -1;
+        private int bigNewsTimer = -1;
 
         public LauncherForm()
         {
@@ -377,6 +379,7 @@ namespace AAEmu.Launcher
             btnWebsite.Visible = (panelID == 0);
             lNewsFeed.Visible = (panelID == 0);
             imgBigNews.Visible = (panelID == 0);
+            lBigNewsImage.Visible = ((panelID == 0) && (lBigNewsImage.Tag != null) && (lBigNewsImage.Tag.ToString() != ""));
             wbNews.Visible = ((panelID == 0) && (wbNews.Tag != null) && (wbNews.Tag.ToString() == "1"));
 
             // 1: Settings "panel"
@@ -868,10 +871,7 @@ namespace AAEmu.Launcher
                     if (Setting.SaveLoginAndPassword == "true")
                         SaveSettings();
 
-                    if (Setting.UpdateLocale == "True")
-                    {
-                        UpdateGameConfigLocale(Setting.Lang);
-                    }
+                    UpdateGameSystemConfigFile((Setting.UpdateLocale == "True"),Setting.Lang, (Setting.SkipIntro == "True"));
 
                     string LoginArg = "";
 
@@ -1313,16 +1313,22 @@ namespace AAEmu.Launcher
             updateGameClientTypeLabel();
         }
 
-        private void UpdateGameConfigLocale(string locale)
+        private void UpdateGameSystemConfigFile(bool enableUpdateLocale, string locale, bool enableSkipIntro)
         {
             // C:\ArcheAge\Documents => UserHomeFolder\ArcheAge
             string configFileName = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ArcheAge\\system.cfg";
             const string localeField = "locale = ";
+            const string movieField = "login_first_movie = ";
+            const string optionSoundField = "option_sound = ";
+
+
 
             List<string> lines = new List<string>();
             List<string> newLines = new List<string>();
 
             bool updatedLocale = false;
+            bool updatedMovie = false;
+            bool hasSoundOptionSetting = false;
 
             if (File.Exists(configFileName) == true)
             {
@@ -1330,7 +1336,7 @@ namespace AAEmu.Launcher
 
                 foreach (string line in lines)
                 {
-                    if (line.IndexOf(localeField) >= 0)
+                    if ((enableUpdateLocale == true) && (line.IndexOf(localeField) >= 0))
                     {
                         // replace here
                         if (updatedLocale == false)
@@ -1340,12 +1346,41 @@ namespace AAEmu.Launcher
                         updatedLocale = true;
                     }
                     else
+                    if ((enableSkipIntro == true) && (line.IndexOf(movieField) >= 0))
+                    {
+                        // replace here
+                        if (updatedMovie == false)
+                        {
+                            newLines.Add(movieField + " 1");
+                        }
+                        updatedMovie = true;
+                    }
+                    else
                     {
                         newLines.Add(line);
                     }
+                    if (line.IndexOf(optionSoundField) >= 0)
+                    {
+                        hasSoundOptionSetting = true;
+                    }
+
                 }
             }
-            if (updatedLocale == false)
+
+            // Hack to make sure people can get past the server select on their first run
+            // Apperantly missing the option_sound in the system.cfg will make it so the charater
+            // select screen crashes
+            if (hasSoundOptionSetting == false)
+            {
+                newLines.Add(optionSoundField + " 4");
+            }
+
+            // Add our settings if needed
+            if ((enableSkipIntro == true) && (updatedMovie == false))
+            {
+                newLines.Add(movieField + " 1");
+            }
+            if ((enableUpdateLocale == true) && (updatedLocale == false))
             {
                 newLines.Add(localeField + locale);
             }
@@ -1537,7 +1572,7 @@ namespace AAEmu.Launcher
 
                 try
                 {
-                    string newsString = WebHelper.SimpleGetURI(Setting.ServerNewsFeedURL);
+                    string newsString = WebHelper.SimpleGetURIAsString(Setting.ServerNewsFeedURL);
                     CreateNewsFeedFromJSON(newsString);
                 } catch
                 {
@@ -1562,6 +1597,23 @@ namespace AAEmu.Launcher
                     checkServerStatus();
 
                     updatePlayButton(serverCheckStatus, false);
+                }
+            }
+
+            if ((bigNewsTimer > 0) && (currentPanel == 0)) // Only count timer on the main "panel"
+            {
+                bigNewsTimer -= timerGeneral.Interval;
+                if (bigNewsTimer <= 0)
+                {
+                    bigNewsTimer += 1000 * 10 * 1; // 1 minute
+
+                    bigNewsIndex++;
+                    if (bigNewsIndex >= newsFeed.data.Count)
+                    {
+                        bigNewsIndex = 0;
+                    }
+
+                    LoadBigNews(newsFeed.data[bigNewsIndex]);
                 }
             }
 
@@ -1605,25 +1657,6 @@ namespace AAEmu.Launcher
                 }
             }
             Application.UseWaitCursor = false;
-
-            /*
-            // connect with a 5 second timeout on the connection
-            TcpClient connection = new TcpClientWithTimeout("www.google.com", 80, 5000).Connect();
-            NetworkStream stream = connection.GetStream();
-
-            // Send 10 bytes
-            byte[] to_send = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0xa };
-            stream.Write(to_send, 0, to_send.Length);
-
-            // Receive 10 bytes
-            byte[] readbuf = new byte[10]; // you must allocate space first
-            stream.ReadTimeout = 10000; // 10 second timeout on the read
-            stream.Read(readbuf, 0, 10); // read
-
-            // Disconnect nicely
-            stream.Close(); // workaround for a .net bug: http://support.microsoft.com/kb/821625
-            connection.Close();
-            */
 
         }
 
@@ -1681,16 +1714,18 @@ namespace AAEmu.Launcher
             btnLocaleLang.Refresh();
         }
 
-        private void CreateNewsFeedFromJSON(string URIResult)
+        private void CreateNewsFeedFromJSON(string JSONString)
         {
 
             try
             {
-                newsFeed = JsonConvert.DeserializeObject<AAEmuNewsFeed>(URIResult);
+                newsFeed = JsonConvert.DeserializeObject<AAEmuNewsFeed>(JSONString);
             }
             catch
             {
-                lNewsFeed.Text = "Load Failed\n\nFailed to load news. Are you offline ?";
+                lNewsFeed.Text = "Load Failed\n\nFailed to load news";
+                wbNews.Hide();
+                wbNews.Tag = "0";
                 return;
             }
             finally
@@ -1699,6 +1734,8 @@ namespace AAEmu.Launcher
             }
             if (newsFeed == null)
             {
+                wbNews.Hide();
+                wbNews.Tag = "0";
                 return;
             }
 
@@ -1731,17 +1768,82 @@ namespace AAEmu.Launcher
             wns += "</body></html>";
             wbNews.DocumentText = wns;
             wbNews.Refresh();
-            File.WriteAllText("newscache.htm",wns);
+            // File.WriteAllText("newscache.htm",wns);
+
+            if ((newsFeed.data != null) && (newsFeed.data[0].itemAttributes.itemPicture != null) && (newsFeed.data[0].itemAttributes.itemPicture != ""))
+            {
+                LoadBigNews(newsFeed.data[0]);
+                bigNewsTimer = 1000 * 10 * 1; // 10 seconds
+            }
         }
 
-        /*
-            <div style="background-color:white;background-image:url(//www.html.am/images/backgrounds/background-image-3.gif);background-attachment:scroll;border:0px;width:200px;height:183px;font-size:18px;line-height:3em;overflow:scroll;"></div>
-         */
+        private Image LoadImageForNews(AAEmuNewsFeedDataItem newsItem)
+        {
+            string cacheFileName = "data\\img-" + Setting.configName.Replace("@","_").Replace("/","_").Replace("\\","_").Replace("|","_") + "-" + newsItem.itemID + ".bin";
+
+            MemoryStream imageData;
+            if (File.Exists(cacheFileName) == true)
+            {
+                FileStream fs = new FileStream(cacheFileName, FileMode.Open);
+                imageData = new MemoryStream();
+                fs.CopyTo(imageData);
+                fs.Dispose();
+            }
+            else
+            {
+                imageData = WebHelper.SimpleGetURIAsMemoryStream(newsItem.itemAttributes.itemPicture);
+                FileStream fs = new FileStream(cacheFileName, FileMode.Create);
+                imageData.WriteTo(fs);
+                fs.Flush();
+                fs.Dispose();
+            }
+            var img = Image.FromStream(imageData);
+            return img;
+        }
+
+        private void LoadBigNews(AAEmuNewsFeedDataItem newsItem)
+        {
+            Application.UseWaitCursor = true;
+            try
+            {
+                var img = LoadImageForNews(newsItem);
+                if (img != null)
+                {
+                    imgBigNews.Image = img;
+                    lBigNewsImage.Text = newsItem.itemAttributes.itemTitle;
+                    lBigNewsImage.Tag = newsItem.itemAttributes.itemLinks.self;
+                    lBigNewsImage.Visible = true;
+                }
+                else
+                {
+                    lBigNewsImage.Tag = "";
+                    lBigNewsImage.Visible = false;
+                    imgBigNews.Image = Properties.Resources.bignews_default ;
+                    imgBigNews.Visible = true;
+                }
+            }
+            catch
+            {
+                lBigNewsImage.Tag = "";
+                lBigNewsImage.Visible = false;
+                imgBigNews.Image = Properties.Resources.bignews_default;
+                imgBigNews.Visible = true;
+            }
+            Application.UseWaitCursor = false;
+        }
 
         private void wbNews_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
             wbNews.Show();
             wbNews.Tag = "1"; // We use this it indicate if we need to show/hide the browser when swapping panels
+        }
+
+        private void lBigNewsImage_Click(object sender, EventArgs e)
+        {
+            if ((lBigNewsImage.Tag != null) && (lBigNewsImage.Tag.ToString() != ""))
+            {
+                Process.Start(lBigNewsImage.Tag.ToString());
+            }
         }
     }
 }

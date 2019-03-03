@@ -25,7 +25,7 @@
     <ProductName>AAEmu Launcher</ProductName>
     <SuiteName>AAEmu Launcher</SuiteName>
     <ApplicationRevision>2</ApplicationRevision>
-    <ApplicationVersion>0.2.0.%2a</ApplicationVersion>
+    <ApplicationVersion>0.3.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -123,7 +123,9 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="aaemu.info.aelcf" />
+    <None Include="aaemu.info.aelcf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="lng\de.lng">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -200,6 +202,10 @@
     <None Include="Res\mini_locale_kr.png" />
     <None Include="Res\mini_locale_ru.png" />
     <None Include="Res\bgnews.b64.txt" />
+    <Content Include="data\data.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Res\bignews1.png" />
     <Content Include="ToolsA.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

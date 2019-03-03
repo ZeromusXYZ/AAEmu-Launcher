@@ -94,6 +94,7 @@
             this.btnLauncherLangChange = new System.Windows.Forms.PictureBox();
             this.imgBigNews = new System.Windows.Forms.PictureBox();
             this.wbNews = new System.Windows.Forms.WebBrowser();
+            this.lBigNewsImage = new System.Windows.Forms.Label();
             this.cmsAAEmuButton.SuspendLayout();
             this.cmsGitHub.SuspendLayout();
             this.cmsLauncherLanguage.SuspendLayout();
@@ -210,11 +211,11 @@
             this.lAppVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lAppVersion.BackColor = System.Drawing.Color.Transparent;
             this.lAppVersion.ForeColor = System.Drawing.Color.White;
-            this.lAppVersion.Location = new System.Drawing.Point(835, 480);
+            this.lAppVersion.Location = new System.Drawing.Point(751, 477);
             this.lAppVersion.Name = "lAppVersion";
-            this.lAppVersion.Size = new System.Drawing.Size(110, 21);
+            this.lAppVersion.Size = new System.Drawing.Size(95, 21);
             this.lAppVersion.TabIndex = 17;
-            this.lAppVersion.Text = "AAEmu 2019";
+            this.lAppVersion.Text = "V 0.3";
             this.lAppVersion.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
             // lLogin
@@ -764,7 +765,7 @@
             this.btnDiscord.BackColor = System.Drawing.Color.Transparent;
             this.btnDiscord.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnDiscord.Image = global::AAEmu.Launcher.Properties.Resources.Discord_Logo_Only;
-            this.btnDiscord.Location = new System.Drawing.Point(789, 461);
+            this.btnDiscord.Location = new System.Drawing.Point(898, 458);
             this.btnDiscord.Name = "btnDiscord";
             this.btnDiscord.Size = new System.Drawing.Size(40, 40);
             this.btnDiscord.TabIndex = 12;
@@ -778,7 +779,7 @@
             this.btnGithub.BackColor = System.Drawing.Color.Transparent;
             this.btnGithub.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnGithub.Image = ((System.Drawing.Image)(resources.GetObject("btnGithub.Image")));
-            this.btnGithub.Location = new System.Drawing.Point(743, 461);
+            this.btnGithub.Location = new System.Drawing.Point(852, 458);
             this.btnGithub.Name = "btnGithub";
             this.btnGithub.Size = new System.Drawing.Size(40, 40);
             this.btnGithub.TabIndex = 11;
@@ -802,7 +803,7 @@
             // imgBigNews
             // 
             this.imgBigNews.BackColor = System.Drawing.Color.Transparent;
-            this.imgBigNews.Image = ((System.Drawing.Image)(resources.GetObject("imgBigNews.Image")));
+            this.imgBigNews.Image = global::AAEmu.Launcher.Properties.Resources.bignews_default;
             this.imgBigNews.Location = new System.Drawing.Point(25, 85);
             this.imgBigNews.Name = "imgBigNews";
             this.imgBigNews.Size = new System.Drawing.Size(243, 24);
@@ -825,6 +826,20 @@
             this.wbNews.WebBrowserShortcutsEnabled = false;
             this.wbNews.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.wbNews_DocumentCompleted);
             // 
+            // lBigNewsImage
+            // 
+            this.lBigNewsImage.AutoSize = true;
+            this.lBigNewsImage.BackColor = System.Drawing.Color.Transparent;
+            this.lBigNewsImage.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lBigNewsImage.ForeColor = System.Drawing.Color.Black;
+            this.lBigNewsImage.Location = new System.Drawing.Point(24, 64);
+            this.lBigNewsImage.Name = "lBigNewsImage";
+            this.lBigNewsImage.Size = new System.Drawing.Size(86, 18);
+            this.lBigNewsImage.TabIndex = 49;
+            this.lBigNewsImage.Text = "NewsLabel";
+            this.lBigNewsImage.Visible = false;
+            this.lBigNewsImage.Click += new System.EventHandler(this.lBigNewsImage_Click);
+            // 
             // LauncherForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -832,6 +847,7 @@
             this.BackColor = System.Drawing.Color.DimGray;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(950, 510);
+            this.Controls.Add(this.lBigNewsImage);
             this.Controls.Add(this.wbNews);
             this.Controls.Add(this.btnLocaleLang);
             this.Controls.Add(this.lLoadedConfig);
@@ -964,6 +980,7 @@
         private System.Windows.Forms.ToolStripMenuItem deleteGameConfigurationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteAllArcheAgeSettingsToolStripMenuItem;
         private System.Windows.Forms.WebBrowser wbNews;
+        private System.Windows.Forms.Label lBigNewsImage;
     }
 }
 
