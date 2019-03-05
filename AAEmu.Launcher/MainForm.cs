@@ -1506,6 +1506,10 @@ namespace AAEmu.Launcher
 
             string configPath = Path.GetDirectoryName(launcherOpenedConfigFile);
             // Yes I know this trim looks silly, but it's to prevent stuff like "C:\\\\directory\\pathtogame.exe"
+            if (configPath == "")
+            {
+                configPath = Path.GetDirectoryName(Application.ExecutablePath);
+            }
             configPath = configPath.TrimEnd('\\') + "\\" ;
 
             pb1.Visible = true;
@@ -1840,14 +1844,14 @@ namespace AAEmu.Launcher
                     imgBigNews.Image = img;
                     lBigNewsImage.Text = newsItem.itemAttributes.itemTitle;
                     lBigNewsImage.Tag = newsItem.itemAttributes.itemLinks.self;
-                    lBigNewsImage.Visible = true;
+                    lBigNewsImage.Visible = (currentPanel == 0);
                 }
                 else
                 {
                     lBigNewsImage.Tag = "";
                     lBigNewsImage.Visible = false;
                     imgBigNews.Image = Properties.Resources.bignews_default ;
-                    imgBigNews.Visible = true;
+                    imgBigNews.Visible = (currentPanel == 0);
                 }
             }
             catch
@@ -1855,14 +1859,14 @@ namespace AAEmu.Launcher
                 lBigNewsImage.Tag = "";
                 lBigNewsImage.Visible = false;
                 imgBigNews.Image = Properties.Resources.bignews_default;
-                imgBigNews.Visible = true;
+                imgBigNews.Visible = (currentPanel == 0);
             }
             Application.UseWaitCursor = false;
         }
 
         private void wbNews_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
-            wbNews.Show();
+            wbNews.Visible = (currentPanel == 0);
             wbNews.Tag = "1"; // We use this it indicate if we need to show/hide the browser when swapping panels
         }
 
