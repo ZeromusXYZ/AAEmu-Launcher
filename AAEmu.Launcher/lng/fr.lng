@@ -20,5 +20,7 @@
   "unknownlauncherprotocol": "Protocole de lanceur inconnu: {0}",
   "nouserorpassword": "Entrer un nom d'utilisateur et mot de passe s'il vous plaît",
   "missinggame": "Dossier du jeu est invalide!",
-  "errorupdatingfile": "ERREUR mise à jour {0}"
+  "errorupdatingfile": "ERREUR mise à jour {0}",
+  "minimize": "Minimiser",
+  "closeprogram": "Fermer"
 }

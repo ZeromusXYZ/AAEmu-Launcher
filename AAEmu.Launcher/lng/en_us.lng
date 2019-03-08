@@ -20,5 +20,7 @@
   "unknownlauncherprotocol":"Unknown launcher protocol: {0}",
   "nouserorpassword":"Please enter a username and password",
   "missinggame":"No valid game path set!",
-  "errorupdatingfile":"ERROR updating {0}"
+  "errorupdatingfile": "ERROR updating {0}",
+  "minimize": "Minimize",
+  "closeprogram": "Close"
 }

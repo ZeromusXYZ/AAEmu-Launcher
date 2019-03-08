@@ -20,5 +20,7 @@
   "unknownlauncherprotocol": "Неизвестный протокол запуска: {0}",
   "nouserorpassword": "Пожалуйста, введите имя пользователя и пароль",
   "missinggame": "Не указан правильный игровой путь",
-  "errorupdatingfile": "Ошибка обновления {0}"
+  "errorupdatingfile": "Ошибка обновления {0}",
+  "minimize": "Минимизировать",
+  "closeprogram": "близко"
 }
