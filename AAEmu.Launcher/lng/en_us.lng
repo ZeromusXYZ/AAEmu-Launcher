@@ -22,5 +22,7 @@
   "missinggame":"No valid game path set!",
   "errorupdatingfile": "ERROR updating {0}",
   "minimize": "Minimize",
-  "closeprogram": "Close"
+  "closeprogram": "Close",
+  "update": "Update!",
+  "updating": "Updating"
 }

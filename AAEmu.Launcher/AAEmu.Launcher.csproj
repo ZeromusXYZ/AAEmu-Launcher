@@ -203,6 +203,8 @@
     <None Include="Res\mini_locale_ru.png" />
     <None Include="Res\bgnews.b64.txt" />
     <None Include="Res\bignews1.png" />
+    <None Include="Res\pgbar_back.png" />
+    <None Include="Res\pgbar_front.png" />
     <Content Include="ToolsA.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

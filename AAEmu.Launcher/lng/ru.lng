@@ -22,5 +22,7 @@
   "missinggame": "Не указан правильный игровой путь",
   "errorupdatingfile": "Ошибка обновления {0}",
   "minimize": "Минимизировать",
-  "closeprogram": "близко"
+  "closeprogram": "близко",
+  "update": "Update!",
+  "updating": "Updating"
 }

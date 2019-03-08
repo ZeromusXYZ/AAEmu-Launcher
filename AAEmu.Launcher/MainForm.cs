@@ -208,6 +208,12 @@ namespace AAEmu.Launcher
             [JsonProperty("offline")]
             public string Offline { get; set; }
 
+            [JsonProperty("update")]
+            public string Update { get; set; }
+
+            [JsonProperty("updating")]
+            public string Updating { get; set; }
+
             [JsonProperty("updatelocale")]
             public string UpdateLocale { get; set; }
 
@@ -266,11 +272,14 @@ namespace AAEmu.Launcher
 
         private int currentPanel = 0;
         private int nextServerCheck = -1;
-        private int serverCheckStatus = 2; // 0 = Offline ; 1 = Online ; 2 = Unknown (not checked)
+        enum serverCheck { Offline = 0, Online, Unknown, Update, Updating };
+        private serverCheck serverCheckStatus = serverCheck.Unknown;
         private bool checkNews = false;
         AAEmuNewsFeed newsFeed = null ;
         private int bigNewsIndex = -1;
         private int bigNewsTimer = -1;
+
+        private int pgbPos = 0;
 
         public LauncherForm()
         {
@@ -295,6 +304,8 @@ namespace AAEmu.Launcher
             L.Play = "Play";
             L.Online = "Online";
             L.Offline = "Offline";
+            L.Update = "Update!";
+            L.Updating = "Updating";
             L.UpdateLocale = "Update locale";
             L.AllowUpdates = "Allow Updates";
             L.ToolsAFailed = "Failed to load ToolsA.DLL, you might have a debugger open, if so, please close it and restart the launcher";
@@ -376,14 +387,31 @@ namespace AAEmu.Launcher
             // onto a panel is hard as hell. It's easier to just put EVERYTHING on the form, and
             // Just show/hide what you need (swapping out background where needed)
 
-            // 0: Main login "panel"
-            panelLoginAndNews.Visible = (panelID == 0);
-            panelLoginAndNews.Location = new Point(0, 0);
-            panelLoginAndNews.Size = this.Size;
-
-            cbLoginList.Visible = ((panelID == 0) && (cbLoginList.Items.Count > 0));
+            // 0: Main login "panel"  and  2: Update/Patch "panel"
+            panelLoginAndPatch.Visible = ((panelID == 0) || (panelID == 2));
+            panelLoginAndPatch.Location = new Point(0, 0);
+            panelLoginAndPatch.Size = this.Size;
+            // If we don't change this, transparancy effects that aren't on the panels will show wrong because of gray background
+            switch (panelID)
+            {
+                case 0:
+                    panelLoginAndPatch.BackgroundImage = Properties.Resources.bg_login;
+                    break;
+                case 2:
+                    panelLoginAndPatch.BackgroundImage = Properties.Resources.bg;
+                    break;
+            }
+            eLogin.Visible = (panelID == 0);
+            ePassword.Visible = (panelID == 0);
+            lLogin.Visible = (panelID == 0);
+            lPassword.Visible = (panelID == 0);
+            lNewsFeed.Visible = ((panelID == 0) || (panelID == 2));
+            imgBigNews.Visible = (panelID == 0);
+            cbLoginList.Visible = (cbLoginList.Items.Count > 0);
             lBigNewsImage.Visible = ((panelID == 0) && (lBigNewsImage.Tag != null) && (lBigNewsImage.Tag.ToString() != ""));
-            wbNews.Visible = ((panelID == 0) && (wbNews.Tag != null) && (wbNews.Tag.ToString() == "1"));
+            wbNews.Visible = (((panelID == 0) || (panelID == 2)) && (wbNews.Tag != null) && (wbNews.Tag.ToString() == "1"));
+            pgbBackTotal.Visible = (panelID == 2);
+            pgbFrontTotal.Visible = (panelID == 2);
 
             // 1: Settings "panel"
             panelSettings.Visible = (panelID == 1);
@@ -413,6 +441,7 @@ namespace AAEmu.Launcher
                 case 1:
                     BackgroundImage = Properties.Resources.bg_setup;
                     break;
+                case 2:
                 default:
                     BackgroundImage = Properties.Resources.bg;
                     break;
@@ -1175,9 +1204,21 @@ namespace AAEmu.Launcher
 
         private void btnPlay_Click(object sender, EventArgs e)
         {
-            Application.UseWaitCursor = true;
-            StartGame();
-            Application.UseWaitCursor = false;
+            switch (serverCheckStatus)
+            {
+                case serverCheck.Update:
+                    StartUpdate();
+                    break;
+                case serverCheck.Updating:
+                    // Do nothing with this button while we are updating
+                    break;
+                default:
+                    // Start game if status is unknown, online or offline
+                    Application.UseWaitCursor = true;
+                    StartGame();
+                    Application.UseWaitCursor = false;
+                    break;
+            }
         }
 
         private void btnPlay_MouseEnter(object sender, EventArgs e)
@@ -1230,9 +1271,20 @@ namespace AAEmu.Launcher
         private void lSettingsBack_Click(object sender, EventArgs e)
         {
             SaveSettings();
-            ShowPanelControls(0);
-            serverCheckStatus = 2;
-            nextServerCheck = 1000;
+            if ((serverCheckStatus == serverCheck.Online) || (serverCheckStatus == serverCheck.Offline) || (serverCheckStatus == serverCheck.Unknown))
+            {
+                serverCheckStatus = serverCheck.Unknown;
+                nextServerCheck = 1000;
+                ShowPanelControls(0);
+            }
+            if (serverCheckStatus == serverCheck.Update)
+            {
+                ShowPanelControls(0);
+            }
+            if (serverCheckStatus == serverCheck.Updating)
+            {
+                ShowPanelControls(2);
+            }
             updatePlayButton(serverCheckStatus, false);
         }
 
@@ -1528,22 +1580,30 @@ namespace AAEmu.Launcher
             Application.UseWaitCursor = false;
         }
 
-        private void updatePlayButton(int serverState, bool isMouseOver)
+        private void updatePlayButton(serverCheck serverState, bool isMouseOver)
         {
 
             if (isMouseOver == true)
             {
                 switch (serverState)
                 {
-                    case 0: // offline
+                    case serverCheck.Offline: // offline
                         btnPlay.Image = Properties.Resources.btn_red;
                         btnPlay.Text = L.Offline;
                         break;
-                    case 1:
+                    case serverCheck.Online: // Play
                         btnPlay.Image = Properties.Resources.btn_green_a;
                         btnPlay.Text = L.Play ;
                         break;
-                    case 2:
+                    case serverCheck.Update: // Update
+                        btnPlay.Image = Properties.Resources.btn_green;
+                        btnPlay.Text = L.Update ;
+                        break;
+                    case serverCheck.Updating: // Updating
+                        btnPlay.Image = Properties.Resources.btn_red;
+                        btnPlay.Text = L.Updating;
+                        break;
+                    case serverCheck.Unknown: // Play
                     default:
                         btnPlay.Image = Properties.Resources.btn_green;
                         btnPlay.Text = L.Play ;
@@ -1554,19 +1614,36 @@ namespace AAEmu.Launcher
             {
                 switch (serverState)
                 {
-                    case 0: // offline
+                    case serverCheck.Offline: // offline
                         btnPlay.Image = Properties.Resources.btn_red;
                         btnPlay.Text = L.Offline ;
                         break;
-                    case 1:
+                    case serverCheck.Online:
                         btnPlay.Image = Properties.Resources.btn_green;
                         btnPlay.Text = L.Play ;
                         break;
-                    case 2:
+                    case serverCheck.Update: // Update
+                        btnPlay.Image = Properties.Resources.btn_green_d;
+                        btnPlay.Text = L.Update;
+                        break;
+                    case serverCheck.Updating: // Updating
+                        btnPlay.Image = Properties.Resources.btn_red;
+                        btnPlay.Text = L.Updating;
+                        break;
+                    case serverCheck.Unknown:
                     default:
                         btnPlay.Image = Properties.Resources.btn_green_d;
                         btnPlay.Text = L.Play ;
                         break;
+                }
+
+                if (serverCheckStatus == serverCheck.Updating)
+                {
+                    btnPlay.Cursor = Cursors.No;
+                }
+                else
+                {
+                    btnPlay.Cursor = Cursors.Hand;
                 }
 
             }
@@ -1627,6 +1704,16 @@ namespace AAEmu.Launcher
                 }
             }
 
+            if (serverCheckStatus == serverCheck.Updating)
+            {
+                pgbPos++;
+                if (pgbPos > 100)
+                {
+                    pgbPos = 0;
+                }
+                UpdateProgressBarTotal(pgbPos, 100);
+            }
+
 
         }
 
@@ -1634,7 +1721,7 @@ namespace AAEmu.Launcher
         {
             if ((Setting.ServerIpAddress == null) || (Setting.ServerIpAddress == ""))
             {
-                serverCheckStatus = 2;
+                serverCheckStatus = serverCheck.Unknown;
                 return;
             }
 
@@ -1659,7 +1746,7 @@ namespace AAEmu.Launcher
                 testCon = new TcpClientWithTimeout(serverIP, serverPort, 5000).Connect();
                 if (testCon.Connected)
                 {
-                    serverCheckStatus = 1;
+                    serverCheckStatus = serverCheck.Online;
                     nextServerCheck = (1000 * 60 * 2); // check every 2 minutes when connected
 
                 }
@@ -1708,6 +1795,7 @@ namespace AAEmu.Launcher
                 debugModeToolStripMenuItem.Checked = true;
                 debugModeToolStripMenuItem.Visible = true;
             }
+            troubleshootToolStripMenuItem.Visible = true;
         }
 
         private void debugModeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1880,6 +1968,30 @@ namespace AAEmu.Launcher
             {
                 Process.Start(lBigNewsImage.Tag.ToString());
             }
+        }
+
+        private void forcePatchDownloadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            serverCheckStatus = serverCheck.Update; // Patch
+            nextServerCheck = -1;
+            updatePlayButton(serverCheckStatus, false);
+            ShowPanelControls(0); // Update Panel (same as login but replaced news)
+        }
+
+        private void UpdateProgressBarTotal(int pos,int maxPos)
+        {
+            float posPC = (float)pos / (float)(maxPos);
+            int progressSize = (int)(posPC * (float)pgbBackTotal.Width);
+            pgbFrontTotal.Location = pgbBackTotal.Location;
+            pgbFrontTotal.Size = new Size(progressSize, pgbBackTotal.Height);
+        }
+
+        private void StartUpdate()
+        {
+            serverCheckStatus = serverCheck.Updating;
+            ShowPanelControls(2); // Swap to download layout
+            updatePlayButton(serverCheckStatus, false);
+            //
         }
     }
 }

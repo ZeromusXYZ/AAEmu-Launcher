@@ -22,5 +22,7 @@
   "missinggame": "Dossier du jeu est invalide!",
   "errorupdatingfile": "ERREUR mise à jour {0}",
   "minimize": "Minimiser",
-  "closeprogram": "Fermer"
+  "closeprogram": "Fermer",
+  "update": "Update!",
+  "updating": "Updating"
 }

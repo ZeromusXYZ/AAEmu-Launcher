@@ -22,5 +22,7 @@
   "missinggame": "Kein gültiger Spielpfad eingestellt!",
   "errorupdatingfile": "Fehler beim Aktualisieren {0}",
   "minimize": "Minimieren",
-  "closeprogram": "Schließen"
+  "closeprogram": "Schließen",
+  "update": "Update!",
+  "updating": "Updating"
 }

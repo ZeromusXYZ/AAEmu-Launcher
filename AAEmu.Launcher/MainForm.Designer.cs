@@ -30,22 +30,29 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LauncherForm));
-            this.panelLoginAndNews = new System.Windows.Forms.Panel();
+            this.panelLoginAndPatch = new System.Windows.Forms.Panel();
             this.lBigNewsImage = new System.Windows.Forms.Label();
+            this.imgBigNews = new System.Windows.Forms.PictureBox();
             this.eLogin = new System.Windows.Forms.TextBox();
+            this.cbLoginList = new System.Windows.Forms.ComboBox();
             this.ePassword = new System.Windows.Forms.TextBox();
+            this.wbNews = new System.Windows.Forms.WebBrowser();
+            this.lNewsFeed = new System.Windows.Forms.Label();
+            this.btnSettings = new System.Windows.Forms.Label();
+            this.btnWebsite = new System.Windows.Forms.Label();
+            this.btnPlay = new System.Windows.Forms.Label();
+            this.lPassword = new System.Windows.Forms.Label();
+            this.lLogin = new System.Windows.Forms.Label();
             this.pb1 = new System.Windows.Forms.ProgressBar();
             this.timerGeneral = new System.Windows.Forms.Timer(this.components);
             this.pb2 = new System.Windows.Forms.ProgressBar();
             this.eServerIP = new System.Windows.Forms.TextBox();
             this.lPathToGameLabel = new System.Windows.Forms.Label();
-            this.cbLoginList = new System.Windows.Forms.ComboBox();
             this.lAppVersion = new System.Windows.Forms.Label();
-            this.lLogin = new System.Windows.Forms.Label();
-            this.lPassword = new System.Windows.Forms.Label();
             this.cmsAAEmuButton = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.minimizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.troubleshootToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.forcePatchDownloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteShaderCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteGameConfigurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteAllArcheAgeSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -87,17 +94,14 @@
             this.japaneseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnLocaleLang = new System.Windows.Forms.PictureBox();
             this.btnSystem = new System.Windows.Forms.PictureBox();
-            this.btnWebsite = new System.Windows.Forms.Label();
-            this.btnSettings = new System.Windows.Forms.Label();
-            this.lNewsFeed = new System.Windows.Forms.Label();
-            this.btnPlay = new System.Windows.Forms.Label();
             this.btnDiscord = new System.Windows.Forms.PictureBox();
             this.btnGithub = new System.Windows.Forms.PictureBox();
             this.btnLauncherLangChange = new System.Windows.Forms.PictureBox();
-            this.imgBigNews = new System.Windows.Forms.PictureBox();
-            this.wbNews = new System.Windows.Forms.WebBrowser();
             this.panelSettings = new System.Windows.Forms.Panel();
-            this.panelLoginAndNews.SuspendLayout();
+            this.pgbBackTotal = new System.Windows.Forms.PictureBox();
+            this.pgbFrontTotal = new System.Windows.Forms.PictureBox();
+            this.panelLoginAndPatch.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.imgBigNews)).BeginInit();
             this.cmsAAEmuButton.SuspendLayout();
             this.cmsGitHub.SuspendLayout();
             this.cmsLauncherLanguage.SuspendLayout();
@@ -107,34 +111,37 @@
             ((System.ComponentModel.ISupportInitialize)(this.btnDiscord)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnGithub)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnLauncherLangChange)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imgBigNews)).BeginInit();
             this.panelSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pgbBackTotal)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pgbFrontTotal)).BeginInit();
             this.SuspendLayout();
             // 
-            // panelLoginAndNews
+            // panelLoginAndPatch
             // 
-            this.panelLoginAndNews.BackColor = System.Drawing.Color.Transparent;
-            this.panelLoginAndNews.BackgroundImage = global::AAEmu.Launcher.Properties.Resources.bg_login;
-            this.panelLoginAndNews.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.panelLoginAndNews.Controls.Add(this.lBigNewsImage);
-            this.panelLoginAndNews.Controls.Add(this.imgBigNews);
-            this.panelLoginAndNews.Controls.Add(this.eLogin);
-            this.panelLoginAndNews.Controls.Add(this.cbLoginList);
-            this.panelLoginAndNews.Controls.Add(this.ePassword);
-            this.panelLoginAndNews.Controls.Add(this.wbNews);
-            this.panelLoginAndNews.Controls.Add(this.lNewsFeed);
-            this.panelLoginAndNews.Controls.Add(this.btnSettings);
-            this.panelLoginAndNews.Controls.Add(this.btnWebsite);
-            this.panelLoginAndNews.Controls.Add(this.btnPlay);
-            this.panelLoginAndNews.Controls.Add(this.lPassword);
-            this.panelLoginAndNews.Controls.Add(this.lLogin);
-            this.panelLoginAndNews.Location = new System.Drawing.Point(17, 63);
-            this.panelLoginAndNews.Name = "panelLoginAndNews";
-            this.panelLoginAndNews.Size = new System.Drawing.Size(376, 162);
-            this.panelLoginAndNews.TabIndex = 50;
-            this.panelLoginAndNews.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseDown);
-            this.panelLoginAndNews.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
-            this.panelLoginAndNews.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
+            this.panelLoginAndPatch.BackColor = System.Drawing.Color.Transparent;
+            this.panelLoginAndPatch.BackgroundImage = global::AAEmu.Launcher.Properties.Resources.bg_login;
+            this.panelLoginAndPatch.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.panelLoginAndPatch.Controls.Add(this.pgbFrontTotal);
+            this.panelLoginAndPatch.Controls.Add(this.pgbBackTotal);
+            this.panelLoginAndPatch.Controls.Add(this.lBigNewsImage);
+            this.panelLoginAndPatch.Controls.Add(this.imgBigNews);
+            this.panelLoginAndPatch.Controls.Add(this.eLogin);
+            this.panelLoginAndPatch.Controls.Add(this.cbLoginList);
+            this.panelLoginAndPatch.Controls.Add(this.ePassword);
+            this.panelLoginAndPatch.Controls.Add(this.wbNews);
+            this.panelLoginAndPatch.Controls.Add(this.lNewsFeed);
+            this.panelLoginAndPatch.Controls.Add(this.btnSettings);
+            this.panelLoginAndPatch.Controls.Add(this.btnWebsite);
+            this.panelLoginAndPatch.Controls.Add(this.btnPlay);
+            this.panelLoginAndPatch.Controls.Add(this.lPassword);
+            this.panelLoginAndPatch.Controls.Add(this.lLogin);
+            this.panelLoginAndPatch.Location = new System.Drawing.Point(17, 63);
+            this.panelLoginAndPatch.Name = "panelLoginAndPatch";
+            this.panelLoginAndPatch.Size = new System.Drawing.Size(376, 162);
+            this.panelLoginAndPatch.TabIndex = 50;
+            this.panelLoginAndPatch.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseDown);
+            this.panelLoginAndPatch.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
+            this.panelLoginAndPatch.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
             // 
             // lBigNewsImage
             // 
@@ -150,6 +157,19 @@
             this.lBigNewsImage.Visible = false;
             this.lBigNewsImage.Click += new System.EventHandler(this.lBigNewsImage_Click);
             // 
+            // imgBigNews
+            // 
+            this.imgBigNews.BackColor = System.Drawing.Color.Transparent;
+            this.imgBigNews.Image = global::AAEmu.Launcher.Properties.Resources.bignews_default;
+            this.imgBigNews.Location = new System.Drawing.Point(25, 85);
+            this.imgBigNews.Name = "imgBigNews";
+            this.imgBigNews.Size = new System.Drawing.Size(243, 24);
+            this.imgBigNews.TabIndex = 27;
+            this.imgBigNews.TabStop = false;
+            this.imgBigNews.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseDown);
+            this.imgBigNews.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
+            this.imgBigNews.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
+            // 
             // eLogin
             // 
             this.eLogin.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(45)))), ((int)(((byte)(65)))));
@@ -164,6 +184,24 @@
             this.eLogin.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.eLogin.WordWrap = false;
             this.eLogin.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtLogin_KeyUp);
+            // 
+            // cbLoginList
+            // 
+            this.cbLoginList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(45)))), ((int)(((byte)(65)))));
+            this.cbLoginList.DropDownHeight = 140;
+            this.cbLoginList.DropDownWidth = 200;
+            this.cbLoginList.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cbLoginList.Font = new System.Drawing.Font("Georgia", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbLoginList.ForeColor = System.Drawing.Color.White;
+            this.cbLoginList.FormattingEnabled = true;
+            this.cbLoginList.IntegralHeight = false;
+            this.cbLoginList.Location = new System.Drawing.Point(39, 397);
+            this.cbLoginList.Name = "cbLoginList";
+            this.cbLoginList.Size = new System.Drawing.Size(18, 24);
+            this.cbLoginList.TabIndex = 15;
+            this.cbLoginList.Visible = false;
+            this.cbLoginList.SelectedIndexChanged += new System.EventHandler(this.cbLoginList_SelectedIndexChanged);
+            this.cbLoginList.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtLogin_KeyUp);
             // 
             // ePassword
             // 
@@ -181,11 +219,111 @@
             this.ePassword.WordWrap = false;
             this.ePassword.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtPassword_KeyUp);
             // 
+            // wbNews
+            // 
+            this.wbNews.IsWebBrowserContextMenuEnabled = false;
+            this.wbNews.Location = new System.Drawing.Point(685, 122);
+            this.wbNews.Margin = new System.Windows.Forms.Padding(0);
+            this.wbNews.MinimumSize = new System.Drawing.Size(20, 20);
+            this.wbNews.Name = "wbNews";
+            this.wbNews.Size = new System.Drawing.Size(201, 183);
+            this.wbNews.TabIndex = 48;
+            this.wbNews.Visible = false;
+            this.wbNews.WebBrowserShortcutsEnabled = false;
+            this.wbNews.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.wbNews_DocumentCompleted);
+            // 
+            // lNewsFeed
+            // 
+            this.lNewsFeed.BackColor = System.Drawing.Color.Transparent;
+            this.lNewsFeed.Font = new System.Drawing.Font("Georgia", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lNewsFeed.ForeColor = System.Drawing.Color.White;
+            this.lNewsFeed.Image = global::AAEmu.Launcher.Properties.Resources.bg_newsfeed;
+            this.lNewsFeed.Location = new System.Drawing.Point(685, 85);
+            this.lNewsFeed.Margin = new System.Windows.Forms.Padding(0);
+            this.lNewsFeed.Name = "lNewsFeed";
+            this.lNewsFeed.Size = new System.Drawing.Size(201, 263);
+            this.lNewsFeed.TabIndex = 24;
+            this.lNewsFeed.Text = "Launcher News\r\n\r\nNow able to launch the\r\ngame using -t\r\n\r\nYou are now able to set" +
+    "\r\nyour game language\r\ndifferent from the launcher\r\n\r\nHead 4\r\ntext 4\r\n";
+            this.lNewsFeed.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // btnSettings
+            // 
+            this.btnSettings.BackColor = System.Drawing.Color.Transparent;
+            this.btnSettings.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSettings.Font = new System.Drawing.Font("Georgia", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSettings.ForeColor = System.Drawing.Color.White;
+            this.btnSettings.Image = global::AAEmu.Launcher.Properties.Resources.btn_red_small;
+            this.btnSettings.Location = new System.Drawing.Point(687, 350);
+            this.btnSettings.Name = "btnSettings";
+            this.btnSettings.Size = new System.Drawing.Size(88, 26);
+            this.btnSettings.TabIndex = 25;
+            this.btnSettings.Text = "Settings";
+            this.btnSettings.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
+            // 
+            // btnWebsite
+            // 
+            this.btnWebsite.BackColor = System.Drawing.Color.Transparent;
+            this.btnWebsite.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnWebsite.Font = new System.Drawing.Font("Georgia", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnWebsite.ForeColor = System.Drawing.Color.White;
+            this.btnWebsite.Image = global::AAEmu.Launcher.Properties.Resources.btn_green_small;
+            this.btnWebsite.Location = new System.Drawing.Point(796, 350);
+            this.btnWebsite.Name = "btnWebsite";
+            this.btnWebsite.Size = new System.Drawing.Size(94, 26);
+            this.btnWebsite.TabIndex = 26;
+            this.btnWebsite.Text = "Website";
+            this.btnWebsite.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnWebsite.Click += new System.EventHandler(this.btnWebsite_Click);
+            // 
+            // btnPlay
+            // 
+            this.btnPlay.BackColor = System.Drawing.Color.Transparent;
+            this.btnPlay.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnPlay.Font = new System.Drawing.Font("Georgia", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPlay.ForeColor = System.Drawing.Color.White;
+            this.btnPlay.Image = global::AAEmu.Launcher.Properties.Resources.btn_green_d;
+            this.btnPlay.Location = new System.Drawing.Point(679, 373);
+            this.btnPlay.Name = "btnPlay";
+            this.btnPlay.Size = new System.Drawing.Size(227, 67);
+            this.btnPlay.TabIndex = 23;
+            this.btnPlay.Text = "Play";
+            this.btnPlay.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnPlay.Click += new System.EventHandler(this.btnPlay_Click);
+            this.btnPlay.MouseEnter += new System.EventHandler(this.btnPlay_MouseEnter);
+            this.btnPlay.MouseLeave += new System.EventHandler(this.btnPlay_MouseLeave);
+            // 
+            // lPassword
+            // 
+            this.lPassword.BackColor = System.Drawing.Color.Transparent;
+            this.lPassword.Font = new System.Drawing.Font("Georgia", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lPassword.ForeColor = System.Drawing.Color.White;
+            this.lPassword.Location = new System.Drawing.Point(300, 360);
+            this.lPassword.Name = "lPassword";
+            this.lPassword.Size = new System.Drawing.Size(110, 25);
+            this.lPassword.TabIndex = 19;
+            this.lPassword.Text = "Password";
+            this.lPassword.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lLogin
+            // 
+            this.lLogin.BackColor = System.Drawing.Color.Transparent;
+            this.lLogin.Font = new System.Drawing.Font("Georgia", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lLogin.ForeColor = System.Drawing.Color.White;
+            this.lLogin.Location = new System.Drawing.Point(36, 360);
+            this.lLogin.Name = "lLogin";
+            this.lLogin.Size = new System.Drawing.Size(110, 25);
+            this.lLogin.TabIndex = 18;
+            this.lLogin.Text = "Username";
+            this.lLogin.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // pb1
             // 
-            this.pb1.Location = new System.Drawing.Point(16, 29);
+            this.pb1.Location = new System.Drawing.Point(16, 32);
             this.pb1.Name = "pb1";
-            this.pb1.Size = new System.Drawing.Size(277, 13);
+            this.pb1.Size = new System.Drawing.Size(512, 10);
             this.pb1.TabIndex = 3;
             this.pb1.Visible = false;
             // 
@@ -197,9 +335,9 @@
             // 
             // pb2
             // 
-            this.pb2.Location = new System.Drawing.Point(16, 48);
+            this.pb2.Location = new System.Drawing.Point(16, 47);
             this.pb2.Name = "pb2";
-            this.pb2.Size = new System.Drawing.Size(276, 9);
+            this.pb2.Size = new System.Drawing.Size(513, 10);
             this.pb2.TabIndex = 4;
             this.pb2.Visible = false;
             // 
@@ -229,24 +367,6 @@
             this.lPathToGameLabel.Text = "gamepath";
             this.lPathToGameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // cbLoginList
-            // 
-            this.cbLoginList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(45)))), ((int)(((byte)(65)))));
-            this.cbLoginList.DropDownHeight = 140;
-            this.cbLoginList.DropDownWidth = 200;
-            this.cbLoginList.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cbLoginList.Font = new System.Drawing.Font("Georgia", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbLoginList.ForeColor = System.Drawing.Color.White;
-            this.cbLoginList.FormattingEnabled = true;
-            this.cbLoginList.IntegralHeight = false;
-            this.cbLoginList.Location = new System.Drawing.Point(39, 397);
-            this.cbLoginList.Name = "cbLoginList";
-            this.cbLoginList.Size = new System.Drawing.Size(18, 24);
-            this.cbLoginList.TabIndex = 15;
-            this.cbLoginList.Visible = false;
-            this.cbLoginList.SelectedIndexChanged += new System.EventHandler(this.cbLoginList_SelectedIndexChanged);
-            this.cbLoginList.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtLogin_KeyUp);
-            // 
             // lAppVersion
             // 
             this.lAppVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -259,35 +379,11 @@
             this.lAppVersion.Text = "V 0.3.1";
             this.lAppVersion.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
-            // lLogin
-            // 
-            this.lLogin.BackColor = System.Drawing.Color.Transparent;
-            this.lLogin.Font = new System.Drawing.Font("Georgia", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lLogin.ForeColor = System.Drawing.Color.White;
-            this.lLogin.Location = new System.Drawing.Point(36, 360);
-            this.lLogin.Name = "lLogin";
-            this.lLogin.Size = new System.Drawing.Size(110, 25);
-            this.lLogin.TabIndex = 18;
-            this.lLogin.Text = "Username";
-            this.lLogin.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // lPassword
-            // 
-            this.lPassword.BackColor = System.Drawing.Color.Transparent;
-            this.lPassword.Font = new System.Drawing.Font("Georgia", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lPassword.ForeColor = System.Drawing.Color.White;
-            this.lPassword.Location = new System.Drawing.Point(300, 360);
-            this.lPassword.Name = "lPassword";
-            this.lPassword.Size = new System.Drawing.Size(110, 25);
-            this.lPassword.TabIndex = 19;
-            this.lPassword.Text = "Password";
-            this.lPassword.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // cmsAAEmuButton
             // 
             this.cmsAAEmuButton.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.minimizeToolStripMenuItem,
-            this.toolStripMenuItem1,
+            this.troubleshootToolStripMenuItem,
             this.debugModeToolStripMenuItem,
             this.toolStripSeparator1,
             this.closeToolStripMenuItem});
@@ -301,31 +397,42 @@
             this.minimizeToolStripMenuItem.Text = "Minimize";
             this.minimizeToolStripMenuItem.Click += new System.EventHandler(this.minimizeToolStripMenuItem_Click);
             // 
-            // toolStripMenuItem1
+            // troubleshootToolStripMenuItem
             // 
-            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.troubleshootToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.forcePatchDownloadToolStripMenuItem,
             this.deleteShaderCacheToolStripMenuItem,
             this.deleteGameConfigurationToolStripMenuItem,
             this.deleteAllArcheAgeSettingsToolStripMenuItem});
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(144, 22);
-            this.toolStripMenuItem1.Text = "Troubleshoot";
-            this.toolStripMenuItem1.Visible = false;
+            this.troubleshootToolStripMenuItem.Name = "troubleshootToolStripMenuItem";
+            this.troubleshootToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.troubleshootToolStripMenuItem.Text = "Troubleshoot";
+            this.troubleshootToolStripMenuItem.Visible = false;
+            // 
+            // forcePatchDownloadToolStripMenuItem
+            // 
+            this.forcePatchDownloadToolStripMenuItem.Name = "forcePatchDownloadToolStripMenuItem";
+            this.forcePatchDownloadToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.forcePatchDownloadToolStripMenuItem.Text = "Force Patch Download";
+            this.forcePatchDownloadToolStripMenuItem.Click += new System.EventHandler(this.forcePatchDownloadToolStripMenuItem_Click);
             // 
             // deleteShaderCacheToolStripMenuItem
             // 
+            this.deleteShaderCacheToolStripMenuItem.Enabled = false;
             this.deleteShaderCacheToolStripMenuItem.Name = "deleteShaderCacheToolStripMenuItem";
             this.deleteShaderCacheToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.deleteShaderCacheToolStripMenuItem.Text = "Delete Shader Cache";
             // 
             // deleteGameConfigurationToolStripMenuItem
             // 
+            this.deleteGameConfigurationToolStripMenuItem.Enabled = false;
             this.deleteGameConfigurationToolStripMenuItem.Name = "deleteGameConfigurationToolStripMenuItem";
             this.deleteGameConfigurationToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.deleteGameConfigurationToolStripMenuItem.Text = "Delete game configuration";
             // 
             // deleteAllArcheAgeSettingsToolStripMenuItem
             // 
+            this.deleteAllArcheAgeSettingsToolStripMenuItem.Enabled = false;
             this.deleteAllArcheAgeSettingsToolStripMenuItem.Name = "deleteAllArcheAgeSettingsToolStripMenuItem";
             this.deleteAllArcheAgeSettingsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.deleteAllArcheAgeSettingsToolStripMenuItem.Text = "Delete all ArcheAge settings";
@@ -735,69 +842,6 @@
             this.btnSystem.Click += new System.EventHandler(this.btnSystem_Click);
             this.btnSystem.DoubleClick += new System.EventHandler(this.btnSystem_DoubleClick);
             // 
-            // btnWebsite
-            // 
-            this.btnWebsite.BackColor = System.Drawing.Color.Transparent;
-            this.btnWebsite.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnWebsite.Font = new System.Drawing.Font("Georgia", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnWebsite.ForeColor = System.Drawing.Color.White;
-            this.btnWebsite.Image = global::AAEmu.Launcher.Properties.Resources.btn_green_small;
-            this.btnWebsite.Location = new System.Drawing.Point(796, 350);
-            this.btnWebsite.Name = "btnWebsite";
-            this.btnWebsite.Size = new System.Drawing.Size(94, 26);
-            this.btnWebsite.TabIndex = 26;
-            this.btnWebsite.Text = "Website";
-            this.btnWebsite.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.btnWebsite.Click += new System.EventHandler(this.btnWebsite_Click);
-            // 
-            // btnSettings
-            // 
-            this.btnSettings.BackColor = System.Drawing.Color.Transparent;
-            this.btnSettings.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSettings.Font = new System.Drawing.Font("Georgia", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSettings.ForeColor = System.Drawing.Color.White;
-            this.btnSettings.Image = global::AAEmu.Launcher.Properties.Resources.btn_red_small;
-            this.btnSettings.Location = new System.Drawing.Point(687, 350);
-            this.btnSettings.Name = "btnSettings";
-            this.btnSettings.Size = new System.Drawing.Size(88, 26);
-            this.btnSettings.TabIndex = 25;
-            this.btnSettings.Text = "Settings";
-            this.btnSettings.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
-            // 
-            // lNewsFeed
-            // 
-            this.lNewsFeed.BackColor = System.Drawing.Color.Transparent;
-            this.lNewsFeed.Font = new System.Drawing.Font("Georgia", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lNewsFeed.ForeColor = System.Drawing.Color.White;
-            this.lNewsFeed.Image = global::AAEmu.Launcher.Properties.Resources.bg_newsfeed;
-            this.lNewsFeed.Location = new System.Drawing.Point(685, 85);
-            this.lNewsFeed.Margin = new System.Windows.Forms.Padding(0);
-            this.lNewsFeed.Name = "lNewsFeed";
-            this.lNewsFeed.Size = new System.Drawing.Size(201, 263);
-            this.lNewsFeed.TabIndex = 24;
-            this.lNewsFeed.Text = "Launcher News\r\n\r\nNow able to launch the\r\ngame using -t\r\n\r\nYou are now able to set" +
-    "\r\nyour game language\r\ndifferent from the launcher\r\n\r\nHead 4\r\ntext 4\r\n";
-            this.lNewsFeed.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // btnPlay
-            // 
-            this.btnPlay.BackColor = System.Drawing.Color.Transparent;
-            this.btnPlay.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnPlay.Font = new System.Drawing.Font("Georgia", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnPlay.ForeColor = System.Drawing.Color.White;
-            this.btnPlay.Image = global::AAEmu.Launcher.Properties.Resources.btn_green_d;
-            this.btnPlay.Location = new System.Drawing.Point(679, 373);
-            this.btnPlay.Name = "btnPlay";
-            this.btnPlay.Size = new System.Drawing.Size(227, 67);
-            this.btnPlay.TabIndex = 23;
-            this.btnPlay.Text = "Play";
-            this.btnPlay.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.btnPlay.Click += new System.EventHandler(this.btnPlay_Click);
-            this.btnPlay.MouseEnter += new System.EventHandler(this.btnPlay_MouseEnter);
-            this.btnPlay.MouseLeave += new System.EventHandler(this.btnPlay_MouseLeave);
-            // 
             // btnDiscord
             // 
             this.btnDiscord.BackColor = System.Drawing.Color.Transparent;
@@ -838,32 +882,6 @@
             this.btnLauncherLangChange.TabStop = false;
             this.btnLauncherLangChange.Click += new System.EventHandler(this.btnLauncherLangChange_Click);
             // 
-            // imgBigNews
-            // 
-            this.imgBigNews.BackColor = System.Drawing.Color.Transparent;
-            this.imgBigNews.Image = global::AAEmu.Launcher.Properties.Resources.bignews_default;
-            this.imgBigNews.Location = new System.Drawing.Point(25, 85);
-            this.imgBigNews.Name = "imgBigNews";
-            this.imgBigNews.Size = new System.Drawing.Size(243, 24);
-            this.imgBigNews.TabIndex = 27;
-            this.imgBigNews.TabStop = false;
-            this.imgBigNews.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseDown);
-            this.imgBigNews.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
-            this.imgBigNews.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
-            // 
-            // wbNews
-            // 
-            this.wbNews.IsWebBrowserContextMenuEnabled = false;
-            this.wbNews.Location = new System.Drawing.Point(685, 122);
-            this.wbNews.Margin = new System.Windows.Forms.Padding(0);
-            this.wbNews.MinimumSize = new System.Drawing.Size(20, 20);
-            this.wbNews.Name = "wbNews";
-            this.wbNews.Size = new System.Drawing.Size(201, 183);
-            this.wbNews.TabIndex = 48;
-            this.wbNews.Visible = false;
-            this.wbNews.WebBrowserShortcutsEnabled = false;
-            this.wbNews.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.wbNews_DocumentCompleted);
-            // 
             // panelSettings
             // 
             this.panelSettings.BackColor = System.Drawing.Color.Transparent;
@@ -894,6 +912,27 @@
             this.panelSettings.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
             this.panelSettings.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
             // 
+            // pgbBackTotal
+            // 
+            this.pgbBackTotal.BackColor = System.Drawing.Color.Transparent;
+            this.pgbBackTotal.Image = global::AAEmu.Launcher.Properties.Resources.pgbar_back;
+            this.pgbBackTotal.Location = new System.Drawing.Point(36, 360);
+            this.pgbBackTotal.Name = "pgbBackTotal";
+            this.pgbBackTotal.Size = new System.Drawing.Size(500, 70);
+            this.pgbBackTotal.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pgbBackTotal.TabIndex = 52;
+            this.pgbBackTotal.TabStop = false;
+            // 
+            // pgbFrontTotal
+            // 
+            this.pgbFrontTotal.BackColor = System.Drawing.Color.Transparent;
+            this.pgbFrontTotal.Image = global::AAEmu.Launcher.Properties.Resources.pgbar_front;
+            this.pgbFrontTotal.Location = new System.Drawing.Point(36, 360);
+            this.pgbFrontTotal.Name = "pgbFrontTotal";
+            this.pgbFrontTotal.Size = new System.Drawing.Size(500, 70);
+            this.pgbFrontTotal.TabIndex = 53;
+            this.pgbFrontTotal.TabStop = false;
+            // 
             // LauncherForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -909,7 +948,7 @@
             this.Controls.Add(this.btnLauncherLangChange);
             this.Controls.Add(this.pb2);
             this.Controls.Add(this.pb1);
-            this.Controls.Add(this.panelLoginAndNews);
+            this.Controls.Add(this.panelLoginAndPatch);
             this.Controls.Add(this.panelSettings);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Georgia", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -927,8 +966,9 @@
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
-            this.panelLoginAndNews.ResumeLayout(false);
-            this.panelLoginAndNews.PerformLayout();
+            this.panelLoginAndPatch.ResumeLayout(false);
+            this.panelLoginAndPatch.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.imgBigNews)).EndInit();
             this.cmsAAEmuButton.ResumeLayout(false);
             this.cmsGitHub.ResumeLayout(false);
             this.cmsLauncherLanguage.ResumeLayout(false);
@@ -938,9 +978,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.btnDiscord)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnGithub)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnLauncherLangChange)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imgBigNews)).EndInit();
             this.panelSettings.ResumeLayout(false);
             this.panelSettings.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pgbBackTotal)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pgbFrontTotal)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1006,14 +1047,17 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem troubleshootToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteShaderCacheToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteGameConfigurationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteAllArcheAgeSettingsToolStripMenuItem;
         private System.Windows.Forms.WebBrowser wbNews;
         private System.Windows.Forms.Label lBigNewsImage;
-        private System.Windows.Forms.Panel panelLoginAndNews;
+        private System.Windows.Forms.Panel panelLoginAndPatch;
         private System.Windows.Forms.Panel panelSettings;
+        private System.Windows.Forms.ToolStripMenuItem forcePatchDownloadToolStripMenuItem;
+        private System.Windows.Forms.PictureBox pgbBackTotal;
+        private System.Windows.Forms.PictureBox pgbFrontTotal;
     }
 }
 
