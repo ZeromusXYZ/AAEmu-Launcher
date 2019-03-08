@@ -10,7 +10,7 @@
   "lastLoginUser": "",
   "lastLoginPass": "",
   "loginType": "trino_1_2",
-  "updateLocale": "False",
+  "updateLocale": "True",
   "allowGameUpdates": "False",
   "serverGameUpdateURL": "",
   "serverWebsiteURL": "https://aaemu.info/",

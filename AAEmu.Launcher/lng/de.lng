@@ -20,5 +20,7 @@
   "unknownlauncherprotocol": "Unbekanntes Startprogramm-Protokoll: {0}",
   "nouserorpassword": "Bitte geben Sie einen Benutzernamen und ein Passwort ein",
   "missinggame": "Kein gültiger Spielpfad eingestellt!",
-  "errorupdatingfile": "Fehler beim Aktualisieren {0}"
+  "errorupdatingfile": "Fehler beim Aktualisieren {0}",
+  "minimize": "Minimieren",
+  "closeprogram": "Schließen"
 }

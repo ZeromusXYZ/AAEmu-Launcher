@@ -229,6 +229,11 @@ namespace AAEmu.Launcher
             [JsonProperty("errorupdatingfile")]
             public string ErrorUpdatingFile { get; set; }
 
+            [JsonProperty("minimize")]
+            public string Minimize { get; set; }
+
+            [JsonProperty("closeprogram")]
+            public string CloseProgram { get; set; }
         }
 
 
@@ -297,6 +302,8 @@ namespace AAEmu.Launcher
             L.NoUserOrPassword = "Please enter a username and password";
             L.MissingGame = "No valid game path set!";
             L.ErrorUpdatingFile = "ERROR updating {0}";
+            L.Minimize = "Minimize";
+            L.CloseProgram = "Close";
         }
 
         private void LoadLanguageFromFile(string languageID)
@@ -370,38 +377,19 @@ namespace AAEmu.Launcher
             // Just show/hide what you need (swapping out background where needed)
 
             // 0: Main login "panel"
-            lLogin.Visible = (panelID == 0);
-            eLogin.Visible = (panelID == 0); // "Transparent" TextBox always hidden
+            panelLoginAndNews.Visible = (panelID == 0);
+            panelLoginAndNews.Location = new Point(0, 0);
+            panelLoginAndNews.Size = this.Size;
+
             cbLoginList.Visible = ((panelID == 0) && (cbLoginList.Items.Count > 0));
-            lPassword.Visible = (panelID == 0);
-            ePassword.Visible = (panelID == 0); // "Transparent" TextBox always hidden
-            btnPlay.Visible = (panelID == 0);
-            btnSettings.Visible = (panelID == 0);
-            btnWebsite.Visible = (panelID == 0);
-            lNewsFeed.Visible = (panelID == 0);
-            imgBigNews.Visible = (panelID == 0);
             lBigNewsImage.Visible = ((panelID == 0) && (lBigNewsImage.Tag != null) && (lBigNewsImage.Tag.ToString() != ""));
             wbNews.Visible = ((panelID == 0) && (wbNews.Tag != null) && (wbNews.Tag.ToString() == "1"));
 
             // 1: Settings "panel"
-            lSettingsBack.Visible = (panelID == 1);
-            lIPAddress.Visible = (panelID == 1);
-            eServerIP.Visible = (panelID == 1);
-            lGamePath.Visible = (panelID == 1);
-            lPathToGameLabel.Visible = (panelID == 1);
-            lHideSplash.Visible = (panelID == 1);
-            cbHideSplash.Visible = (panelID == 1);
-            lSaveUser.Visible = (panelID == 1);
-            cbSaveUser.Visible = (panelID == 1);
-            lSkipIntro.Visible = (panelID == 1); // Currently disabled/unused
-            cbSkipIntro.Visible = (panelID == 1);
-            lGameClientType.Visible = (panelID == 1);
-            lUpdateLocale.Visible = (panelID == 1);
-            cbUpdateLocale.Visible = (panelID == 1);
-            btnLocaleLang.Visible = (panelID == 1);
+            panelSettings.Visible = (panelID == 1);
+            panelSettings.Location = new Point(0, 0);
+            panelSettings.Size = this.Size;
 
-            lAllowUpdates.Visible = (panelID == 1);
-            cbAllowUpdates.Visible = (panelID == 1);
             // Gray out this setting if no update url is set
             if ((Setting.ServerGameUpdateURL != null) && (Setting.ServerGameUpdateURL != ""))
             {
@@ -416,7 +404,7 @@ namespace AAEmu.Launcher
                 cbAllowUpdates.Cursor = Cursors.No;
             }
 
-
+            // If we don't change this, transparancy effects that aren't on the panels will show wrong because of gray background
             switch (panelID)
             {
                 case 0:
@@ -429,6 +417,7 @@ namespace AAEmu.Launcher
                     BackgroundImage = Properties.Resources.bg;
                     break;
             }
+            
 
             currentPanel = panelID;
         }
@@ -468,6 +457,9 @@ namespace AAEmu.Launcher
             btnWebsite.Text = L.Website;
             lUpdateLocale.Text = L.UpdateLocale ;
             lAllowUpdates.Text = L.AllowUpdates;
+            minimizeToolStripMenuItem.Text = L.Minimize;
+            closeToolStripMenuItem.Text = L.CloseProgram;
+
             updatePlayButton(serverCheckStatus, false);
 
             btnLauncherLangChange.Refresh();
