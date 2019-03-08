@@ -310,7 +310,7 @@ namespace AAEmu.Launcher
         {
             bool res = false;
 
-            string lngFileName = Application.StartupPath + "\\lng\\" + languageID + ".lng";
+            string lngFileName = Path.GetDirectoryName(Application.ExecutablePath) + "\\lng\\" + languageID + ".lng";
 
             StreamReader reader = null;
             Console.WriteLine(lngFileName);
@@ -1803,25 +1803,37 @@ namespace AAEmu.Launcher
 
         private Image LoadImageForNews(AAEmuNewsFeedDataItem newsItem)
         {
-            string cacheFileName = "data\\img-" + Setting.configName.Replace("@","_").Replace("/","_").Replace("\\","_").Replace("|","_") + "-" + newsItem.itemID + ".bin";
+            string cacheFolder = Application.LocalUserAppDataPath + "\\data";
+            Directory.CreateDirectory(cacheFolder);
+            string cacheFileName = cacheFolder + "\\img -" + Setting.configName.Replace("@","_").Replace("/","_").Replace("\\","_").Replace("|","_") + "-" + newsItem.itemID + ".bin";
 
             MemoryStream imageData;
+            Image img = null;
             if (File.Exists(cacheFileName) == true)
             {
                 FileStream fs = new FileStream(cacheFileName, FileMode.Open);
                 imageData = new MemoryStream();
                 fs.CopyTo(imageData);
                 fs.Dispose();
+                img = Image.FromStream(imageData);
             }
             else
             {
-                imageData = WebHelper.SimpleGetURIAsMemoryStream(newsItem.itemAttributes.itemPicture);
-                FileStream fs = new FileStream(cacheFileName, FileMode.Create);
-                imageData.WriteTo(fs);
-                fs.Flush();
-                fs.Dispose();
+                try
+                {
+                    imageData = WebHelper.SimpleGetURIAsMemoryStream(newsItem.itemAttributes.itemPicture);
+                    FileStream fs = new FileStream(cacheFileName, FileMode.Create);
+                    imageData.WriteTo(fs);
+                    fs.Flush();
+                    fs.Dispose();
+                    img = Image.FromStream(imageData);
+                }
+                catch
+                {
+                    Console.WriteLine("Error loading " + newsItem.itemAttributes.itemPicture + " into " + cacheFileName);
+                }
+
             }
-            var img = Image.FromStream(imageData);
             return img;
         }
 
