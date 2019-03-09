@@ -1650,68 +1650,41 @@ namespace AAEmu.Launcher
 
         }
 
+
         private void timerGeneral_Tick(object sender, EventArgs e)
         {
-            if (checkNews == true)
-            {
-                checkNews = false;
-                lNewsFeed.Text = "Server News\n\n\n\nLoading ...";
-
-                try
-                {
-                    string newsString = WebHelper.SimpleGetURIAsString(Setting.ServerNewsFeedURL);
-                    CreateNewsFeedFromJSON(newsString);
-                } catch
-                {
-                    lNewsFeed.Text = "Server News\n\n\n\nLoad Failed !";
-                }
-            }
-
             if (nextServerCheck > 0)
             {
-                /*
-                if (pb2.Maximum < nextServerCheck)
-                {
-                    pb2.Maximum = nextServerCheck;
-                }
-                pb2.Value = nextServerCheck;
-                */
-
                 nextServerCheck -= timerGeneral.Interval;
                 if (nextServerCheck <= 0)
                 {
                     nextServerCheck += 1000 * 60 * 1 ; // 1 minute
-                    checkServerStatus();
-
+                    //checkServerStatus();
+                    bgwServerStatusCheck.RunWorkerAsync();
                     updatePlayButton(serverCheckStatus, false);
                 }
             }
 
+            bool updateNews = false;
             if ((bigNewsTimer > 0) && (currentPanel == 0)) // Only count timer on the main "panel"
             {
                 bigNewsTimer -= timerGeneral.Interval;
                 if (bigNewsTimer <= 0)
                 {
                     bigNewsTimer += 1000 * 10 * 1; // 1 minute
-
                     bigNewsIndex++;
                     if (bigNewsIndex >= newsFeed.data.Count)
                     {
                         bigNewsIndex = 0;
                     }
 
-                    LoadBigNews(newsFeed.data[bigNewsIndex]);
+                    updateNews = true;
                 }
             }
 
-            if (serverCheckStatus == serverCheck.Updating)
+            if ((checkNews == true) || (updateNews == true))
             {
-                pgbPos++;
-                if (pgbPos > 100)
-                {
-                    pgbPos = 0;
-                }
-                UpdateProgressBarTotal(pgbPos, 100);
+                bgwNewsFeed.RunWorkerAsync();
             }
 
 
@@ -1884,7 +1857,9 @@ namespace AAEmu.Launcher
 
             if ((newsFeed.data != null) && (newsFeed.data[0].itemAttributes.itemPicture != null) && (newsFeed.data[0].itemAttributes.itemPicture != ""))
             {
-                LoadBigNews(newsFeed.data[0]);
+                // LoadBigNews(newsFeed.data[0]);
+                // Move this to always load at the end of our newsfeed backgroundworker thread
+                bigNewsIndex = 0;
                 bigNewsTimer = 1000 * 10 * 1; // 10 seconds
             }
         }
@@ -1992,6 +1967,73 @@ namespace AAEmu.Launcher
             ShowPanelControls(2); // Swap to download layout
             updatePlayButton(serverCheckStatus, false);
             //
+        }
+
+        private void bgwNewsFeed_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker worker = sender as BackgroundWorker;
+            worker.ReportProgress(0);
+            if (checkNews == true)
+            {
+                checkNews = false;
+                worker.ReportProgress(1);
+                System.Threading.Thread.Sleep(250);
+                //lNewsFeed.Text = "Server News\n\n\n\nLoading ...";
+                //wbNews.Visible = false;
+                //wbNews.Tag = "0";
+                try
+                {
+                    string newsString = WebHelper.SimpleGetURIAsString(Setting.ServerNewsFeedURL);
+                    worker.ReportProgress(10);
+                    CreateNewsFeedFromJSON(newsString);
+                    worker.ReportProgress(50);
+                }
+                catch
+                {
+                    //lNewsFeed.Text = "Server News\n\n\n\nLoad Failed !";
+                    worker.ReportProgress(99);
+                }
+            }
+
+            this.Invoke(new MethodInvoker(delegate
+            {
+                LoadBigNews(newsFeed.data[bigNewsIndex]);
+            }));
+            worker.ReportProgress(100);
+        }
+
+        private void bgwNewsFeed_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            // Didn't feel like making a custom object, so just using the progress settings to change the label here
+            switch(e.ProgressPercentage)
+            {
+                case 1:
+                    lNewsFeed.Text = "Server News\n\n\n\nLoading ...";
+                    wbNews.Visible = false;
+                    wbNews.Tag = "0";
+                    break;
+                case 10:
+                    lNewsFeed.Text = "Server News";
+                    break;
+                case 99:
+                    lNewsFeed.Text = "Server News\n\n\n\nLoad Failed !";
+                    break;
+            }
+        }
+
+        private void bgwNewsFeed_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            //
+        }
+
+        private void bgwServerStatusCheck_DoWork(object sender, DoWorkEventArgs e)
+        {
+            checkServerStatus();
+        }
+
+        private void bgwServerStatusCheck_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            updatePlayButton(serverCheckStatus, false);
         }
     }
 }

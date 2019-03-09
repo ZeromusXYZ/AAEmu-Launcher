@@ -101,6 +101,9 @@
             this.pgbBackTotal = new System.Windows.Forms.PictureBox();
             this.pgbFrontTotal = new System.Windows.Forms.PictureBox();
             this.panelLoginAndPatch.SuspendLayout();
+            this.bgwNewsFeed = new System.ComponentModel.BackgroundWorker();
+            this.bgwServerStatusCheck = new System.ComponentModel.BackgroundWorker();
+            this.panelLoginAndNews.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imgBigNews)).BeginInit();
             this.cmsAAEmuButton.SuspendLayout();
             this.cmsGitHub.SuspendLayout();
@@ -932,6 +935,18 @@
             this.pgbFrontTotal.Size = new System.Drawing.Size(500, 70);
             this.pgbFrontTotal.TabIndex = 53;
             this.pgbFrontTotal.TabStop = false;
+            // bgwNewsFeed
+            // 
+            this.bgwNewsFeed.WorkerReportsProgress = true;
+            this.bgwNewsFeed.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwNewsFeed_DoWork);
+            this.bgwNewsFeed.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgwNewsFeed_ProgressChanged);
+            this.bgwNewsFeed.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwNewsFeed_RunWorkerCompleted);
+            // 
+            // bgwServerStatusCheck
+            // 
+            this.bgwServerStatusCheck.WorkerReportsProgress = true;
+            this.bgwServerStatusCheck.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwServerStatusCheck_DoWork);
+            this.bgwServerStatusCheck.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwServerStatusCheck_RunWorkerCompleted);
             // 
             // LauncherForm
             // 
@@ -1058,6 +1073,8 @@
         private System.Windows.Forms.ToolStripMenuItem forcePatchDownloadToolStripMenuItem;
         private System.Windows.Forms.PictureBox pgbBackTotal;
         private System.Windows.Forms.PictureBox pgbFrontTotal;
+        private System.ComponentModel.BackgroundWorker bgwNewsFeed;
+        private System.ComponentModel.BackgroundWorker bgwServerStatusCheck;
     }
 }
 
