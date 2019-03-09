@@ -240,6 +240,27 @@ namespace AAEmu.Launcher
 
             [JsonProperty("closeprogram")]
             public string CloseProgram { get; set; }
+
+            [JsonProperty("noupdateurl")]
+            public string NoUpdateURL { get; set; }
+
+            [JsonProperty("checkversion")]
+            public string CheckVersion { get; set; }
+
+            [JsonProperty("downloadpatch")]
+            public string DownloadPatch { get; set; }
+
+            [JsonProperty("downloaderror")]
+            public string DownloadError { get; set; }
+
+            [JsonProperty("applypatch")]
+            public string ApplyPatch { get; set; }
+
+            [JsonProperty("applypatcherror")]
+            public string ApplyPatchError { get; set; }
+
+            [JsonProperty("patchcomplete")]
+            public string PatchComplete { get; set; }
         }
 
 
@@ -252,6 +273,8 @@ namespace AAEmu.Launcher
         const ushort defaultAuthPort = 1237 ;
         const string launcherDefaultConfigFile = "settings.aelcf"; // .aelcf = ArcheAge Emu Launcher Configuration File
         const string clientLookupDefaultFile = "clientslist.json";
+        const string patchListFileName = ".patch/patchfiles.csv";
+        const string patchVersionFileName = ".patch/patchfiles.ver";
         string launcherOpenedConfigFile = "";
         const string urlAAEmuGitHub = "https://github.com/atel0/AAEmu";
         const string urlLauncherGitHub = "https://github.com/ZeromusXYZ/AAEmu-Launcher";
@@ -279,7 +302,7 @@ namespace AAEmu.Launcher
         private int bigNewsIndex = -1;
         private int bigNewsTimer = -1;
 
-        private int pgbPos = 0;
+        AAPatchProgress aaPatcher = new AAPatchProgress();
 
         public LauncherForm()
         {
@@ -315,6 +338,13 @@ namespace AAEmu.Launcher
             L.ErrorUpdatingFile = "ERROR updating {0}";
             L.Minimize = "Minimize";
             L.CloseProgram = "Close";
+            L.NoUpdateURL = "No update information provided, please start the launcher with a configuration file from the server you are trying to play on.";
+            L.CheckVersion = "Checking version information.";
+            L.DownloadPatch = "Downloading patch files";
+            L.DownloadError = "Error downloading patch files!";
+            L.ApplyPatch = "Applying patch";
+            L.ApplyPatchError = "Error while patching game files!";
+            L.PatchComplete = "Done patching files.";
         }
 
         private void LoadLanguageFromFile(string languageID)
@@ -410,6 +440,7 @@ namespace AAEmu.Launcher
             cbLoginList.Visible = (cbLoginList.Items.Count > 0);
             lBigNewsImage.Visible = ((panelID == 0) && (lBigNewsImage.Tag != null) && (lBigNewsImage.Tag.ToString() != ""));
             wbNews.Visible = (((panelID == 0) || (panelID == 2)) && (wbNews.Tag != null) && (wbNews.Tag.ToString() == "1"));
+            lPatchProgressBarText.Visible = (panelID == 2);
             pgbBackTotal.Visible = (panelID == 2);
             pgbFrontTotal.Visible = (panelID == 2);
 
@@ -1207,7 +1238,16 @@ namespace AAEmu.Launcher
             switch (serverCheckStatus)
             {
                 case serverCheck.Update:
-                    StartUpdate();
+                    if ((Setting.ServerGameUpdateURL != null) && (Setting.ServerGameUpdateURL != ""))
+                    {
+                        StartUpdate();
+                    }
+                    else
+                    {
+                        MessageBox.Show(L.NoUpdateURL,"No update URL");
+                        serverCheckStatus = serverCheck.Unknown;
+                        nextServerCheck = 1000;
+                    }
                     break;
                 case serverCheck.Updating:
                     // Do nothing with this button while we are updating
@@ -1684,10 +1724,45 @@ namespace AAEmu.Launcher
 
             if ((checkNews == true) || (updateNews == true))
             {
-                bgwNewsFeed.RunWorkerAsync();
+                if (!bgwNewsFeed.IsBusy)
+                {
+                    bgwNewsFeed.RunWorkerAsync();
+                }
             }
 
 
+        }
+
+        private bool NeedToUpdateFrom(string remoteVersion)
+        {
+            string s = "";
+            string localPatchVerFile = Path.GetDirectoryName(Path.GetDirectoryName(Setting.PathToGame)) + "\\" + patchVersionFileName;
+            try
+            {
+                if (File.Exists(localPatchVerFile))
+                {
+                    s = File.ReadAllText(localPatchVerFile);
+                }
+            }
+            catch
+            {
+                s = "";
+            }
+
+            if ((s != "") && (aaPatcher.SetLocalVersionByString(s)))
+            {
+                if (aaPatcher.remoteVersion != aaPatcher.localVersion)
+                {
+                    // Different version, enable patching
+                    return true;
+                }
+            }
+            else if (s == "")
+            {
+                // No data, enable patching
+                return true;
+            }
+            return false;
         }
 
         private void checkServerStatus()
@@ -1741,6 +1816,21 @@ namespace AAEmu.Launcher
                 }
             }
             Application.UseWaitCursor = false;
+
+            if ((Setting.ServerGameUpdateURL != null) && (Setting.ServerGameUpdateURL != "") && (aaPatcher.remoteVersion == ""))
+            {
+
+                // Download patch version file
+                string remoteVersionString = WebHelper.SimpleGetURIAsString(Setting.ServerGameUpdateURL + patchVersionFileName);
+                if (aaPatcher.SetRemoteVersionByString(remoteVersionString))
+                {
+                    if (NeedToUpdateFrom(aaPatcher.remoteVersion))
+                    {
+                        serverCheckStatus = serverCheck.Update;
+                        nextServerCheck = -1;
+                    }
+                }
+            }
 
         }
 
@@ -1966,7 +2056,7 @@ namespace AAEmu.Launcher
             serverCheckStatus = serverCheck.Updating;
             ShowPanelControls(2); // Swap to download layout
             updatePlayButton(serverCheckStatus, false);
-            //
+            bgwPatcher.RunWorkerAsync(); // start patch process
         }
 
         private void bgwNewsFeed_DoWork(object sender, DoWorkEventArgs e)
@@ -2033,6 +2123,73 @@ namespace AAEmu.Launcher
 
         private void bgwServerStatusCheck_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            updatePlayButton(serverCheckStatus, false);
+        }
+
+        private void bgwPatcher_DoWork(object sender, DoWorkEventArgs e)
+        {
+            aaPatcher.Fase = PatchFase.Init;
+            bgwPatcher.ReportProgress(0, aaPatcher);
+
+            System.Threading.Thread.Sleep(150);
+            aaPatcher.Fase = PatchFase.DownloadPatchFilesInfo;
+            bgwPatcher.ReportProgress(0, aaPatcher);
+
+            // Download patch version file
+            string remoteVersionString = WebHelper.SimpleGetURIAsString(Setting.ServerGameUpdateURL + patchVersionFileName);
+            if (!aaPatcher.SetRemoteVersionByString(remoteVersionString))
+            {
+                aaPatcher.Fase = PatchFase.Done;
+                MessageBox.Show(L.DownloadError +"\r\n"+Setting.ServerGameUpdateURL + patchVersionFileName);
+                return;
+            }
+            bgwPatcher.ReportProgress(1, aaPatcher);
+
+
+            aaPatcher.Fase = PatchFase.CalculateDownloads ;
+            // Do patch stuff
+            for (int i = 0; i <= 100;i++)
+            {
+                bgwPatcher.ReportProgress(i, aaPatcher);
+                System.Threading.Thread.Sleep(250);
+            }
+            aaPatcher.Fase = PatchFase.Done;
+            bgwPatcher.ReportProgress(100, aaPatcher);
+            System.Threading.Thread.Sleep(1500);
+        }
+
+        private void bgwPatcher_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            // Patch progress
+            AAPatchProgress p = e.UserState as AAPatchProgress;
+            switch(p.Fase)
+            {
+                case PatchFase.Init:
+                    lPatchProgressBarText.Text = L.CheckVersion;
+                    break;
+                case PatchFase.CalculateDownloads:
+                    lPatchProgressBarText.Text = L.CheckVersion + " -> " + aaPatcher.remoteVersion ;
+                    break;
+                case PatchFase.DownloadFiles:
+                    lPatchProgressBarText.Text = L.DownloadPatch;
+                    break;
+                case PatchFase.AddFiles:
+                    lPatchProgressBarText.Text = L.ApplyPatch;
+                    break;
+                case PatchFase.Done:
+                    lPatchProgressBarText.Text = L.PatchComplete;
+                    break;
+            }
+            UpdateProgressBarTotal(e.ProgressPercentage, 100);
+        }
+
+        private void bgwPatcher_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // Patch Finished
+            // Revert server status to unknown
+            serverCheckStatus = serverCheck.Unknown;
+            nextServerCheck = 1000;
+            ShowPanelControls(0);
             updatePlayButton(serverCheckStatus, false);
         }
     }

@@ -31,6 +31,8 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LauncherForm));
             this.panelLoginAndPatch = new System.Windows.Forms.Panel();
+            this.pgbFrontTotal = new System.Windows.Forms.PictureBox();
+            this.pgbBackTotal = new System.Windows.Forms.PictureBox();
             this.lBigNewsImage = new System.Windows.Forms.Label();
             this.imgBigNews = new System.Windows.Forms.PictureBox();
             this.eLogin = new System.Windows.Forms.TextBox();
@@ -98,12 +100,13 @@
             this.btnGithub = new System.Windows.Forms.PictureBox();
             this.btnLauncherLangChange = new System.Windows.Forms.PictureBox();
             this.panelSettings = new System.Windows.Forms.Panel();
-            this.pgbBackTotal = new System.Windows.Forms.PictureBox();
-            this.pgbFrontTotal = new System.Windows.Forms.PictureBox();
-            this.panelLoginAndPatch.SuspendLayout();
             this.bgwNewsFeed = new System.ComponentModel.BackgroundWorker();
             this.bgwServerStatusCheck = new System.ComponentModel.BackgroundWorker();
-            this.panelLoginAndNews.SuspendLayout();
+            this.bgwPatcher = new System.ComponentModel.BackgroundWorker();
+            this.lPatchProgressBarText = new System.Windows.Forms.Label();
+            this.panelLoginAndPatch.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pgbFrontTotal)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pgbBackTotal)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgBigNews)).BeginInit();
             this.cmsAAEmuButton.SuspendLayout();
             this.cmsGitHub.SuspendLayout();
@@ -115,8 +118,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.btnGithub)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnLauncherLangChange)).BeginInit();
             this.panelSettings.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pgbBackTotal)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pgbFrontTotal)).BeginInit();
             this.SuspendLayout();
             // 
             // panelLoginAndPatch
@@ -124,6 +125,7 @@
             this.panelLoginAndPatch.BackColor = System.Drawing.Color.Transparent;
             this.panelLoginAndPatch.BackgroundImage = global::AAEmu.Launcher.Properties.Resources.bg_login;
             this.panelLoginAndPatch.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.panelLoginAndPatch.Controls.Add(this.lPatchProgressBarText);
             this.panelLoginAndPatch.Controls.Add(this.pgbFrontTotal);
             this.panelLoginAndPatch.Controls.Add(this.pgbBackTotal);
             this.panelLoginAndPatch.Controls.Add(this.lBigNewsImage);
@@ -145,6 +147,27 @@
             this.panelLoginAndPatch.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseDown);
             this.panelLoginAndPatch.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
             this.panelLoginAndPatch.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
+            // 
+            // pgbFrontTotal
+            // 
+            this.pgbFrontTotal.BackColor = System.Drawing.Color.Transparent;
+            this.pgbFrontTotal.Image = global::AAEmu.Launcher.Properties.Resources.pgbar_front;
+            this.pgbFrontTotal.Location = new System.Drawing.Point(36, 360);
+            this.pgbFrontTotal.Name = "pgbFrontTotal";
+            this.pgbFrontTotal.Size = new System.Drawing.Size(500, 70);
+            this.pgbFrontTotal.TabIndex = 53;
+            this.pgbFrontTotal.TabStop = false;
+            // 
+            // pgbBackTotal
+            // 
+            this.pgbBackTotal.BackColor = System.Drawing.Color.Transparent;
+            this.pgbBackTotal.Image = global::AAEmu.Launcher.Properties.Resources.pgbar_back;
+            this.pgbBackTotal.Location = new System.Drawing.Point(36, 360);
+            this.pgbBackTotal.Name = "pgbBackTotal";
+            this.pgbBackTotal.Size = new System.Drawing.Size(500, 70);
+            this.pgbBackTotal.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pgbBackTotal.TabIndex = 52;
+            this.pgbBackTotal.TabStop = false;
             // 
             // lBigNewsImage
             // 
@@ -915,26 +938,6 @@
             this.panelSettings.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
             this.panelSettings.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
             // 
-            // pgbBackTotal
-            // 
-            this.pgbBackTotal.BackColor = System.Drawing.Color.Transparent;
-            this.pgbBackTotal.Image = global::AAEmu.Launcher.Properties.Resources.pgbar_back;
-            this.pgbBackTotal.Location = new System.Drawing.Point(36, 360);
-            this.pgbBackTotal.Name = "pgbBackTotal";
-            this.pgbBackTotal.Size = new System.Drawing.Size(500, 70);
-            this.pgbBackTotal.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pgbBackTotal.TabIndex = 52;
-            this.pgbBackTotal.TabStop = false;
-            // 
-            // pgbFrontTotal
-            // 
-            this.pgbFrontTotal.BackColor = System.Drawing.Color.Transparent;
-            this.pgbFrontTotal.Image = global::AAEmu.Launcher.Properties.Resources.pgbar_front;
-            this.pgbFrontTotal.Location = new System.Drawing.Point(36, 360);
-            this.pgbFrontTotal.Name = "pgbFrontTotal";
-            this.pgbFrontTotal.Size = new System.Drawing.Size(500, 70);
-            this.pgbFrontTotal.TabIndex = 53;
-            this.pgbFrontTotal.TabStop = false;
             // bgwNewsFeed
             // 
             this.bgwNewsFeed.WorkerReportsProgress = true;
@@ -947,6 +950,22 @@
             this.bgwServerStatusCheck.WorkerReportsProgress = true;
             this.bgwServerStatusCheck.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwServerStatusCheck_DoWork);
             this.bgwServerStatusCheck.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwServerStatusCheck_RunWorkerCompleted);
+            // 
+            // bgwPatcher
+            // 
+            this.bgwPatcher.WorkerReportsProgress = true;
+            this.bgwPatcher.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwPatcher_DoWork);
+            this.bgwPatcher.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgwPatcher_ProgressChanged);
+            this.bgwPatcher.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwPatcher_RunWorkerCompleted);
+            // 
+            // lPatchProgressBarText
+            // 
+            this.lPatchProgressBarText.AutoSize = true;
+            this.lPatchProgressBarText.Location = new System.Drawing.Point(36, 340);
+            this.lPatchProgressBarText.Name = "lPatchProgressBarText";
+            this.lPatchProgressBarText.Size = new System.Drawing.Size(48, 18);
+            this.lPatchProgressBarText.TabIndex = 54;
+            this.lPatchProgressBarText.Text = "Patch";
             // 
             // LauncherForm
             // 
@@ -983,6 +1002,8 @@
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
             this.panelLoginAndPatch.ResumeLayout(false);
             this.panelLoginAndPatch.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pgbFrontTotal)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pgbBackTotal)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgBigNews)).EndInit();
             this.cmsAAEmuButton.ResumeLayout(false);
             this.cmsGitHub.ResumeLayout(false);
@@ -995,8 +1016,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.btnLauncherLangChange)).EndInit();
             this.panelSettings.ResumeLayout(false);
             this.panelSettings.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pgbBackTotal)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pgbFrontTotal)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1075,6 +1094,8 @@
         private System.Windows.Forms.PictureBox pgbFrontTotal;
         private System.ComponentModel.BackgroundWorker bgwNewsFeed;
         private System.ComponentModel.BackgroundWorker bgwServerStatusCheck;
+        private System.ComponentModel.BackgroundWorker bgwPatcher;
+        private System.Windows.Forms.Label lPatchProgressBarText;
     }
 }
 

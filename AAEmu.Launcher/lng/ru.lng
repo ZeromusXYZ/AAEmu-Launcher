@@ -23,6 +23,13 @@
   "errorupdatingfile": "Ошибка обновления {0}",
   "minimize": "Минимизировать",
   "closeprogram": "близко",
-  "update": "Update!",
-  "updating": "Updating"
+  "update": "Обновить",
+  "updating": "Oбновление",
+  "noupdateurl": "No update information provided, please start the launcher with a configuration file from the server you are trying to play on.",
+  "checkversion": "Checking version information.",
+  "downloadpatch": "Downloading patch files",
+  "downloaderror": "Error downloading patch files!",
+  "applypatch": "Applying patch",
+  "applypatcherror": "Error while patching game files!",
+  "patchcomplete": "Done patching files."
 }

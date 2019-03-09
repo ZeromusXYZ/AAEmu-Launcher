@@ -206,7 +206,7 @@ namespace AAEmu.Patch
         private static void SavePatchVersion()
         {
             string listHash = GetMD5ForFile(Settings.patchListFileName);
-            string verFile = DateTime.UtcNow.ToString("yyyyMMdd-HHmmss") + ";" + listHash;
+            string verFile = DateTime.UtcNow.ToString("yyyyMMdd-HHmmss") + ";" + listHash + ";1" ; // 1 = patch system version
             File.WriteAllText(Settings.patchVersionFileName, verFile);
             Log("Save", "Saved patch version");
         }

@@ -163,11 +163,18 @@ namespace AAEmu.Launcher
             request.UserAgent = "AAEmu.Launcher";
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
 
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            using (Stream stream = response.GetResponseStream())
-            using (StreamReader reader = new StreamReader(stream))
+            try
             {
-                return reader.ReadToEnd();
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                using (Stream stream = response.GetResponseStream())
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    return reader.ReadToEnd();
+                }
+            }
+            catch
+            {
+                return "";
             }
         }
 
@@ -175,15 +182,23 @@ namespace AAEmu.Launcher
         {
             MemoryStream ms = new MemoryStream();
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-            request.UserAgent = "AAEmu.Launcher";
-            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            using (Stream stream = response.GetResponseStream())
+            try
             {
-                stream.CopyTo(ms);
-                return ms ;
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+                request.UserAgent = "AAEmu.Launcher";
+                request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                using (Stream stream = response.GetResponseStream())
+                {
+                    stream.CopyTo(ms);
+                    return ms;
+                }
+            }
+            catch
+            {
+                ms.SetLength(0);
+                return ms;
             }
         }
     }
@@ -229,6 +244,89 @@ namespace AAEmu.Launcher
 
         [JsonProperty("links")]
         public AAEmuNewsFeedLinksItem links { get; set; }
+    }
+
+    public class PakFileInfo
+    {
+        public string filePath;
+        public Int64 fileSize;
+        public string fileHash;
+        public FileSystemInfo fileInfo;
+    }
+
+    public enum PatchFase { Init, DownloadVerFile, CompareVersion, DownloadPatchFilesInfo, CreateLocalHash, CalculateDownloads, DownloadFiles, AddFiles, Done };
+    public class AAPatchProgress
+    {
+        public PatchFase Fase = PatchFase.Init;
+        public string remotePatchSystemVersion = "0";
+        public string localVersion = "";
+        public string remoteVersion = "";
+        public string remotePatchFileHash = "";
+        public List<PakFileInfo> localPakFileList = new List<PakFileInfo>();
+        public List<PakFileInfo> remotePakFileList = new List<PakFileInfo>();
+
+        public Int64 FileDownloadSizeTotal = 0;
+        public Int64 FileDownloadSizeDownloaded = 0;
+        public Int64 FileApplySize = 0;
+
+        public void Init()
+        {
+            Fase = PatchFase.Init;
+            remotePatchSystemVersion = "0";
+            localVersion = "";
+            remoteVersion = "";
+            localPakFileList = new List<PakFileInfo>();
+            remotePakFileList = new List<PakFileInfo>();
+
+            FileDownloadSizeTotal = 0;
+            FileDownloadSizeDownloaded = 0;
+            FileApplySize = 0;
+        }
+
+        public void RecalculateTotalDownloadSize()
+        {
+            Int64 c = 0;
+            for (int i = 0; i < remotePakFileList.Count;i++)
+            {
+                c += remotePakFileList[i].fileSize;
+            }
+            FileDownloadSizeTotal = c;
+        }
+
+        public bool SetRemoteVersionByString(string verStr)
+        {
+            string[] strItems = verStr.Split(';');
+            if (strItems.Length >= 3) // Only check if 3 or more, might extend later versions
+            {
+                // Primitive check for size mismatch
+                if ((strItems[0].Length != 15) || (strItems[1].Length != 32))
+                {
+                    return false;
+                }
+                remoteVersion = strItems[0];
+                remotePatchFileHash = strItems[1];
+                remotePatchSystemVersion = strItems[2];
+                return true;
+            }
+            return false;
+        }
+
+        public bool SetLocalVersionByString(string verStr)
+        {
+            string[] strItems = verStr.Split(';');
+            if (strItems.Length >= 3) // Only check if 3 or more, might extend later versions, only first is used for local patch info
+            {
+                // Primitive check for size mismatch
+                if ((strItems[0].Length != 15))
+                {
+                    return false;
+                }
+                localVersion = strItems[0];
+                return true;
+            }
+            return false;
+        }
+
     }
 
 
