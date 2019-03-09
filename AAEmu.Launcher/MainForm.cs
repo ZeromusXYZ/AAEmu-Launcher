@@ -448,6 +448,17 @@ namespace AAEmu.Launcher
             panelSettings.Visible = (panelID == 1);
             panelSettings.Location = new Point(0, 0);
             panelSettings.Size = this.Size;
+            eServerIP.Enabled = (serverCheckStatus != serverCheck.Updating);
+
+            if (serverCheckStatus == serverCheck.Updating)
+            {
+                lGamePath.Cursor = Cursors.No;
+            }
+            else
+            {
+                lGamePath.Cursor = Cursors.Hand;
+            }
+
 
             // Gray out this setting if no update url is set
             if ((Setting.ServerGameUpdateURL != null) && (Setting.ServerGameUpdateURL != ""))
@@ -1319,6 +1330,9 @@ namespace AAEmu.Launcher
             }
             if (serverCheckStatus == serverCheck.Update)
             {
+                // Allow re-checking if settings changed (or not)
+                serverCheckStatus = serverCheck.Unknown;
+                nextServerCheck = 1000;
                 ShowPanelControls(0);
             }
             if (serverCheckStatus == serverCheck.Updating)
@@ -1330,6 +1344,10 @@ namespace AAEmu.Launcher
 
         private void lGamePath_Click(object sender, EventArgs e)
         {
+            if (serverCheckStatus == serverCheck.Updating)
+            {
+                return;
+            }
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (lGamePath.Text != "")
             {
@@ -1699,8 +1717,7 @@ namespace AAEmu.Launcher
                 if (nextServerCheck <= 0)
                 {
                     nextServerCheck += 1000 * 60 * 1 ; // 1 minute
-                    //checkServerStatus();
-                    bgwServerStatusCheck.RunWorkerAsync();
+                    bgwServerStatusCheck.RunWorkerAsync(); // former checkServerStatus();
                     updatePlayButton(serverCheckStatus, false);
                 }
             }
@@ -1815,23 +1832,22 @@ namespace AAEmu.Launcher
                     testCon.Dispose();
                 }
             }
-            Application.UseWaitCursor = false;
 
-            if ((Setting.ServerGameUpdateURL != null) && (Setting.ServerGameUpdateURL != "") && (aaPatcher.remoteVersion == ""))
+            if (Setting.AllowGameUpdates == "True")
             {
-
-                // Download patch version file
-                string remoteVersionString = WebHelper.SimpleGetURIAsString(Setting.ServerGameUpdateURL + patchVersionFileName);
-                if (aaPatcher.SetRemoteVersionByString(remoteVersionString))
+                if ((Setting.ServerGameUpdateURL != null) && (Setting.ServerGameUpdateURL != "") && (aaPatcher.remoteVersion == ""))
                 {
-                    if (NeedToUpdateFrom(aaPatcher.remoteVersion))
-                    {
-                        serverCheckStatus = serverCheck.Update;
-                        nextServerCheck = -1;
-                    }
+                    // Download patch version file only once until it's invalidated
+                    string remoteVersionString = WebHelper.SimpleGetURIAsString(Setting.ServerGameUpdateURL + patchVersionFileName);
+                    aaPatcher.SetRemoteVersionByString(remoteVersionString);
+                }
+                if ((aaPatcher.remoteVersion != "") && (NeedToUpdateFrom(aaPatcher.remoteVersion)))
+                {
+                    serverCheckStatus = serverCheck.Update;
+                    nextServerCheck = -1;
                 }
             }
-
+            Application.UseWaitCursor = false;
         }
 
         private void btnLauncherLangChange_Click(object sender, EventArgs e)
@@ -2037,6 +2053,8 @@ namespace AAEmu.Launcher
 
         private void forcePatchDownloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            aaPatcher.Init(); // reset patch info
+            // force the button to update
             serverCheckStatus = serverCheck.Update; // Patch
             nextServerCheck = -1;
             updatePlayButton(serverCheckStatus, false);
@@ -2153,6 +2171,7 @@ namespace AAEmu.Launcher
                 bgwPatcher.ReportProgress(i, aaPatcher);
                 System.Threading.Thread.Sleep(250);
             }
+            aaPatcher.localVersion = aaPatcher.remoteVersion;
             aaPatcher.Fase = PatchFase.Done;
             bgwPatcher.ReportProgress(100, aaPatcher);
             System.Threading.Thread.Sleep(1500);
