@@ -18,6 +18,7 @@ using System.Security.AccessControl;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Net.Sockets;
+using XLPakTool;
 
 
 namespace AAEmu.Launcher
@@ -1843,6 +1844,7 @@ namespace AAEmu.Launcher
                 }
                 if ((aaPatcher.remoteVersion != "") && (NeedToUpdateFrom(aaPatcher.remoteVersion)))
                 {
+                    aaPatcher.Init(Setting.PathToGame); // reset patch info
                     serverCheckStatus = serverCheck.Update;
                     nextServerCheck = -1;
                 }
@@ -2053,7 +2055,7 @@ namespace AAEmu.Launcher
 
         private void forcePatchDownloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            aaPatcher.Init(); // reset patch info
+            aaPatcher.Init(Setting.PathToGame); // reset patch info
             // force the button to update
             serverCheckStatus = serverCheck.Update; // Patch
             nextServerCheck = -1;
@@ -2163,6 +2165,14 @@ namespace AAEmu.Launcher
             }
             bgwPatcher.ReportProgress(1, aaPatcher);
 
+            // Create Local Hash
+            if (File.Exists(aaPatcher.localGame_Pak))
+            {
+                XLPack.MountXLGamePakFileSystem(aaPatcher.localGame_Pak);
+
+            }
+
+
 
             aaPatcher.Fase = PatchFase.CalculateDownloads ;
             // Do patch stuff
@@ -2211,5 +2221,6 @@ namespace AAEmu.Launcher
             ShowPanelControls(0);
             updatePlayButton(serverCheckStatus, false);
         }
+
     }
 }

@@ -262,6 +262,7 @@ namespace AAEmu.Launcher
         public string localVersion = "";
         public string remoteVersion = "";
         public string remotePatchFileHash = "";
+        public string localGame_Pak = "";
         public List<PakFileInfo> localPakFileList = new List<PakFileInfo>();
         public List<PakFileInfo> remotePakFileList = new List<PakFileInfo>();
 
@@ -269,12 +270,13 @@ namespace AAEmu.Launcher
         public Int64 FileDownloadSizeDownloaded = 0;
         public Int64 FileApplySize = 0;
 
-        public void Init()
+        public void Init(string ArcheAgeExeLocation)
         {
             Fase = PatchFase.Init;
             remotePatchSystemVersion = "0";
             localVersion = "";
             remoteVersion = "";
+            localGame_Pak = Path.GetDirectoryName(Path.GetDirectoryName(ArcheAgeExeLocation)) + "\\game_pak";
             localPakFileList = new List<PakFileInfo>();
             remotePakFileList = new List<PakFileInfo>();
 
