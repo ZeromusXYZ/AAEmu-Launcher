@@ -186,7 +186,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="aaemu.ico" />
-    <Content Include="xlpack.dll" />
+    <Content Include="xlpack.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Res\btn_red.png" />
     <None Include="Res\flag_cn.png" />
     <None Include="Res\flag_de.png" />

@@ -6,6 +6,20 @@ using System.Runtime.InteropServices;
 namespace XLPakTool
 {
 
+    public class PatchFileInfo: IComparable<PatchFileInfo>
+    {
+        public string Path { get; set; }
+        public long Size { get; set; }
+        public string Hash { get; set; } // TODO md5
+        public DateTime CreateTime { get; set; }
+        public DateTime ModifyTime { get; set; }
+
+        public int CompareTo(PatchFileInfo other)
+        {
+            return Path.CompareTo(other.Path);
+        }
+}
+
     public class XLTreeDictionary
     {
         public class XlFile
@@ -195,7 +209,7 @@ namespace XLPakTool
             {
                 return false;
             }
-            _logHandler = XLPack.SetFileLogHandler("pack.log", LogHandler);
+            _logHandler = XLPack.SetFileLogHandler(".patch/pack.log", LogHandler);
 
             return true;
         }
@@ -270,7 +284,7 @@ namespace XLPakTool
             XLPack.DestroyFileSystem();
         }
 
-        private static XLTreeDictionary.XlFile GetFileState(string path)
+        public static XLTreeDictionary.XlFile GetFileState(string path)
         {
             if (!XLPack.IsFileExist(path))
                 return null;
@@ -281,7 +295,7 @@ namespace XLPakTool
             return res ? new XLTreeDictionary.XlFile(path, stat) : null;
         }
 
-        private static void ExportDir(XLTreeDictionary thisDir, ref List<string> sl)
+        public static void ExportDir(XLTreeDictionary thisDir, ref List<string> stringList)
         {
             string thisPath = thisDir.Path + "/";
 
@@ -295,39 +309,65 @@ namespace XLPakTool
                 if (isDirectory)
                 {
                     var folder = new XLTreeDictionary(file) { Parent = thisDir };
-                    sl.Add(thisFile + ";-1;;;;");
-                    // Console.WriteLine("{0};0;;;;", file);
-                    ExportDir(folder, ref sl);
-                    //thisDir.Directories.Add(folder);
+                    stringList.Add(thisFile + ";-1;;;;");
+                    ExportDir(folder, ref stringList);
                 }
                 else
                 {
                     var temp = GetFileState(file);
                     if (temp != null)
                     {
-                        //thisDir.Files.Add(temp);
-                        sl.Add(thisFile + ";" +
+                        stringList.Add(thisFile + ";" +
                             temp.Size.ToString() + ";" +
                             temp.Hash + ";" +
                             temp.CreateTime.ToString("yyyyMMdd-HHmmss") + ";" +
                             temp.ModifyTime.ToString("yyyyMMdd-HHmmss")
                             );
-                        //Console.WriteLine("{0};{1};{2};{3};{4};", file,temp.Size,temp.Hash,temp.CreateTime.ToString("yyyyMMdd-HHmmss"),temp.ModifyTime.ToString("yyyyMMdd-HHmmss"));
-                        /*
-                            Log("File", thisPath);
-                            Log("File", $"Size: {temp.Size}");
-                            Log("File", $"CreationTime: {temp.CreateTime}");
-                            Log("File", $"ModifiedTime: {temp.ModifyTime}");
-                            Log("File", $"MD5: {temp.Hash}");
-                        */
-
                     }
                 }
             }
 
         }
 
-        private static void ExportFileList()
+        public static void ExportDirXL(XLTreeDictionary thisDir, ref List<PatchFileInfo> fileList)
+        {
+            string thisPath = thisDir.Path + "/";
+
+            var files = GetFiles(thisDir.Path + "/");
+            foreach (var (file, isDirectory) in files)
+            {
+
+                // Trim the "/master/" part of the file = 8 chars, it's always the same anyway
+                string thisFile = file.Remove(0, 8);
+
+                if (isDirectory)
+                {
+                    var folder = new XLTreeDictionary(file) { Parent = thisDir };
+                    //fileList.Add(thisFile + ";-1;;;;");
+                    ExportDirXL(folder, ref fileList);
+                }
+                else
+                {
+                    var temp = GetFileState(file);
+                    if (temp != null)
+                    {
+                        var fi = new PatchFileInfo
+                        {
+                            Path = thisFile , // temp.Path,
+                            Size = temp.Size,
+                            Hash = temp.Hash,
+                            CreateTime = temp.CreateTime,
+                            ModifyTime = temp.ModifyTime
+                        };
+                        fileList.Add(fi);
+                    }
+                }
+            }
+
+        }
+
+
+        public static void ExportFileList()
         {
             Console.WriteLine("--- Init ExportFileList ---");
             var tree = new XLTreeDictionary("/master");

@@ -254,7 +254,7 @@ namespace AAEmu.Launcher
         public FileSystemInfo fileInfo;
     }
 
-    public enum PatchFase { Init, DownloadVerFile, CompareVersion, DownloadPatchFilesInfo, CreateLocalHash, CalculateDownloads, DownloadFiles, AddFiles, Done };
+    public enum PatchFase { Error, Init, DownloadVerFile, CompareVersion, CheckLocalFiles, DownloadPatchFilesInfo, CreateLocalHash, CalculateDownloads, DownloadFiles, AddFiles, Done };
     public class AAPatchProgress
     {
         public PatchFase Fase = PatchFase.Init;
@@ -263,6 +263,8 @@ namespace AAEmu.Launcher
         public string remoteVersion = "";
         public string remotePatchFileHash = "";
         public string localGame_Pak = "";
+        public string localPatchDirectory = ".patch\\";
+        public string ErrorMsg = "NO_ERROR";
         public List<PakFileInfo> localPakFileList = new List<PakFileInfo>();
         public List<PakFileInfo> remotePakFileList = new List<PakFileInfo>();
 
@@ -277,12 +279,14 @@ namespace AAEmu.Launcher
             localVersion = "";
             remoteVersion = "";
             localGame_Pak = Path.GetDirectoryName(Path.GetDirectoryName(ArcheAgeExeLocation)) + "\\game_pak";
+            localPatchDirectory = Path.GetDirectoryName(Path.GetDirectoryName(ArcheAgeExeLocation)) + "\\.patch\\";
             localPakFileList = new List<PakFileInfo>();
             remotePakFileList = new List<PakFileInfo>();
 
             FileDownloadSizeTotal = 0;
             FileDownloadSizeDownloaded = 0;
             FileApplySize = 0;
+            ErrorMsg = "NO_ERROR";
         }
 
         public void RecalculateTotalDownloadSize()
