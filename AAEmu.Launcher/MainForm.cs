@@ -2287,9 +2287,12 @@ namespace AAEmu.Launcher
 
                 var tree = new XLTreeDictionary("/master");
 
+                XLPack.XLPakToolProgressCallBackFunction = XLPakToolProgressCallback;
+                // We use the downloadsize handler to track progress
+                aaPatcher.FileDownloadSizeTotal = new System.IO.FileInfo(aaPatcher.localGame_Pak).Length;
+
                 XLPack.ExportDirXL(tree, ref localPakFileList);
                 // TODO: A lot of files report zero as their size, try to find out why
-
 
                 if (XLPack.isXLGamePackMounted)
                 {
@@ -2416,6 +2419,14 @@ namespace AAEmu.Launcher
             nextServerCheck = 1000;
             ShowPanelControls(0);
             updatePlayButton(serverCheckStatus, false);
+        }
+        
+        // Create a method for a delegate.
+        public void XLPakToolProgressCallback(long progress)
+        {
+            aaPatcher.FileDownloadSizeDownloaded += progress;
+            bgwPatcher.ReportProgress(aaPatcher.GetDownloadProgressPercent(), aaPatcher);
+            // System.Console.WriteLine("Callback: progress: "+progress.ToString());
         }
 
     }

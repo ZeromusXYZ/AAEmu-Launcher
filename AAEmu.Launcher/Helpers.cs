@@ -333,6 +333,12 @@ namespace AAEmu.Launcher
             return false;
         }
 
+        public int GetDownloadProgressPercent()
+        {
+            long p = FileDownloadSizeDownloaded * 100 / FileDownloadSizeTotal ;
+            return (int)p;
+        }
+
     }
 
 

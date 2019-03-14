@@ -2,9 +2,13 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Text;
+using ChunkedMemStream;
 
 namespace XLPakTool
 {
+    public delegate void XLPakToolProgress(long progress);
 
     public class PatchFileInfo: IComparable<PatchFileInfo>
     {
@@ -55,6 +59,8 @@ namespace XLPakTool
 
     public class XLPack
     {
+        public static XLPakToolProgress XLPakToolProgressCallBackFunction;
+
         private static string _globalPath = "/master/";
         private static string _fsPath;
         private static IntPtr _fsHandler;
@@ -136,7 +142,16 @@ namespace XLPakTool
         
         [DllImport("xlpack.dll", EntryPoint = "?FSize@@YA_JPAUFile@@@Z", CallingConvention = CallingConvention.Cdecl)]
         public static extern long FSize(IntPtr filePosition);
-        
+
+        [DllImport("xlpack.dll", EntryPoint = "?FGetStat@@YA_NPAUFile@@PAUpack_stat2@@@Z", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool FGetMD5(IntPtr filePosition, ref afs_md5_ctx md5);
+
+        [DllImport("xlpack.dll", EntryPoint = "?FRead@@YA_JPAUFile@@PAD_J@Z", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int FRead(IntPtr filePosition, IntPtr buffer, Int64 size);
+
+        [DllImport("xlpack.dll", EntryPoint = "?FSetMD5@@YA_NPAUFile@@QBD@Z", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool FSetMD5(IntPtr filePosition, ref afs_md5_ctx md5);
+
         [StructLayout(LayoutKind.Explicit)]
         public struct afs_finddata
         {
@@ -332,6 +347,8 @@ namespace XLPakTool
         public static void ExportDirXL(XLTreeDictionary thisDir, ref List<PatchFileInfo> fileList)
         {
             string thisPath = thisDir.Path + "/";
+            string nullHash = "";
+            nullHash = nullHash.PadRight(32, '0');
 
             var files = GetFiles(thisDir.Path + "/");
             foreach (var (file, isDirectory) in files)
@@ -348,19 +365,34 @@ namespace XLPakTool
                 }
                 else
                 {
-                    var temp = GetFileState(file);
-                    if (temp != null)
+                    // Manually read the info instead of using GetFileState
+                    var fi = new PatchFileInfo();
+                    fi.Path = thisFile;
+                    var filePos = FOpen(thisFile, "r");
+                    fi.Size = FSize(filePos);
+                    pack_stat_t pst = new pack_stat_t();
+                    FGetStat(filePos, ref pst);
+                    fi.CreateTime = DateTime.FromFileTime(pst.creationTime);
+                    fi.ModifyTime = DateTime.FromFileTime(pst.modifiedTime);
+
+                    afs_md5_ctx md5info = new afs_md5_ctx();
+                    if (XLPack.FGetMD5(filePos, ref md5info))
                     {
-                        var fi = new PatchFileInfo
-                        {
-                            Path = thisFile , // temp.Path,
-                            Size = temp.Size,
-                            Hash = temp.Hash,
-                            CreateTime = temp.CreateTime,
-                            ModifyTime = temp.ModifyTime
-                        };
-                        fileList.Add(fi);
+                        fi.Hash = BitConverter.ToString(md5info.md5).Replace("-", "").ToLower();
                     }
+                    FClose(ref filePos);
+
+                    if (fi.Hash == nullHash)
+                    {
+                        // We encountered a missing hash, add it !
+                        if (ReCalculateFileMD5(thisFile))
+                        {
+                            fi.Hash = GetFileMD5(thisFile);
+                        }
+                    }
+                    fileList.Add(fi);
+                    // add the new file's size to the "progress bar"
+                    XLPakToolProgressCallBackFunction(fi.Size);
                 }
             }
 
@@ -379,6 +411,115 @@ namespace XLPakTool
             Console.WriteLine("--- {0} items --- ", sl.Count);
             System.IO.File.WriteAllLines("export.csv", sl.ToArray());
             Console.WriteLine("--- End ExportFileList --- ");
+        }
+
+        public static byte[] StringToByteArray(String hex)
+        {
+            int NumberChars = hex.Length;
+            byte[] bytes = new byte[NumberChars / 2];
+            for (int i = 0; i < NumberChars; i += 2)
+                bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+            return bytes;
+        }
+
+        static string GetMd5Hash(MD5 md5Hash, Stream input)
+        {
+
+            // Convert the input string to a byte array and compute the hash.
+            byte[] data = md5Hash.ComputeHash(input);
+
+            // Create a new Stringbuilder to collect the bytes
+            // and create a string.
+            StringBuilder sBuilder = new StringBuilder();
+
+            // Loop through each byte of the hashed data 
+            // and format each one as a hexadecimal string.
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+
+            // Return the hexadecimal string.
+            return sBuilder.ToString();
+        }
+
+        // Verify a hash against a string.
+        static bool VerifyMd5Hash(MD5 md5Hash, Stream input, string hash)
+        {
+            // Hash the input.
+            string hashOfInput = GetMd5Hash(md5Hash, input);
+
+            // Create a StringComparer an compare the hashes.
+            StringComparer comparer = StringComparer.OrdinalIgnoreCase;
+
+            if (0 == comparer.Compare(hashOfInput, hash))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private static string GetFileMD5(string path)
+        {
+            if (!XLPack.IsFileExist(path))
+                return "";
+            var position = XLPack.FOpen(path, "r");
+            XLPack.afs_md5_ctx md5info = new XLPack.afs_md5_ctx();
+            var res = XLPack.FGetMD5(position, ref md5info);
+            XLPack.FClose(ref position);
+            return res ? BitConverter.ToString(md5info.md5).Replace("-", "").ToLower() : "";
+        }
+
+        private static bool SetFileMD5(string path, string hash)
+        {
+            if (!XLPack.IsFileExist(path))
+                return false;
+
+            XLPack.afs_md5_ctx md5info = new XLPack.afs_md5_ctx();
+            md5info.md5 = StringToByteArray(hash);
+            var position = XLPack.FOpen(path, "r");
+            // fsetmd5 00001111222233334444555566667777 /master/bin32/zlib1.dll
+            var res = XLPack.FSetMD5(position, ref md5info);
+            XLPack.FClose(ref position);
+            return res;
+        }
+
+        private static bool ReCalculateFileMD5(string path)
+        {
+            if (!XLPack.IsFileExist(path))
+                return false;
+
+            var position = XLPack.FOpen(path, "r");
+            long fileSize = XLPack.FSize(position);
+            const int bufSize = 0x4000;
+            byte[] buffer = new byte[bufSize];
+            IntPtr bufPtr = Marshal.UnsafeAddrOfPinnedArrayElement(buffer, 0);
+            // TODO: Do this without reading the entire file into memory to calculate the MD5
+            //       Maybe try to use the XLPack.DLL's MD5Init, MD5Update and MD5 Finalize functions ?
+            // Using ChunkedMemoryStream instead of MemoryStream to hopefully avoid outofmemory errors on large files
+            ChunkedMemoryStream ms = new ChunkedMemoryStream();
+            long readTotalSize = 0;
+            while (readTotalSize < fileSize)
+            {
+                long readSize = fileSize - readTotalSize;
+                if (readSize > bufSize)
+                {
+                    readSize = bufSize;
+                }
+                XLPack.FRead(position, bufPtr, readSize);
+                ms.Write(buffer, 0, (int)readSize); // readSize should never be out of int range, so it's safe to cast it
+                readTotalSize += readSize;
+            }
+            XLPack.FClose(ref position);
+            ms.Position = 0;
+            MD5 md5Hash = MD5.Create();
+            string md5String = GetMd5Hash(md5Hash, ms).Replace("-", "").ToLower();
+            ms.Dispose();
+            var res = SetFileMD5(path, md5String);
+            return res;
         }
 
 
