@@ -1954,7 +1954,10 @@ namespace AAEmu.Launcher
                 wns += i.itemAttributes.itemTitle;
                 wns += "</a><br>";
                 wns += "<div align=\"left\"><font size=\"1\">";
-                wns += i.itemAttributes.itemBody.Replace("\\r", "").Replace("\\n", "<br>");
+                var bodyStr = i.itemAttributes.itemBody;
+                if (bodyStr == null)
+                    bodyStr = "";
+                wns += bodyStr.Replace("\\r", "").Replace("\\n", "<br>");
                 wns += "</font></div></p>";
             }
             // wns += "<p align=\"center\"><a href=\"testlink\" target=\"_new\">Test</a></p>";
@@ -2105,10 +2108,13 @@ namespace AAEmu.Launcher
                 }
             }
 
-            this.Invoke(new MethodInvoker(delegate
+            if ((bigNewsIndex >= 0) && (bigNewsIndex < newsFeed.data.Count))
             {
-                LoadBigNews(newsFeed.data[bigNewsIndex]);
-            }));
+                this.Invoke(new MethodInvoker(delegate
+                {
+                    LoadBigNews(newsFeed.data[bigNewsIndex]);
+                }));
+            }
             worker.ReportProgress(100);
         }
 
