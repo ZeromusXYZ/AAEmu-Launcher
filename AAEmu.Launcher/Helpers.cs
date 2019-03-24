@@ -254,7 +254,7 @@ namespace AAEmu.Launcher
         public FileSystemInfo fileInfo;
     }
 
-    public enum PatchFase { Error, Init, DownloadVerFile, CompareVersion, CheckLocalFiles, DownloadPatchFilesInfo, CreateLocalHash, CalculateDownloads, DownloadFiles, AddFiles, Done };
+    public enum PatchFase { Error, Init, DownloadVerFile, CompareVersion, CheckLocalFiles, ReHashLocalFiles, DownloadPatchFilesInfo, CalculateDownloads, DownloadFiles, AddFiles, Done };
     public class AAPatchProgress
     {
         public PatchFase Fase = PatchFase.Init;

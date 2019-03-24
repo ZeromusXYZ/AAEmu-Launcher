@@ -18,7 +18,8 @@ using System.Security.AccessControl;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Net.Sockets;
-using XLPakTool;
+using AAPakEditor;
+// using XLPakTool;
 
 
 namespace AAEmu.Launcher
@@ -303,7 +304,9 @@ namespace AAEmu.Launcher
         private int bigNewsIndex = -1;
         private int bigNewsTimer = -1;
 
-        AAPatchProgress aaPatcher = new AAPatchProgress();
+        private AAPatchProgress aaPatcher = new AAPatchProgress();
+        private AAPak pak = null;
+        private List<AAPakFileInfo> dlPakFileList = new List<AAPakFileInfo>();
 
         public LauncherForm()
         {
@@ -444,6 +447,7 @@ namespace AAEmu.Launcher
             lPatchProgressBarText.Visible = (panelID == 2);
             pgbBackTotal.Visible = (panelID == 2);
             pgbFrontTotal.Visible = (panelID == 2);
+            gbPatchSteps.Visible = (panelID == 2);
 
             // 1: Settings "panel"
             panelSettings.Visible = (panelID == 1);
@@ -2152,9 +2156,9 @@ namespace AAEmu.Launcher
             updatePlayButton(serverCheckStatus, false);
         }
 
-        private List<PatchFileInfo> CreateXlFileListFromStream(Stream aStream)
+        private List<AAPakFileInfo> CreateXlFileListFromStream(Stream aStream)
         {
-            List<PatchFileInfo> res = new List<PatchFileInfo>();
+            List<AAPakFileInfo> res = new List<AAPakFileInfo>();
 
             aStream.Position = 0; // Rewind!
             List<string> rows = new List<string>();
@@ -2164,28 +2168,61 @@ namespace AAEmu.Launcher
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    PatchFileInfo xlfi = new PatchFileInfo();
+                    AAPakFileInfo xlfi = new AAPakFileInfo();
                     string[] items = line.Split(';');
                     // Path
-                    xlfi.Path = items[0];
+                    xlfi.name = items[0];
                     // Size
                     long l = 0;
                     if (long.TryParse(items[1],out l))
-                        xlfi.Size = l;
+                        xlfi.size = l;
                     else
-                        xlfi.Size = 0;
+                        xlfi.size = 0;
                     // If directory info
+
+                    // Skip directories
+                    if (xlfi.size < 0)
+                        continue;
+
                     if (items.Length > 2)
                     {
-                        xlfi.Hash = items[2];
-                        //xlfi.CreateTime = items[3];
-                        //xlfi.ModifyTime = items[4];
+                        xlfi.md5 = StringToByteArray(items[2]);
                     }
                     else
                     {
-                        xlfi.Hash = "";
-                        //xlfi.CreateTime = items[3];
-                        //xlfi.ModifyTime = items[4];
+                        xlfi.md5 = new byte[16] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+                    }
+                    if (items.Length > 4)
+                    {
+                        int yyyy = 0;
+                        int mm = 0;
+                        int dd = 0;
+                        int hh = 0;
+                        int nn = 0;
+                        int ss = 0;
+
+                        if (!int.TryParse(items[3].Substring(0, 4), out yyyy)) yyyy = 0;
+                        if (!int.TryParse(items[3].Substring(4, 2), out mm)) mm = 0;
+                        if (!int.TryParse(items[3].Substring(6, 2), out dd)) dd = 0;
+                        if (!int.TryParse(items[3].Substring(9, 2), out hh)) hh = 0;
+                        if (!int.TryParse(items[3].Substring(11,2), out nn)) nn = 0;
+                        if (!int.TryParse(items[3].Substring(13,2), out ss)) ss = 0;
+
+                        xlfi.createTime = (new DateTime(yyyy,mm,dd,hh,nn,ss)).ToFileTime();
+
+                        if (!int.TryParse(items[4].Substring(0, 4), out yyyy)) yyyy = 0;
+                        if (!int.TryParse(items[4].Substring(4, 2), out mm)) mm = 0;
+                        if (!int.TryParse(items[4].Substring(6, 2), out dd)) dd = 0;
+                        if (!int.TryParse(items[4].Substring(9, 2), out hh)) hh = 0;
+                        if (!int.TryParse(items[4].Substring(11,2), out nn)) nn = 0;
+                        if (!int.TryParse(items[4].Substring(13,2), out ss)) ss = 0;
+
+                        xlfi.modifyTime = (new DateTime(yyyy, mm, dd, hh, nn, ss)).ToFileTime(); ;
+                    }
+                    else
+                    {
+                        xlfi.createTime = 0;
+                        xlfi.modifyTime = 0;
                     }
                     res.Add(xlfi);
                 }
@@ -2193,7 +2230,7 @@ namespace AAEmu.Launcher
             return res;
         }
 
-        private PatchFileInfo FindPatchFileInList(string filename, List<PatchFileInfo> list, ref int startIndex)
+        private AAPakFileInfo FindPatchFileInList(string filename, List<AAPakFileInfo> list, ref int startIndex)
         {
             filename = filename.ToLower();
             int i = startIndex;
@@ -2203,8 +2240,8 @@ namespace AAEmu.Launcher
                 {
                     i = 0;
                 }
-                PatchFileInfo pfi = list[i];
-                if (pfi.Path.ToLower() == filename)
+                AAPakFileInfo pfi = list[i];
+                if (pfi.name.ToLower() == filename)
                 {
                     startIndex = i;
                     return pfi;
@@ -2213,29 +2250,29 @@ namespace AAEmu.Launcher
             return null;
         }
 
-        private long MakeDownloadList(List<PatchFileInfo> local, List<PatchFileInfo> remote, ref List<PatchFileInfo> dl)
+        private long MakeDownloadList(List<AAPakFileInfo> local, List<AAPakFileInfo> remote, ref List<AAPakFileInfo> dl)
         {
             long totSize = 0;
             int lastLocalIndex = 0;
-            foreach(PatchFileInfo r in remote)
+            foreach(AAPakFileInfo r in remote)
             {
-                if (r.Size <= 0) continue;
+                if (r.size <= 0) continue;
 
-                PatchFileInfo l = FindPatchFileInList(r.Path,local,ref lastLocalIndex);
+                AAPakFileInfo l = FindPatchFileInList(r.name,local,ref lastLocalIndex);
                 if (l == null)
                 {
                     // We don't have a local copy of this file
                     dl.Add(r);
-                    totSize += r.Size;
+                    totSize += r.size;
                 }
                 else
                 {
                     
-                    if ((l.Size != r.Size) || (l.Hash != r.Hash))
+                    if ((l.size != r.size) || (l.md5.Equals(r.md5)))
                     {
                         // Local Filesize or Hash is different from remote
                         dl.Add(r);
-                        totSize += r.Size;
+                        totSize += r.size;
                     }
                 }
             }
@@ -2247,6 +2284,7 @@ namespace AAEmu.Launcher
         {
             aaPatcher.Fase = PatchFase.Init;
             bgwPatcher.ReportProgress(0, aaPatcher);
+            System.Threading.Thread.Sleep(150);
 
             try
             {
@@ -2257,53 +2295,74 @@ namespace AAEmu.Launcher
                 // Failed to create temp patch directory, quit trying to update
                 aaPatcher.Fase = PatchFase.Error;
                 aaPatcher.ErrorMsg = "Failed to create patch directory: " + aaPatcher.localPatchDirectory;
+                return;
             }
 
             System.Threading.Thread.Sleep(150);
-            aaPatcher.Fase = PatchFase.DownloadPatchFilesInfo;
+            aaPatcher.Fase = PatchFase.DownloadVerFile;
             bgwPatcher.ReportProgress(0, aaPatcher);
 
             // Download patch version file
             string remoteVersionString = WebHelper.SimpleGetURIAsString(Setting.ServerGameUpdateURL + patchVersionFileName);
             if (!aaPatcher.SetRemoteVersionByString(remoteVersionString))
             {
-                aaPatcher.Fase = PatchFase.Done;
-                MessageBox.Show(L.DownloadError +"\r\n"+Setting.ServerGameUpdateURL + patchVersionFileName);
+                aaPatcher.Fase = PatchFase.Error;
+                aaPatcher.ErrorMsg = L.DownloadError +"\r\n"+Setting.ServerGameUpdateURL + patchVersionFileName ;
                 return;
             }
-            bgwPatcher.ReportProgress(1, aaPatcher);
 
-            List<PatchFileInfo> localPakFileList = new List<PatchFileInfo>();
-            List<PatchFileInfo> remotePakFileList ;
-            List<PatchFileInfo> dlPakFileList = new List<PatchFileInfo>();
-            List<PatchFileInfo> rmPakFileList = new List<PatchFileInfo>();
+            aaPatcher.Fase = PatchFase.CheckLocalFiles;
+            bgwPatcher.ReportProgress(1, aaPatcher);
+            // TODO: compare to locally stored ver file if that exists
+            System.Threading.Thread.Sleep(500);
+
+            List<AAPakFileInfo> remotePakFileList ;
+            List<AAPakFileInfo> rmPakFileList = new List<AAPakFileInfo>();
+
+            dlPakFileList.Clear();
 
             // Create/Load Local Hash from game_pak
             if (File.Exists(aaPatcher.localGame_Pak))
             {
                 aaPatcher.Fase = PatchFase.CheckLocalFiles;
                 bgwPatcher.ReportProgress(2, aaPatcher);
-                if (!XLPack.InitXLGamePakFileSystem())
+
+                pak = new AAPak(aaPatcher.localGame_Pak, false, false);
+                if (!pak.isOpen)
                 {
+                    // Failed to open pak
                     aaPatcher.Fase = PatchFase.Error;
-                    aaPatcher.ErrorMsg = "Failed to initialize XLPack System";
+                    aaPatcher.ErrorMsg = "Failed to open: " + aaPatcher.localGame_Pak;
                     return;
                 }
-                XLPack.MountXLGamePakFileSystem(aaPatcher.localGame_Pak);
 
-                var tree = new XLTreeDictionary("/master");
-
-                XLPack.XLPakToolProgressCallBackFunction = XLPakToolProgressCallback;
-                // We use the downloadsize handler to track progress
-                aaPatcher.FileDownloadSizeTotal = new System.IO.FileInfo(aaPatcher.localGame_Pak).Length;
-
-                XLPack.ExportDirXL(tree, ref localPakFileList);
-                // TODO: A lot of files report zero as their size, try to find out why
-
-                if (XLPack.isXLGamePackMounted)
+                // Calculate local file size total
+                // aaPatcher.FileDownloadSizeTotal = new System.IO.FileInfo(aaPatcher.localGame_Pak).Length;
+                aaPatcher.FileDownloadSizeTotal = 0;
+                var totalFilesCount = 0;
+                foreach(AAPakFileInfo pfi in pak.files)
                 {
-                    XLPack.UnmountXLPackFileSystem();
+                    aaPatcher.FileDownloadSizeTotal += pfi.size;
+                    totalFilesCount++;
                 }
+
+                var filesCount = 0;
+                foreach (AAPakFileInfo pfi in pak.files)
+                {
+                    if (BitConverter.ToString(pfi.md5).Replace("-","") == pak._header.nullHashString)
+                    {
+                        aaPatcher.Fase = PatchFase.ReHashLocalFiles;
+                        pak.UpdateMD5(pfi);
+                    }
+                    filesCount++;
+                    if ((filesCount % 50) == 0)
+                    {
+                        bgwPatcher.ReportProgress((filesCount * 100 / totalFilesCount), aaPatcher);
+                    }
+                }
+
+                if (aaPatcher.Fase == PatchFase.ReHashLocalFiles)
+                    pak.SaveHeader();
                 System.Threading.Thread.Sleep(1000);
             }
 
@@ -2319,7 +2378,7 @@ namespace AAEmu.Launcher
             aaPatcher.Fase = PatchFase.CalculateDownloads ;
             bgwPatcher.ReportProgress(0, aaPatcher);
 
-            localPakFileList.Sort();
+            pak.files.Sort();
             remotePakFileList.Sort();
 
             //aaPatcher.FileDownloadSizeTotal = MakeDownloadList(localPakFileList, remotePakFileList, ref dlPakFileList);
@@ -2328,65 +2387,77 @@ namespace AAEmu.Launcher
             int lastLocalIndex = 0; // used for search optimization, without this, it takes roughly half a hour on my PC, with about 10 seconds
             for(int i = 0 ; i < remotePakFileList.Count;i++)
             {
-                PatchFileInfo r = remotePakFileList[i];
+                AAPakFileInfo r = remotePakFileList[i];
 
                 // Don't download empty files or entries marked as directories (-1)
-                if (r.Size <= 0) continue;
+                if (r.size <= 0) continue;
 
-                PatchFileInfo l = FindPatchFileInList(r.Path, localPakFileList,ref lastLocalIndex);
+                AAPakFileInfo l = FindPatchFileInList(r.name, pak.files,ref lastLocalIndex);
                 if (l == null)
                 {
                     // We don't have a local copy of this file
                     // Add it to the list
                     dlPakFileList.Add(r);
-                    totSize += r.Size;
+                    totSize += r.size;
                 }
                 else
                 {
 
-                    if ((l.Size != r.Size) || (l.Hash != r.Hash))
+                    if ((l.size != r.size) || (l.md5.Equals(r.md5)))
                     {
                         // Local Filesize or Hash is different from remote
                         // Redownload it
                         dlPakFileList.Add(r);
-                        totSize += r.Size;
+                        totSize += r.size;
                     }
                 }
 
-                int p = i * 100 / remotePakFileList.Count;
-
-                bgwPatcher.ReportProgress(p, aaPatcher);
+                if ((i % 100) == 0)
+                {
+                    int p = i * 100 / remotePakFileList.Count;
+                    bgwPatcher.ReportProgress(p, aaPatcher);
+                    System.Threading.Thread.Sleep(1);
+                }
             }
 
             aaPatcher.FileDownloadSizeTotal = totSize;
 
             List<string> sl = new List<string>();
-            foreach(PatchFileInfo pfi in dlPakFileList)
+            foreach(AAPakFileInfo pfi in dlPakFileList)
             {
-                sl.Add(pfi.Path);
+                sl.Add(pfi.name);
             }
+
             File.WriteAllLines(aaPatcher.localPatchDirectory + "download.txt", sl);
 
-
+            // rbDownloadFiles.Text = "Download patch "+ dlPakFileList.Count.ToString() + " files - "+ (aaPatcher.FileDownloadSizeTotal / 1024 / 1024).ToString() + " MB";
             MessageBox.Show("Need to download " + dlPakFileList.Count.ToString() + " files, "+ (aaPatcher.FileDownloadSizeTotal / 1024 / 1024).ToString() + " MB total");
 
+            System.Threading.Thread.Sleep(500);
 
-
-            System.Threading.Thread.Sleep(1000);
-
+            // Do download stuff
             aaPatcher.Fase = PatchFase.DownloadFiles;
-            bgwPatcher.ReportProgress(4, aaPatcher);
-            // Do patch stuff
+            bgwPatcher.ReportProgress(0, aaPatcher);
             for (int i = 0; i <= 100;i++)
             {
                 bgwPatcher.ReportProgress(i, aaPatcher);
                 System.Threading.Thread.Sleep(250);
             }
-            aaPatcher.localVersion = aaPatcher.remoteVersion;
 
+            // Do Patch Stuff
+            aaPatcher.Fase = PatchFase.AddFiles;
+            bgwPatcher.ReportProgress(0, aaPatcher);
+            for (int i = 0; i <= 100; i++)
+            {
+                bgwPatcher.ReportProgress(i, aaPatcher);
+                System.Threading.Thread.Sleep(250);
+            }
+
+            // All done, back to the login page
+            aaPatcher.localVersion = aaPatcher.remoteVersion;
             aaPatcher.Fase = PatchFase.Done;
             bgwPatcher.ReportProgress(100, aaPatcher);
-            System.Threading.Thread.Sleep(1500);
+            System.Threading.Thread.Sleep(2500);
         }
 
         private void bgwPatcher_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -2397,21 +2468,41 @@ namespace AAEmu.Launcher
             {
                 case PatchFase.Init:
                     lPatchProgressBarText.Text = L.CheckVersion;
+                    rbInit.Checked = true;
+                    break;
+                case PatchFase.DownloadVerFile:
+                    rbDownloadVerFile.Checked = true;
+                    break;
+                case PatchFase.CompareVersion:
+                    rbComparingVersion.Checked = true;
                     break;
                 case PatchFase.CheckLocalFiles:
                     lPatchProgressBarText.Text = "Checking local file information";
+                    rbCheckLocalFiles.Checked = true;
+                    break;
+                case PatchFase.ReHashLocalFiles:
+                    lPatchProgressBarText.Text = "game_pak needs to be updated, this may take a long time";
+                    rbReHashLocalFiles.Checked = true;
+                    break;
+                case PatchFase.DownloadPatchFilesInfo:
+                    rbDownloadPatchFilesInfo.Checked = true;
                     break;
                 case PatchFase.CalculateDownloads:
                     lPatchProgressBarText.Text = L.CheckVersion + " -> " + aaPatcher.remoteVersion ;
+                    rbCalculateDownloads.Checked = true;
                     break;
                 case PatchFase.DownloadFiles:
                     lPatchProgressBarText.Text = L.DownloadPatch;
+                    rbDownloadFiles.Text = "Download " + dlPakFileList.Count.ToString() + " patch files - " + (aaPatcher.FileDownloadSizeTotal / 1024 / 1024).ToString() + " MB";
+                    rbDownloadFiles.Checked = true;
                     break;
                 case PatchFase.AddFiles:
                     lPatchProgressBarText.Text = L.ApplyPatch;
+                    rbAddFiles.Checked = true;
                     break;
                 case PatchFase.Done:
                     lPatchProgressBarText.Text = L.PatchComplete;
+                    rbDone.Checked = true;
                     break;
             }
             UpdateProgressBarTotal(e.ProgressPercentage, 100);
@@ -2421,6 +2512,10 @@ namespace AAEmu.Launcher
         {
             // Patch Finished
             // Revert server status to unknown
+            if (aaPatcher.Fase == PatchFase.Error)
+            {
+                MessageBox.Show(aaPatcher.ErrorMsg, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             serverCheckStatus = serverCheck.Unknown;
             nextServerCheck = 1000;
             ShowPanelControls(0);
@@ -2433,6 +2528,15 @@ namespace AAEmu.Launcher
             aaPatcher.FileDownloadSizeDownloaded += progress;
             bgwPatcher.ReportProgress(aaPatcher.GetDownloadProgressPercent(), aaPatcher);
             // System.Console.WriteLine("Callback: progress: "+progress.ToString());
+        }
+
+        public byte[] StringToByteArray(string hex)
+        {
+            int NumberChars = hex.Length;
+            byte[] bytes = new byte[NumberChars / 2];
+            for (int i = 0; i < NumberChars; i += 2)
+                bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+            return bytes;
         }
 
     }

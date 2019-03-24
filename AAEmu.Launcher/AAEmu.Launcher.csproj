@@ -94,6 +94,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AAPak.cs" />
     <Compile Include="ChunkedMemStream.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -115,7 +116,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XLPack.cs" />
+    <Compile Include="SubStream.cs" />
     <EmbeddedResource Include="DebugHelperForm.resx">
       <DependentUpon>DebugHelperForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -187,9 +188,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="aaemu.ico" />
-    <Content Include="xlpack.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="Res\btn_red.png" />
     <None Include="Res\flag_cn.png" />
     <None Include="Res\flag_de.png" />

@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LauncherForm));
             this.panelLoginAndPatch = new System.Windows.Forms.Panel();
+            this.lPatchProgressBarText = new System.Windows.Forms.Label();
             this.pgbFrontTotal = new System.Windows.Forms.PictureBox();
             this.pgbBackTotal = new System.Windows.Forms.PictureBox();
             this.lBigNewsImage = new System.Windows.Forms.Label();
@@ -103,7 +104,17 @@
             this.bgwNewsFeed = new System.ComponentModel.BackgroundWorker();
             this.bgwServerStatusCheck = new System.ComponentModel.BackgroundWorker();
             this.bgwPatcher = new System.ComponentModel.BackgroundWorker();
-            this.lPatchProgressBarText = new System.Windows.Forms.Label();
+            this.gbPatchSteps = new System.Windows.Forms.GroupBox();
+            this.rbInit = new System.Windows.Forms.RadioButton();
+            this.rbDownloadVerFile = new System.Windows.Forms.RadioButton();
+            this.rbComparingVersion = new System.Windows.Forms.RadioButton();
+            this.rbCheckLocalFiles = new System.Windows.Forms.RadioButton();
+            this.rbReHashLocalFiles = new System.Windows.Forms.RadioButton();
+            this.rbDownloadPatchFilesInfo = new System.Windows.Forms.RadioButton();
+            this.rbCalculateDownloads = new System.Windows.Forms.RadioButton();
+            this.rbAddFiles = new System.Windows.Forms.RadioButton();
+            this.rbDone = new System.Windows.Forms.RadioButton();
+            this.rbDownloadFiles = new System.Windows.Forms.RadioButton();
             this.panelLoginAndPatch.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pgbFrontTotal)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pgbBackTotal)).BeginInit();
@@ -118,6 +129,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.btnGithub)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnLauncherLangChange)).BeginInit();
             this.panelSettings.SuspendLayout();
+            this.gbPatchSteps.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelLoginAndPatch
@@ -125,6 +137,7 @@
             this.panelLoginAndPatch.BackColor = System.Drawing.Color.Transparent;
             this.panelLoginAndPatch.BackgroundImage = global::AAEmu.Launcher.Properties.Resources.bg_login;
             this.panelLoginAndPatch.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.panelLoginAndPatch.Controls.Add(this.gbPatchSteps);
             this.panelLoginAndPatch.Controls.Add(this.lPatchProgressBarText);
             this.panelLoginAndPatch.Controls.Add(this.pgbFrontTotal);
             this.panelLoginAndPatch.Controls.Add(this.pgbBackTotal);
@@ -147,6 +160,15 @@
             this.panelLoginAndPatch.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseDown);
             this.panelLoginAndPatch.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
             this.panelLoginAndPatch.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
+            // 
+            // lPatchProgressBarText
+            // 
+            this.lPatchProgressBarText.AutoSize = true;
+            this.lPatchProgressBarText.Location = new System.Drawing.Point(36, 340);
+            this.lPatchProgressBarText.Name = "lPatchProgressBarText";
+            this.lPatchProgressBarText.Size = new System.Drawing.Size(48, 18);
+            this.lPatchProgressBarText.TabIndex = 54;
+            this.lPatchProgressBarText.Text = "Patch";
             // 
             // pgbFrontTotal
             // 
@@ -958,14 +980,146 @@
             this.bgwPatcher.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgwPatcher_ProgressChanged);
             this.bgwPatcher.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwPatcher_RunWorkerCompleted);
             // 
-            // lPatchProgressBarText
+            // gbPatchSteps
             // 
-            this.lPatchProgressBarText.AutoSize = true;
-            this.lPatchProgressBarText.Location = new System.Drawing.Point(36, 340);
-            this.lPatchProgressBarText.Name = "lPatchProgressBarText";
-            this.lPatchProgressBarText.Size = new System.Drawing.Size(48, 18);
-            this.lPatchProgressBarText.TabIndex = 54;
-            this.lPatchProgressBarText.Text = "Patch";
+            this.gbPatchSteps.BackColor = System.Drawing.Color.Transparent;
+            this.gbPatchSteps.Controls.Add(this.rbDownloadFiles);
+            this.gbPatchSteps.Controls.Add(this.rbDone);
+            this.gbPatchSteps.Controls.Add(this.rbAddFiles);
+            this.gbPatchSteps.Controls.Add(this.rbCalculateDownloads);
+            this.gbPatchSteps.Controls.Add(this.rbDownloadPatchFilesInfo);
+            this.gbPatchSteps.Controls.Add(this.rbReHashLocalFiles);
+            this.gbPatchSteps.Controls.Add(this.rbCheckLocalFiles);
+            this.gbPatchSteps.Controls.Add(this.rbComparingVersion);
+            this.gbPatchSteps.Controls.Add(this.rbDownloadVerFile);
+            this.gbPatchSteps.Controls.Add(this.rbInit);
+            this.gbPatchSteps.Location = new System.Drawing.Point(27, 85);
+            this.gbPatchSteps.Name = "gbPatchSteps";
+            this.gbPatchSteps.Size = new System.Drawing.Size(377, 231);
+            this.gbPatchSteps.TabIndex = 55;
+            this.gbPatchSteps.TabStop = false;
+            this.gbPatchSteps.Text = "Updating";
+            // 
+            // rbInit
+            // 
+            this.rbInit.AutoSize = true;
+            this.rbInit.Checked = true;
+            this.rbInit.Enabled = false;
+            this.rbInit.Location = new System.Drawing.Point(15, 20);
+            this.rbInit.Name = "rbInit";
+            this.rbInit.Size = new System.Drawing.Size(114, 22);
+            this.rbInit.TabIndex = 1;
+            this.rbInit.TabStop = true;
+            this.rbInit.Text = "Initialization";
+            this.rbInit.UseVisualStyleBackColor = true;
+            // 
+            // rbDownloadVerFile
+            // 
+            this.rbDownloadVerFile.AutoSize = true;
+            this.rbDownloadVerFile.Enabled = false;
+            this.rbDownloadVerFile.Location = new System.Drawing.Point(15, 40);
+            this.rbDownloadVerFile.Name = "rbDownloadVerFile";
+            this.rbDownloadVerFile.Size = new System.Drawing.Size(237, 22);
+            this.rbDownloadVerFile.TabIndex = 2;
+            this.rbDownloadVerFile.TabStop = true;
+            this.rbDownloadVerFile.Text = "Download version information";
+            this.rbDownloadVerFile.UseVisualStyleBackColor = true;
+            // 
+            // rbComparingVersion
+            // 
+            this.rbComparingVersion.AutoSize = true;
+            this.rbComparingVersion.Enabled = false;
+            this.rbComparingVersion.Location = new System.Drawing.Point(15, 60);
+            this.rbComparingVersion.Name = "rbComparingVersion";
+            this.rbComparingVersion.Size = new System.Drawing.Size(245, 22);
+            this.rbComparingVersion.TabIndex = 3;
+            this.rbComparingVersion.TabStop = true;
+            this.rbComparingVersion.Text = "Comparing version information";
+            this.rbComparingVersion.UseVisualStyleBackColor = true;
+            // 
+            // rbCheckLocalFiles
+            // 
+            this.rbCheckLocalFiles.AutoSize = true;
+            this.rbCheckLocalFiles.Enabled = false;
+            this.rbCheckLocalFiles.Location = new System.Drawing.Point(15, 80);
+            this.rbCheckLocalFiles.Name = "rbCheckLocalFiles";
+            this.rbCheckLocalFiles.Size = new System.Drawing.Size(209, 22);
+            this.rbCheckLocalFiles.TabIndex = 4;
+            this.rbCheckLocalFiles.TabStop = true;
+            this.rbCheckLocalFiles.Text = "Checking local game client";
+            this.rbCheckLocalFiles.UseVisualStyleBackColor = true;
+            // 
+            // rbReHashLocalFiles
+            // 
+            this.rbReHashLocalFiles.AutoSize = true;
+            this.rbReHashLocalFiles.Enabled = false;
+            this.rbReHashLocalFiles.Location = new System.Drawing.Point(15, 100);
+            this.rbReHashLocalFiles.Name = "rbReHashLocalFiles";
+            this.rbReHashLocalFiles.Size = new System.Drawing.Size(281, 22);
+            this.rbReHashLocalFiles.TabIndex = 5;
+            this.rbReHashLocalFiles.TabStop = true;
+            this.rbReHashLocalFiles.Text = "Initialize game client for first update";
+            this.rbReHashLocalFiles.UseVisualStyleBackColor = true;
+            // 
+            // rbDownloadPatchFilesInfo
+            // 
+            this.rbDownloadPatchFilesInfo.AutoSize = true;
+            this.rbDownloadPatchFilesInfo.Enabled = false;
+            this.rbDownloadPatchFilesInfo.Location = new System.Drawing.Point(15, 120);
+            this.rbDownloadPatchFilesInfo.Name = "rbDownloadPatchFilesInfo";
+            this.rbDownloadPatchFilesInfo.Size = new System.Drawing.Size(270, 22);
+            this.rbDownloadPatchFilesInfo.TabIndex = 6;
+            this.rbDownloadPatchFilesInfo.TabStop = true;
+            this.rbDownloadPatchFilesInfo.Text = "Downloading patch file information";
+            this.rbDownloadPatchFilesInfo.UseVisualStyleBackColor = true;
+            // 
+            // rbCalculateDownloads
+            // 
+            this.rbCalculateDownloads.AutoSize = true;
+            this.rbCalculateDownloads.Enabled = false;
+            this.rbCalculateDownloads.Location = new System.Drawing.Point(15, 140);
+            this.rbCalculateDownloads.Name = "rbCalculateDownloads";
+            this.rbCalculateDownloads.Size = new System.Drawing.Size(260, 22);
+            this.rbCalculateDownloads.TabIndex = 7;
+            this.rbCalculateDownloads.TabStop = true;
+            this.rbCalculateDownloads.Text = "Calculating download information";
+            this.rbCalculateDownloads.UseVisualStyleBackColor = true;
+            // 
+            // rbAddFiles
+            // 
+            this.rbAddFiles.AutoSize = true;
+            this.rbAddFiles.Enabled = false;
+            this.rbAddFiles.Location = new System.Drawing.Point(15, 180);
+            this.rbAddFiles.Name = "rbAddFiles";
+            this.rbAddFiles.Size = new System.Drawing.Size(207, 22);
+            this.rbAddFiles.TabIndex = 8;
+            this.rbAddFiles.TabStop = true;
+            this.rbAddFiles.Text = "Updating game client files";
+            this.rbAddFiles.UseVisualStyleBackColor = true;
+            // 
+            // rbDone
+            // 
+            this.rbDone.AutoSize = true;
+            this.rbDone.Enabled = false;
+            this.rbDone.Location = new System.Drawing.Point(15, 200);
+            this.rbDone.Name = "rbDone";
+            this.rbDone.Size = new System.Drawing.Size(102, 22);
+            this.rbDone.TabIndex = 9;
+            this.rbDone.TabStop = true;
+            this.rbDone.Text = "Completed";
+            this.rbDone.UseVisualStyleBackColor = true;
+            // 
+            // rbDownloadFiles
+            // 
+            this.rbDownloadFiles.AutoSize = true;
+            this.rbDownloadFiles.Enabled = false;
+            this.rbDownloadFiles.Location = new System.Drawing.Point(15, 160);
+            this.rbDownloadFiles.Name = "rbDownloadFiles";
+            this.rbDownloadFiles.Size = new System.Drawing.Size(170, 22);
+            this.rbDownloadFiles.TabIndex = 10;
+            this.rbDownloadFiles.TabStop = true;
+            this.rbDownloadFiles.Text = "Download patch files";
+            this.rbDownloadFiles.UseVisualStyleBackColor = true;
             // 
             // LauncherForm
             // 
@@ -1016,6 +1170,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.btnLauncherLangChange)).EndInit();
             this.panelSettings.ResumeLayout(false);
             this.panelSettings.PerformLayout();
+            this.gbPatchSteps.ResumeLayout(false);
+            this.gbPatchSteps.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1096,6 +1252,17 @@
         private System.ComponentModel.BackgroundWorker bgwServerStatusCheck;
         private System.ComponentModel.BackgroundWorker bgwPatcher;
         private System.Windows.Forms.Label lPatchProgressBarText;
+        private System.Windows.Forms.GroupBox gbPatchSteps;
+        private System.Windows.Forms.RadioButton rbInit;
+        private System.Windows.Forms.RadioButton rbDownloadVerFile;
+        private System.Windows.Forms.RadioButton rbCalculateDownloads;
+        private System.Windows.Forms.RadioButton rbDownloadPatchFilesInfo;
+        private System.Windows.Forms.RadioButton rbReHashLocalFiles;
+        private System.Windows.Forms.RadioButton rbCheckLocalFiles;
+        private System.Windows.Forms.RadioButton rbComparingVersion;
+        private System.Windows.Forms.RadioButton rbDone;
+        private System.Windows.Forms.RadioButton rbAddFiles;
+        private System.Windows.Forms.RadioButton rbDownloadFiles;
     }
 }
 
