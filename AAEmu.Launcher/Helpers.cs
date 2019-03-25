@@ -1,14 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net.Sockets;
-using System.Threading.Tasks;
-using System.Threading;
-using System.Net;
 using System.IO;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
 
 namespace AAEmu.Launcher
 {
@@ -337,6 +335,49 @@ namespace AAEmu.Launcher
         {
             long p = FileDownloadSizeDownloaded * 100 / FileDownloadSizeTotal ;
             return (int)p;
+        }
+
+        public static string DateTimeToPAtchDateTimeStr(DateTime aTime)
+        {
+            string res = "";
+            try
+            {
+                res = aTime.ToString("yyyyMMdd-HHmmss");
+            }
+            catch
+            {
+                res = "00000000-000000";
+            }
+            return res;
+        }
+
+        public static long PatchDateTimeStrToFILETIME(string encodedString)
+        {
+            long res = 0 ;
+
+            int yyyy = 0;
+            int mm = 0;
+            int dd = 0;
+            int hh = 0;
+            int nn = 0;
+            int ss = 0;
+
+            try
+            {
+                if (!int.TryParse(encodedString.Substring(0, 4), out yyyy)) yyyy = 0;
+                if (!int.TryParse(encodedString.Substring(4, 2), out mm)) mm = 0;
+                if (!int.TryParse(encodedString.Substring(6, 2), out dd)) dd = 0;
+                if (!int.TryParse(encodedString.Substring(9, 2), out hh)) hh = 0;
+                if (!int.TryParse(encodedString.Substring(11, 2), out nn)) nn = 0;
+                if (!int.TryParse(encodedString.Substring(13, 2), out ss)) ss = 0;
+
+                res = (new DateTime(yyyy, mm, dd, hh, nn, ss)).ToFileTime();
+            }
+            catch
+            {
+                res = 0;
+            }
+            return res;
         }
 
     }

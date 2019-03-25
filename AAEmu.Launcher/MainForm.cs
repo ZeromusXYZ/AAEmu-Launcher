@@ -425,16 +425,6 @@ namespace AAEmu.Launcher
             panelLoginAndPatch.Visible = ((panelID == 0) || (panelID == 2));
             panelLoginAndPatch.Location = new Point(0, 0);
             panelLoginAndPatch.Size = this.Size;
-            // If we don't change this, transparancy effects that aren't on the panels will show wrong because of gray background
-            switch (panelID)
-            {
-                case 0:
-                    panelLoginAndPatch.BackgroundImage = Properties.Resources.bg_login;
-                    break;
-                case 2:
-                    panelLoginAndPatch.BackgroundImage = Properties.Resources.bg;
-                    break;
-            }
             eLogin.Visible = (panelID == 0);
             ePassword.Visible = (panelID == 0);
             lLogin.Visible = (panelID == 0);
@@ -489,6 +479,8 @@ namespace AAEmu.Launcher
                     BackgroundImage = Properties.Resources.bg_setup;
                     break;
                 case 2:
+                    panelLoginAndPatch.BackgroundImage = Properties.Resources.bg_patch;
+                    break;
                 default:
                     BackgroundImage = Properties.Resources.bg;
                     break;
@@ -2194,30 +2186,8 @@ namespace AAEmu.Launcher
                     }
                     if (items.Length > 4)
                     {
-                        int yyyy = 0;
-                        int mm = 0;
-                        int dd = 0;
-                        int hh = 0;
-                        int nn = 0;
-                        int ss = 0;
-
-                        if (!int.TryParse(items[3].Substring(0, 4), out yyyy)) yyyy = 0;
-                        if (!int.TryParse(items[3].Substring(4, 2), out mm)) mm = 0;
-                        if (!int.TryParse(items[3].Substring(6, 2), out dd)) dd = 0;
-                        if (!int.TryParse(items[3].Substring(9, 2), out hh)) hh = 0;
-                        if (!int.TryParse(items[3].Substring(11,2), out nn)) nn = 0;
-                        if (!int.TryParse(items[3].Substring(13,2), out ss)) ss = 0;
-
-                        xlfi.createTime = (new DateTime(yyyy,mm,dd,hh,nn,ss)).ToFileTime();
-
-                        if (!int.TryParse(items[4].Substring(0, 4), out yyyy)) yyyy = 0;
-                        if (!int.TryParse(items[4].Substring(4, 2), out mm)) mm = 0;
-                        if (!int.TryParse(items[4].Substring(6, 2), out dd)) dd = 0;
-                        if (!int.TryParse(items[4].Substring(9, 2), out hh)) hh = 0;
-                        if (!int.TryParse(items[4].Substring(11,2), out nn)) nn = 0;
-                        if (!int.TryParse(items[4].Substring(13,2), out ss)) ss = 0;
-
-                        xlfi.modifyTime = (new DateTime(yyyy, mm, dd, hh, nn, ss)).ToFileTime(); ;
+                        xlfi.createTime = AAPatchProgress.PatchDateTimeStrToFILETIME(items[3]);
+                        xlfi.modifyTime = AAPatchProgress.PatchDateTimeStrToFILETIME(items[4]);
                     }
                     else
                     {
@@ -2430,8 +2400,7 @@ namespace AAEmu.Launcher
 
             File.WriteAllLines(aaPatcher.localPatchDirectory + "download.txt", sl);
 
-            // rbDownloadFiles.Text = "Download patch "+ dlPakFileList.Count.ToString() + " files - "+ (aaPatcher.FileDownloadSizeTotal / 1024 / 1024).ToString() + " MB";
-            MessageBox.Show("Need to download " + dlPakFileList.Count.ToString() + " files, "+ (aaPatcher.FileDownloadSizeTotal / 1024 / 1024).ToString() + " MB total");
+            // MessageBox.Show("Need to download " + dlPakFileList.Count.ToString() + " files, "+ (aaPatcher.FileDownloadSizeTotal / 1024 / 1024).ToString() + " MB total");
 
             System.Threading.Thread.Sleep(500);
 
