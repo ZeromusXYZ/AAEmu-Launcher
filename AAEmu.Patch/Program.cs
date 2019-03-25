@@ -12,7 +12,7 @@ namespace AAEmu.Patch
 {
     public class Settings
     {
-        public static string appVer = "V0.1";
+        public static string appVer = "V0.2";
         public static List<string> ignoreList = new List<string>();
         public static string patchListFileName = "patchfiles.csv";
         public static string patchVersionFileName = "patchfiles.ver";
@@ -155,6 +155,9 @@ namespace AAEmu.Patch
             {
                 if (Settings.CanAddFile(di.Name))
                 {
+                    // We no longer store the directories, as the pak itself doesn't either
+                    // This will save roughly 30k lines to compare
+                    /*
                     pfi = new PakFileInfo();
 
                     pfi.filePath = path.Substring(Settings.masterRoot.Length) + di.Name;
@@ -164,7 +167,7 @@ namespace AAEmu.Patch
                     pfi.filePath = pfi.filePath.Replace("\\", "/"); // make all forward slashes
 
                     pakFiles.Add(pfi);
-
+                    */
                     AddDirectory(path + di.Name+"\\");
                 }
             }
@@ -182,7 +185,7 @@ namespace AAEmu.Patch
 
                 foreach (PakFileInfo pfi in pakFiles)
                 {
-
+                    /*
                     if (pfi.fileSize < 0)
 
                     {
@@ -190,8 +193,10 @@ namespace AAEmu.Patch
                     }
                     else
                     {
-                        patchCSV.Add(pfi.filePath + ";" + pfi.fileSize + ";"+pfi.fileHash+";" + pfi.fileInfo.CreationTimeUtc.ToString("yyyyMMdd-HHmmss") + ";" + pfi.fileInfo.LastWriteTimeUtc.ToString("yyyyMMdd-HHmmss") + ";");
+                        patchCSV.Add(pfi.filePath + ";" + pfi.fileSize + ";"+pfi.fileHash+";" + pfi.fileInfo.CreationTime.ToString("yyyyMMdd-HHmmss") + ";" + pfi.fileInfo.LastWriteTime.ToString("yyyyMMdd-HHmmss") + ";");
                     }
+                    */
+                    patchCSV.Add(pfi.filePath + ";" + pfi.fileSize + ";" + pfi.fileHash + ";" + pfi.fileInfo.CreationTime.ToString("yyyyMMdd-HHmmss") + ";" + pfi.fileInfo.LastWriteTime.ToString("yyyyMMdd-HHmmss") + ";");
                 }
 
                 File.WriteAllLines(Settings.patchListFileName, patchCSV);
@@ -206,7 +211,7 @@ namespace AAEmu.Patch
         private static void SavePatchVersion()
         {
             string listHash = GetMD5ForFile(Settings.patchListFileName);
-            string verFile = DateTime.UtcNow.ToString("yyyyMMdd-HHmmss") + ";" + listHash + ";1" ; // 1 = patch system version
+            string verFile = DateTime.Now.ToString("yyyyMMdd-HHmmss") + ";" + listHash + ";1" ; // 1 = patch system version
             File.WriteAllText(Settings.patchVersionFileName, verFile);
             Log("Save", "Saved patch version");
         }
