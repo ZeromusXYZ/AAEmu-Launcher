@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Security.Cryptography;
 
 namespace AAEmu.Launcher
 {
@@ -199,9 +200,19 @@ namespace AAEmu.Launcher
                 return ms;
             }
         }
+
+        public static string GetMD5FromStream(Stream fs)
+        {
+            MD5 hash = MD5.Create();
+            fs.Position = 0;
+            var newHash = hash.ComputeHash(fs);
+            hash.Dispose();
+            return BitConverter.ToString(newHash).Replace("-", "").ToUpper(); // Return the (updated) md5 as a string
+        }
+
     }
 
-    public struct AAEmuNewsFeedLinksItem
+public struct AAEmuNewsFeedLinksItem
     {
         [JsonProperty("self")]
         public string self { get; set; }
@@ -256,10 +267,11 @@ namespace AAEmu.Launcher
     public class AAPatchProgress
     {
         public PatchFase Fase = PatchFase.Init;
-        public string remotePatchSystemVersion = "0";
         public string localVersion = "";
+        public string remoteVersionString = "";
         public string remoteVersion = "";
         public string remotePatchFileHash = "";
+        public string remotePatchSystemVersion = "0";
         public string localGame_Pak = "";
         public string localPatchDirectory = ".patch\\";
         public string ErrorMsg = "NO_ERROR";

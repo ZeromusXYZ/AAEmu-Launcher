@@ -12,7 +12,7 @@
   "loginType": "trino_1_2",
   "updateLocale": "True",
   "allowGameUpdates": "False",
-  "serverGameUpdateURL": "",
+  "serverGameUpdateURL": "http://10.0.1.55/aaemu-patch/",
   "serverWebsiteURL": "https://aaemu.info/",
   "serverNewsFeedURL": "https://aaemu.info/api/articles",
   "userHistory": []

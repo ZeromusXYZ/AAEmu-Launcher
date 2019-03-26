@@ -275,8 +275,11 @@ namespace AAEmu.Launcher
         const ushort defaultAuthPort = 1237 ;
         const string launcherDefaultConfigFile = "settings.aelcf"; // .aelcf = ArcheAge Emu Launcher Configuration File
         const string clientLookupDefaultFile = "clientslist.json";
-        const string patchListFileName = ".patch/patchfiles.csv";
-        const string patchVersionFileName = ".patch/patchfiles.ver";
+        string localPatchFolderName = ".patch" + Path.DirectorySeparatorChar;
+        const string remotePatchFolderURI = ".patch/" ;
+        const string patchListFileName = "patchfiles.csv";
+        const string patchVersionFileName = "patchfiles.ver";
+        const string localPatchPakFileName = "download.patch";
         string launcherOpenedConfigFile = "";
         const string urlAAEmuGitHub = "https://github.com/atel0/AAEmu";
         const string urlLauncherGitHub = "https://github.com/ZeromusXYZ/AAEmu-Launcher";
@@ -438,7 +441,7 @@ namespace AAEmu.Launcher
             lPatchProgressBarText.Visible = (panelID == 2);
             pgbBackTotal.Visible = (panelID == 2);
             pgbFrontTotal.Visible = (panelID == 2);
-            gbPatchSteps.Visible = (panelID == 2);
+            pPatchSteps.Visible = (panelID == 2);
 
             // 1: Settings "panel"
             panelSettings.Visible = (panelID == 1);
@@ -475,11 +478,13 @@ namespace AAEmu.Launcher
             {
                 case 0:
                     BackgroundImage = Properties.Resources.bg_login;
+                    panelLoginAndPatch.BackgroundImage = Properties.Resources.bg_login;
                     break;
                 case 1:
                     BackgroundImage = Properties.Resources.bg_setup;
                     break;
                 case 2:
+                    BackgroundImage = Properties.Resources.bg_patch;
                     panelLoginAndPatch.BackgroundImage = Properties.Resources.bg_patch;
                     break;
                 default:
@@ -1751,7 +1756,7 @@ namespace AAEmu.Launcher
         private bool NeedToUpdateFrom(string remoteVersion)
         {
             string s = "";
-            string localPatchVerFile = Path.GetDirectoryName(Path.GetDirectoryName(Setting.PathToGame)) + "\\" + patchVersionFileName;
+            string localPatchVerFile = Path.GetDirectoryName(Path.GetDirectoryName(Setting.PathToGame)) + "\\" + localPatchFolderName + patchVersionFileName;
             try
             {
                 if (File.Exists(localPatchVerFile))
@@ -1836,8 +1841,8 @@ namespace AAEmu.Launcher
                 if ((Setting.ServerGameUpdateURL != null) && (Setting.ServerGameUpdateURL != "") && (aaPatcher.remoteVersion == ""))
                 {
                     // Download patch version file only once until it's invalidated
-                    string remoteVersionString = WebHelper.SimpleGetURIAsString(Setting.ServerGameUpdateURL + patchVersionFileName);
-                    aaPatcher.SetRemoteVersionByString(remoteVersionString);
+                    aaPatcher.remoteVersionString = WebHelper.SimpleGetURIAsString(Setting.ServerGameUpdateURL + remotePatchFolderURI + patchVersionFileName);
+                    aaPatcher.SetRemoteVersionByString(aaPatcher.remoteVersionString);
                 }
                 if ((aaPatcher.remoteVersion != "") && (NeedToUpdateFrom(aaPatcher.remoteVersion)))
                 {
@@ -2253,10 +2258,12 @@ namespace AAEmu.Launcher
 
         private void bgwPatcher_DoWork(object sender, DoWorkEventArgs e)
         {
+            //------
+            // Init
+            //------
             aaPatcher.Fase = PatchFase.Init;
             bgwPatcher.ReportProgress(0, aaPatcher);
             System.Threading.Thread.Sleep(150);
-
             try
             {
                 DirectoryInfo patchDirInfo = Directory.CreateDirectory(aaPatcher.localPatchDirectory);
@@ -2268,31 +2275,69 @@ namespace AAEmu.Launcher
                 aaPatcher.ErrorMsg = "Failed to create patch directory: " + aaPatcher.localPatchDirectory;
                 return;
             }
-
             System.Threading.Thread.Sleep(150);
+
             aaPatcher.Fase = PatchFase.DownloadVerFile;
             bgwPatcher.ReportProgress(0, aaPatcher);
 
             // Download patch version file
-            string remoteVersionString = WebHelper.SimpleGetURIAsString(Setting.ServerGameUpdateURL + patchVersionFileName);
-            if (!aaPatcher.SetRemoteVersionByString(remoteVersionString))
+            aaPatcher.remoteVersionString = WebHelper.SimpleGetURIAsString(Setting.ServerGameUpdateURL + remotePatchFolderURI + patchVersionFileName);
+            if (!aaPatcher.SetRemoteVersionByString(aaPatcher.remoteVersionString))
             {
                 aaPatcher.Fase = PatchFase.Error;
-                aaPatcher.ErrorMsg = L.DownloadError +"\r\n"+Setting.ServerGameUpdateURL + patchVersionFileName ;
+                aaPatcher.ErrorMsg = L.DownloadError +"\r\n"+Setting.ServerGameUpdateURL + remotePatchFolderURI + patchVersionFileName;
+                return;
+            }
+
+            if (aaPatcher.remotePatchSystemVersion != "1")
+            {
+                aaPatcher.Fase = PatchFase.Error;
+                aaPatcher.ErrorMsg = "Unsupported patch system: Version " + aaPatcher.remotePatchSystemVersion ;
+                return;
+            }
+
+            aaPatcher.Fase = PatchFase.CompareVersion;
+            System.Threading.Thread.Sleep(250);
+
+            //----------------------------------
+            // Read Local version file (if any)
+            //----------------------------------
+            try
+            {
+                if (File.Exists(aaPatcher.localPatchDirectory + remotePatchFolderURI + patchVersionFileName))
+                {
+                    aaPatcher.localVersion = File.ReadAllText(aaPatcher.localPatchDirectory + remotePatchFolderURI + patchVersionFileName);
+                }
+                else
+                {
+                    aaPatcher.localVersion = "No Version Info";
+                }
+            }
+            catch
+            {
+                aaPatcher.localVersion = "Version Info Error";
+            }
+
+            System.Threading.Thread.Sleep(250);
+
+            if (aaPatcher.localVersion == aaPatcher.remoteVersionString)
+            {
+                // Nothing to update, skip out
+                aaPatcher.Fase = PatchFase.Done;
                 return;
             }
 
             aaPatcher.Fase = PatchFase.CheckLocalFiles;
             bgwPatcher.ReportProgress(1, aaPatcher);
-            // TODO: compare to locally stored ver file if that exists
-            System.Threading.Thread.Sleep(500);
+            System.Threading.Thread.Sleep(250);
 
             List<AAPakFileInfo> remotePakFileList ;
             List<AAPakFileInfo> rmPakFileList = new List<AAPakFileInfo>();
-
             dlPakFileList.Clear();
 
+            //--------------------------------------
             // Create/Load Local Hash from game_pak
+            //--------------------------------------
             if (File.Exists(aaPatcher.localGame_Pak))
             {
                 aaPatcher.Fase = PatchFase.CheckLocalFiles;
@@ -2337,18 +2382,35 @@ namespace AAEmu.Launcher
                 System.Threading.Thread.Sleep(1000);
             }
 
+            //------------------------
             // Download PatchFileInfo
+            //------------------------
             aaPatcher.Fase = PatchFase.DownloadPatchFilesInfo;
             bgwPatcher.ReportProgress(2, aaPatcher);
 
-            MemoryStream ms = WebHelper.SimpleGetURIAsMemoryStream(Setting.ServerGameUpdateURL + patchListFileName);
+            MemoryStream ms = WebHelper.SimpleGetURIAsMemoryStream(Setting.ServerGameUpdateURL + remotePatchFolderURI + patchListFileName);
+
+            // check if downloaded patch files list has the correct hash
+            var remotePatchFilesHash = WebHelper.GetMD5FromStream(ms);
+            if (remotePatchFilesHash != aaPatcher.remotePatchFileHash)
+            {
+                aaPatcher.Fase = PatchFase.Error;
+                aaPatcher.ErrorMsg = "Downloaded patch file information does not seem to match the server version information, aborting update !\r\nGot: " + remotePatchFilesHash + "\r\nExpected: " + aaPatcher.remotePatchFileHash+"\r\nPossible corrupted or incomplete download" ;
+                return;
+            }
+
+            // Generate a files list in our pak files' format from the downloaded CSV
             remotePakFileList = CreateXlFileListFromStream(ms);
 
             System.Threading.Thread.Sleep(250);
 
+            //--------------------------------------------------------------------------------------
+            // Compare local game_pak with downloaded information to check what needs to be updated
+            //--------------------------------------------------------------------------------------
             aaPatcher.Fase = PatchFase.CalculateDownloads ;
             bgwPatcher.ReportProgress(0, aaPatcher);
 
+            // First sort both to speed things up
             pak.files.Sort();
             remotePakFileList.Sort();
 
@@ -2392,24 +2454,70 @@ namespace AAEmu.Launcher
             }
             aaPatcher.FileDownloadSizeTotal = totSize;
 
-
-            PatchDownloadPak = new AAPak(aaPatcher.localPatchDirectory + "download.patch",false,true);
-
-            // TODO: init download pak
-
-            List<string> sl = new List<string>();
-            foreach(AAPakFileInfo pfi in dlPakFileList)
+            if ((aaPatcher.FileDownloadSizeTotal <= 0) || (dlPakFileList.Count <= 0))
             {
-                sl.Add(pfi.name);
+                aaPatcher.Fase = PatchFase.Done;
+                aaPatcher.ErrorMsg = "No files need to be updated";
+                return;
             }
 
+
+            //-------------------------------------------------
+            // Initialize download.patch file (patch pak file)
+            //-------------------------------------------------
+            if (!File.Exists(aaPatcher.localPatchDirectory + localPatchPakFileName))
+            {
+                try
+                {
+                    PatchDownloadPak = new AAPak(aaPatcher.localPatchDirectory + localPatchPakFileName, false, true);
+                    PatchDownloadPak.SaveHeader();
+                    PatchDownloadPak.ClosePak();
+                }
+                catch (Exception x)
+                {
+                    aaPatcher.Fase = PatchFase.Error;
+                    aaPatcher.ErrorMsg = "Error creating patch cache. " + x.Message;
+                    return;
+                }
+            }
+
+            PatchDownloadPak = new AAPak(aaPatcher.localPatchDirectory + localPatchPakFileName, false, false);
+            if (!PatchDownloadPak.isOpen)
+            {
+                aaPatcher.Fase = PatchFase.Error;
+                aaPatcher.ErrorMsg = "Failed to open patch cache for writing !";
+                return;
+            }
+
+            // Generate a list of files to download
+            // Skip any file that is already in our download.patch
+            List<string> sl = new List<string>();
+
+            totSize = 0; // calculate this again on the final list
+            for (int i = dlPakFileList.Count-1; i >= 0;i--)
+            {
+                if (PatchDownloadPak.FileExists(dlPakFileList[i].name))
+                {
+                    dlPakFileList.Remove(dlPakFileList[i]);
+                }
+                else
+                {
+                    totSize += dlPakFileList[i].size;
+                    sl.Add(dlPakFileList[i].name);
+                }
+            }
+            aaPatcher.FileDownloadSizeTotal = totSize;
+
+            // debug file to check what we'll download
             File.WriteAllLines(aaPatcher.localPatchDirectory + "download.txt", sl);
 
-            // MessageBox.Show("Need to download " + dlPakFileList.Count.ToString() + " files, "+ (aaPatcher.FileDownloadSizeTotal / 1024 / 1024).ToString() + " MB total");
+            MessageBox.Show("Need to download " + dlPakFileList.Count.ToString() + " files, "+ (aaPatcher.FileDownloadSizeTotal / 1024 / 1024).ToString() + " MB total");
 
             System.Threading.Thread.Sleep(500);
 
+            //-------------------
             // Do download stuff
+            //-------------------
             aaPatcher.Fase = PatchFase.DownloadFiles;
             bgwPatcher.ReportProgress(0, aaPatcher);
             for (int i = 0; i <= 100;i++)
@@ -2418,7 +2526,9 @@ namespace AAEmu.Launcher
                 System.Threading.Thread.Sleep(250);
             }
 
+            //----------------
             // Do Patch Stuff
+            //----------------
             aaPatcher.Fase = PatchFase.AddFiles;
             bgwPatcher.ReportProgress(0, aaPatcher);
             for (int i = 0; i <= 100; i++)
@@ -2427,7 +2537,18 @@ namespace AAEmu.Launcher
                 System.Threading.Thread.Sleep(250);
             }
 
+            //----------------------------------------------------
+            // Extract bin32 and optional DB from the updated pak
+            //----------------------------------------------------
+            
+            // TODO: Extract bin32
+            // TODO: Check if game/db/compact.sqlite3 is encrypted, if not, extract it
+            System.Threading.Thread.Sleep(1000);
+
+
+            //----------------------------------
             // All done, back to the login page
+            //----------------------------------
             aaPatcher.localVersion = aaPatcher.remoteVersion;
             aaPatcher.Fase = PatchFase.Done;
             bgwPatcher.ReportProgress(100, aaPatcher);
@@ -2490,12 +2611,31 @@ namespace AAEmu.Launcher
             {
                 MessageBox.Show(aaPatcher.ErrorMsg, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            if (aaPatcher.Fase == PatchFase.Done)
+            {
+                try
+                {
+                    // Save our .ver file again
+                    File.WriteAllText(aaPatcher.localPatchDirectory + patchVersionFileName, aaPatcher.remoteVersionString);
+                    if ((PatchDownloadPak != null) && (PatchDownloadPak.isOpen))
+                    {
+                        PatchDownloadPak.ClosePak();
+                    }
+                    // Delete Patch Pak if completed succesfully
+                    File.Delete(aaPatcher.localPatchDirectory + localPatchPakFileName);
+                }
+                catch (Exception x)
+                {
+                    MessageBox.Show("Error saving version information. " + x.Message);
+                }
+            }
+
             serverCheckStatus = serverCheck.Unknown;
             nextServerCheck = 1000;
-            ShowPanelControls(0);
             updatePlayButton(serverCheckStatus, false);
+            ShowPanelControls(0);
         }
-        
+
         // Create a method for a delegate.
         public void XLPakToolProgressCallback(long progress)
         {
