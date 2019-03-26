@@ -115,6 +115,8 @@
             this.bgwNewsFeed = new System.ComponentModel.BackgroundWorker();
             this.bgwServerStatusCheck = new System.ComponentModel.BackgroundWorker();
             this.bgwPatcher = new System.ComponentModel.BackgroundWorker();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.skipPatchtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelLoginAndPatch.SuspendLayout();
             this.gbPatchSteps.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pgbFrontTotal)).BeginInit();
@@ -432,8 +434,9 @@
             this.lNewsFeed.Name = "lNewsFeed";
             this.lNewsFeed.Size = new System.Drawing.Size(201, 263);
             this.lNewsFeed.TabIndex = 24;
-            this.lNewsFeed.Text = "Launcher News\r\n\r\nNow able to launch the\r\ngame using -t\r\n\r\nYou are now able to set" +
-    "\r\nyour game language\r\ndifferent from the launcher\r\n\r\nHead 4\r\ntext 4\r\n";
+            this.lNewsFeed.Text = "Launcher News\r\n\r\n\r\nPatch support for servers\r\nthat implement it.\r\n\r\nYou are now a" +
+    "ble to set\r\nyour game language\r\ndifferent from the launcher\r\n\r\nNow able to launc" +
+    "h the\r\ngame using -t\r\n";
             this.lNewsFeed.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // btnSettings
@@ -582,7 +585,7 @@
             // minimizeToolStripMenuItem
             // 
             this.minimizeToolStripMenuItem.Name = "minimizeToolStripMenuItem";
-            this.minimizeToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.minimizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.minimizeToolStripMenuItem.Text = "Minimize";
             this.minimizeToolStripMenuItem.Click += new System.EventHandler(this.minimizeToolStripMenuItem_Click);
             // 
@@ -590,11 +593,13 @@
             // 
             this.troubleshootToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.forcePatchDownloadToolStripMenuItem,
+            this.skipPatchtToolStripMenuItem,
+            this.toolStripSeparator5,
             this.deleteShaderCacheToolStripMenuItem,
             this.deleteGameConfigurationToolStripMenuItem,
             this.deleteAllArcheAgeSettingsToolStripMenuItem});
             this.troubleshootToolStripMenuItem.Name = "troubleshootToolStripMenuItem";
-            this.troubleshootToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.troubleshootToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.troubleshootToolStripMenuItem.Text = "Troubleshoot";
             this.troubleshootToolStripMenuItem.Visible = false;
             // 
@@ -629,7 +634,7 @@
             // debugModeToolStripMenuItem
             // 
             this.debugModeToolStripMenuItem.Name = "debugModeToolStripMenuItem";
-            this.debugModeToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.debugModeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.debugModeToolStripMenuItem.Text = "Debug Mode";
             this.debugModeToolStripMenuItem.Visible = false;
             this.debugModeToolStripMenuItem.Click += new System.EventHandler(this.debugModeToolStripMenuItem_Click);
@@ -637,12 +642,12 @@
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(141, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
@@ -1121,6 +1126,18 @@
             this.bgwPatcher.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgwPatcher_ProgressChanged);
             this.bgwPatcher.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwPatcher_RunWorkerCompleted);
             // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(218, 6);
+            // 
+            // skipPatchtToolStripMenuItem
+            // 
+            this.skipPatchtToolStripMenuItem.Name = "skipPatchtToolStripMenuItem";
+            this.skipPatchtToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.skipPatchtToolStripMenuItem.Text = "Skip Patch";
+            this.skipPatchtToolStripMenuItem.Click += new System.EventHandler(this.skipPatchtToolStripMenuItem_Click);
+            // 
             // LauncherForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -1263,6 +1280,8 @@
         private System.Windows.Forms.RadioButton rbDone;
         private System.Windows.Forms.RadioButton rbAddFiles;
         private System.Windows.Forms.RadioButton rbDownloadFiles;
+        private System.Windows.Forms.ToolStripMenuItem skipPatchtToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
     }
 }
 

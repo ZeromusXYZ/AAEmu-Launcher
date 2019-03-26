@@ -306,6 +306,7 @@ namespace AAEmu.Launcher
 
         private AAPatchProgress aaPatcher = new AAPatchProgress();
         private AAPak pak = null;
+        private AAPak PatchDownloadPak = null;
         private List<AAPakFileInfo> dlPakFileList = new List<AAPakFileInfo>();
 
         public LauncherForm()
@@ -2389,8 +2390,12 @@ namespace AAEmu.Launcher
                     System.Threading.Thread.Sleep(1);
                 }
             }
-
             aaPatcher.FileDownloadSizeTotal = totSize;
+
+
+            PatchDownloadPak = new AAPak(aaPatcher.localPatchDirectory + "download.patch",false,true);
+
+            // TODO: init download pak
 
             List<string> sl = new List<string>();
             foreach(AAPakFileInfo pfi in dlPakFileList)
@@ -2508,5 +2513,13 @@ namespace AAEmu.Launcher
             return bytes;
         }
 
+        private void skipPatchtToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            serverCheckStatus = serverCheck.Unknown; // Force to unknown mode
+            nextServerCheck = -1;
+            updatePlayButton(serverCheckStatus, false);
+            ShowPanelControls(0); // Update Panel
+
+        }
     }
 }
