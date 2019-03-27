@@ -1,6 +1,10 @@
 ﻿.
 ..
 .git
+.gitignore
+README.md
 .patch
 patchfiles.csv
 patchfiles.ver
+game_pak
+aaemu.info.aelcf

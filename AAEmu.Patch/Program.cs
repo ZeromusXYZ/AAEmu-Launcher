@@ -134,11 +134,11 @@ namespace AAEmu.Patch
                 {
                     pfi = new PakFileInfo();
 
-                    pfi.filePath = path.Substring(Settings.masterRoot.Length) + fi.Name ;
+                    pfi.filePath = path.Substring(Settings.masterRoot.Length) + fi.Name;
                     pfi.fileSize = fi.Length;
                     pfi.fileInfo = fi;
                     pfi.fileHash = GetMD5ForFile(path+ fi.Name);
-                    pfi.filePath = pfi.filePath.Replace("\\", "/"); // make all forward slashes
+                    pfi.filePath = pfi.filePath.Replace("\\", "/").ToLower(); // make all forward slashes, and lowercase it while we're at it
 
 
                     pakFiles.Add(pfi);
@@ -198,6 +198,7 @@ namespace AAEmu.Patch
                     */
                     patchCSV.Add(pfi.filePath + ";" + pfi.fileSize + ";" + pfi.fileHash + ";" + pfi.fileInfo.CreationTime.ToString("yyyyMMdd-HHmmss") + ";" + pfi.fileInfo.LastWriteTime.ToString("yyyyMMdd-HHmmss") + ";");
                 }
+                patchCSV.Sort();
 
                 File.WriteAllLines(Settings.patchListFileName, patchCSV);
                 Log("Save", "Saved data for " + patchCSV.Count.ToString() + " files");
