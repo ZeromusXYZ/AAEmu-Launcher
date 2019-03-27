@@ -207,7 +207,7 @@ namespace AAEmu.Launcher
             fs.Position = 0;
             var newHash = hash.ComputeHash(fs);
             hash.Dispose();
-            return BitConverter.ToString(newHash).Replace("-", "").ToUpper(); // Return the (updated) md5 as a string
+            return BitConverter.ToString(newHash).Replace("-", "").ToLower(); // Return the (updated) md5 as a string
         }
 
     }
@@ -275,6 +275,7 @@ public struct AAEmuNewsFeedLinksItem
         public string localGame_Pak = "";
         public string localPatchDirectory = ".patch\\";
         public string ErrorMsg = "NO_ERROR";
+        public string DoneMsg = "";
         public List<PakFileInfo> localPakFileList = new List<PakFileInfo>();
         public List<PakFileInfo> remotePakFileList = new List<PakFileInfo>();
 
@@ -297,6 +298,7 @@ public struct AAEmuNewsFeedLinksItem
             FileDownloadSizeDownloaded = 0;
             FileApplySize = 0;
             ErrorMsg = "NO_ERROR";
+            DoneMsg = "";
         }
 
         public void RecalculateTotalDownloadSize()

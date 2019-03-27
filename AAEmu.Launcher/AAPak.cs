@@ -824,7 +824,7 @@ namespace AAPakEditor
                 newHash.CopyTo(file.md5,0);
                 isDirty = true;
             }
-            return BitConverter.ToString(file.md5).Replace("-", ""); // Return the (updated) md5 as a string
+            return BitConverter.ToString(file.md5).Replace("-", "").ToLower(); // Return the (updated) md5 as a string
         }
 
         public bool FindFileByOffset(long offset, ref AAPakFileInfo fileInfo)

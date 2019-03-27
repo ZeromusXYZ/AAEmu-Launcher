@@ -2304,9 +2304,9 @@ namespace AAEmu.Launcher
             //----------------------------------
             try
             {
-                if (File.Exists(aaPatcher.localPatchDirectory + remotePatchFolderURI + patchVersionFileName))
+                if (File.Exists(aaPatcher.localPatchDirectory + patchVersionFileName))
                 {
-                    aaPatcher.localVersion = File.ReadAllText(aaPatcher.localPatchDirectory + remotePatchFolderURI + patchVersionFileName);
+                    aaPatcher.localVersion = File.ReadAllText(aaPatcher.localPatchDirectory + patchVersionFileName);
                 }
                 else
                 {
@@ -2324,6 +2324,7 @@ namespace AAEmu.Launcher
             {
                 // Nothing to update, skip out
                 aaPatcher.Fase = PatchFase.Done;
+                aaPatcher.DoneMsg = "Nothing to update, same version";
                 return;
             }
 
@@ -2457,7 +2458,7 @@ namespace AAEmu.Launcher
             if ((aaPatcher.FileDownloadSizeTotal <= 0) || (dlPakFileList.Count <= 0))
             {
                 aaPatcher.Fase = PatchFase.Done;
-                aaPatcher.ErrorMsg = "No files need to be updated";
+                aaPatcher.DoneMsg = "No files need to be updated";
                 return;
             }
 
@@ -2484,9 +2485,26 @@ namespace AAEmu.Launcher
             PatchDownloadPak = new AAPak(aaPatcher.localPatchDirectory + localPatchPakFileName, false, false);
             if (!PatchDownloadPak.isOpen)
             {
-                aaPatcher.Fase = PatchFase.Error;
-                aaPatcher.ErrorMsg = "Failed to open patch cache for writing !";
-                return;
+                // TODO: Add better support in case of fails
+                //aaPatcher.Fase = PatchFase.Error;
+                //aaPatcher.ErrorMsg = "Failed to open patch cache for writing, might be corrupted !";
+                //return;
+                MessageBox.Show("Failed to open patch cache for writing, might be corrupted !\r\nTrying again with a new cache.", "CACHE ERROR", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                try
+                {
+                    PatchDownloadPak = new AAPak(aaPatcher.localPatchDirectory + localPatchPakFileName, false, true);
+                }
+                catch
+                {
+                    PatchDownloadPak = null;
+                }
+
+                if ((PatchDownloadPak == null) || (!PatchDownloadPak.isOpen))
+                {
+                    aaPatcher.Fase = PatchFase.Error;
+                    aaPatcher.ErrorMsg = "Fatal Error: unable to open patch cache for writing, please check permissions !";
+                    return;
+                }
             }
 
             // Generate a list of files to download
@@ -2511,7 +2529,7 @@ namespace AAEmu.Launcher
             // debug file to check what we'll download
             File.WriteAllLines(aaPatcher.localPatchDirectory + "download.txt", sl);
 
-            MessageBox.Show("Need to download " + dlPakFileList.Count.ToString() + " files, "+ (aaPatcher.FileDownloadSizeTotal / 1024 / 1024).ToString() + " MB total");
+            // MessageBox.Show("Need to download " + dlPakFileList.Count.ToString() + " files, "+ (aaPatcher.FileDownloadSizeTotal / 1024 / 1024).ToString() + " MB total");
 
             System.Threading.Thread.Sleep(500);
 
@@ -2520,21 +2538,108 @@ namespace AAEmu.Launcher
             //-------------------
             aaPatcher.Fase = PatchFase.DownloadFiles;
             bgwPatcher.ReportProgress(0, aaPatcher);
-            for (int i = 0; i <= 100;i++)
+
+            aaPatcher.FileDownloadSizeDownloaded = 0;
+            for (int i = dlPakFileList.Count - 1; i >= 0; i--)
             {
-                bgwPatcher.ReportProgress(i, aaPatcher);
-                System.Threading.Thread.Sleep(250);
+                AAPakFileInfo pfi = dlPakFileList[i];
+                var fileDLurl = Setting.ServerGameUpdateURL + pfi.name;
+
+                try
+                {
+                    Stream fileDL = WebHelper.SimpleGetURIAsMemoryStream(fileDLurl);
+                    if (fileDL.Length != pfi.size)
+                    {
+                        aaPatcher.Fase = PatchFase.Error;
+                        aaPatcher.ErrorMsg = "Downloading size does not match\r\n" + fileDLurl + "\r\nExpected: "+pfi.size.ToString()+"\r\nGot: "+fileDL.Length.ToString();
+                        fileDL.Dispose();
+                        return;
+                    }
+                    fileDL.Position = 0;
+                    var fileHash =  WebHelper.GetMD5FromStream(fileDL);
+                    var expectHash = BitConverter.ToString(pfi.md5).Replace("-", "").ToLower();
+                    if (fileHash != expectHash)
+                    {
+                        aaPatcher.Fase = PatchFase.Error;
+                        aaPatcher.ErrorMsg = "Downloading hash does not match\r\n" + fileDLurl + "\r\nExpected: " + expectHash + "\r\nGot: " + fileHash;
+                        fileDL.Dispose();
+                        return;
+                    }
+                    var addpfi = PatchDownloadPak.nullAAPakFileInfo;
+                    fileDL.Position = 0;
+                    var addRes = PatchDownloadPak.AddFileFromStream(pfi.name, fileDL, DateTime.FromFileTime(pfi.createTime), DateTime.FromFileTime(pfi.modifyTime), false, out addpfi);
+                    if (!addRes)
+                    {
+                        aaPatcher.Fase = PatchFase.Error;
+                        aaPatcher.ErrorMsg = "Failed to save download cache:\r\n" + pfi.name;
+                        fileDL.Dispose();
+                        return;
+                    }
+                    fileDL.Dispose();
+                }
+                catch
+                {
+                    aaPatcher.Fase = PatchFase.Error;
+                    aaPatcher.ErrorMsg = "Error downloading file\r\n" + fileDLurl;
+                    return;
+                }
+
+                aaPatcher.FileDownloadSizeDownloaded += pfi.size;
+
+                var dlprogress = (aaPatcher.FileDownloadSizeDownloaded * 100) / aaPatcher.FileDownloadSizeTotal;
+                bgwPatcher.ReportProgress((int)dlprogress, aaPatcher);
+            }
+            PatchDownloadPak.SaveHeader();
+
+            // Check if we need to extract the DB
+            bool exportDBAsWell = false;
+            var dbNameInPak = "game/db/compact.sqlite3";
+            if (PatchDownloadPak.FileExists(dbNameInPak))
+            {
+                Stream testStream = PatchDownloadPak.ExportFileAsStream(dbNameInPak);
+                if (testStream.Length > 16)
+                {
+                    // var requiredHeader = "SQLite format 3";
+                    byte[] buf = new byte[16];
+                    testStream.Position = 0;
+                    testStream.Read(buf, 0, 16);
+                    if ((buf[0] == 'S') && (buf[1] == 'Q') && (buf[2] == 'L') && (buf[3] == 'i') && (buf[4] == 't') && (buf[5] == 'e'))
+                    {
+                        exportDBAsWell = true;
+                    }
+                }
+                testStream.Dispose();
+            }
+            var bin32Dir = "bin32/";
+
+            // Recalculate the total size to apply (including data to copy outside of the game_pak)
+            aaPatcher.FileDownloadSizeTotal = 0;
+            foreach(AAPakFileInfo pfi in PatchDownloadPak.files)
+            {
+                aaPatcher.FileDownloadSizeTotal += pfi.size;
+                // Count files inside bin32 twice
+                if ((pfi.name.Length > bin32Dir.Length) && (pfi.name.Substring(0, bin32Dir.Length) == bin32Dir))
+                {
+                    aaPatcher.FileDownloadSizeTotal += pfi.size;
+                }
+                // count compact.sqlite3 twice if it's not encrypted
+                if ((pfi.name == dbNameInPak) && (exportDBAsWell))
+                {
+                    aaPatcher.FileDownloadSizeTotal += pfi.size;
+                }
             }
 
-            //----------------
-            // Do Patch Stuff
-            //----------------
+
+
+            //-------------------
+            // Apply Patch Stuff
+            //-------------------
             aaPatcher.Fase = PatchFase.AddFiles;
             bgwPatcher.ReportProgress(0, aaPatcher);
             for (int i = 0; i <= 100; i++)
             {
                 bgwPatcher.ReportProgress(i, aaPatcher);
-                System.Threading.Thread.Sleep(250);
+                System.Threading.Thread.Sleep(100);
             }
 
             //----------------------------------------------------
@@ -2551,6 +2656,7 @@ namespace AAEmu.Launcher
             //----------------------------------
             aaPatcher.localVersion = aaPatcher.remoteVersion;
             aaPatcher.Fase = PatchFase.Done;
+            aaPatcher.DoneMsg = L.PatchComplete;
             bgwPatcher.ReportProgress(100, aaPatcher);
             System.Threading.Thread.Sleep(2500);
         }
@@ -2588,7 +2694,8 @@ namespace AAEmu.Launcher
                     break;
                 case PatchFase.DownloadFiles:
                     lPatchProgressBarText.Text = L.DownloadPatch;
-                    rbDownloadFiles.Text = "Download " + dlPakFileList.Count.ToString() + " patch files - " + (aaPatcher.FileDownloadSizeTotal / 1024 / 1024).ToString() + " MB";
+                    rbDownloadFiles.Text = string.Format("Download {0} MB in {1} file(s)", (aaPatcher.FileDownloadSizeTotal / 1024 / 1024).ToString(), dlPakFileList.Count.ToString());
+                    // rbDownloadFiles.Text = "Download " + dlPakFileList.Count.ToString() + " patch files - " + (aaPatcher.FileDownloadSizeTotal / 1024 / 1024).ToString() + " MB";
                     rbDownloadFiles.Checked = true;
                     break;
                 case PatchFase.AddFiles:
@@ -2622,12 +2729,19 @@ namespace AAEmu.Launcher
                         PatchDownloadPak.ClosePak();
                     }
                     // Delete Patch Pak if completed succesfully
-                    File.Delete(aaPatcher.localPatchDirectory + localPatchPakFileName);
+                    // Keep patch cache file if debugging
+                    if (debugModeToolStripMenuItem.Checked == false)
+                      File.Delete(aaPatcher.localPatchDirectory + localPatchPakFileName);
                 }
                 catch (Exception x)
                 {
                     MessageBox.Show("Error saving version information. " + x.Message);
                 }
+                if (aaPatcher.DoneMsg != "")
+                {
+                    MessageBox.Show(aaPatcher.DoneMsg, L.PatchComplete, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+
             }
 
             serverCheckStatus = serverCheck.Unknown;
