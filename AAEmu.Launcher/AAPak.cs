@@ -579,8 +579,7 @@ namespace AAPakEditor
 
         ~AAPak()
         {
-            if (isOpen)
-                ClosePak();
+            ClosePak();
         }
 
         public bool OpenPak(string filePath, bool openAsReadOnly)
@@ -651,9 +650,13 @@ namespace AAPakEditor
         {
             if (!isOpen)
                 return;
-            if ((isDirty) && (readOnly == false))
-                SaveHeader();
-            _gpFileStream.Close();
+            try
+            {
+                if ((isDirty) && (readOnly == false))
+                    SaveHeader();
+                _gpFileStream.Close();
+            }
+            catch { }
             _gpFileStream = null;
             _gpFilePath = null;
             isOpen = false;

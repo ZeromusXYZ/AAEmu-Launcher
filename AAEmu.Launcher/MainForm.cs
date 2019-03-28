@@ -312,6 +312,9 @@ namespace AAEmu.Launcher
         private AAPak PatchDownloadPak = null;
         private List<AAPakFileInfo> dlPakFileList = new List<AAPakFileInfo>();
 
+        // Debug stuff
+        long seekerSteps = 0;
+
         public LauncherForm()
         {
             InitializeComponent();
@@ -1146,6 +1149,18 @@ namespace AAEmu.Launcher
         private void LauncherForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             SaveSettings();
+            try
+            {
+                if (PatchDownloadPak != null)
+                    PatchDownloadPak.ClosePak();
+            }
+            catch { }
+            try
+            {
+                if (pak != null)
+                    pak.ClosePak();
+            }
+            catch { }
         }
 
         private void SaveClientLookups()
@@ -2206,7 +2221,7 @@ namespace AAEmu.Launcher
             return res;
         }
 
-        private AAPakFileInfo FindPatchFileInList(string filename, List<AAPakFileInfo> list, ref int startIndex)
+        private AAPakFileInfo FindPatchFileInList(string filename, ref List<AAPakFileInfo> list, ref int startIndex)
         {
             filename = filename.ToLower();
             int i = startIndex;
@@ -2222,9 +2237,49 @@ namespace AAEmu.Launcher
                     startIndex = i;
                     return pfi;
                 }
+                seekerSteps++;
             }
             return null;
         }
+
+        private AAPakFileInfo FindPatchFileInList2(string filename, ref List<AAPakFileInfo> list, ref int startIndex)
+        {
+            filename = filename.ToLower();
+            int i = startIndex;
+            int searchMin = 0;
+            int searchMax = list.Count - 1;
+            int searchPos = 0;
+
+            while (searchMin <= searchMax)
+            {
+                // Calculate range left
+                // int searchSize = searchMax - searchMin;
+                // Find the middle
+                // searchPos = searchMin + (searchSize / 2);
+                searchPos = ((searchMin + searchMax) / 2);
+
+                var res = list[searchPos].name.CompareTo(filename);
+                if (res < 0)
+                {
+                    // Looking for a smaller value
+                    searchMin = searchPos+1;
+                }
+                else
+                if (res > 0)
+                {
+                    // Looking for a higher value
+                    searchMax = searchPos-1;
+                }
+                else
+                {
+                    return list[searchPos];
+                }
+                seekerSteps++;
+            }
+
+            return null;
+        }
+
 
         private long MakeDownloadList(List<AAPakFileInfo> local, List<AAPakFileInfo> remote, ref List<AAPakFileInfo> dl)
         {
@@ -2234,7 +2289,7 @@ namespace AAEmu.Launcher
             {
                 if (r.size <= 0) continue;
 
-                AAPakFileInfo l = FindPatchFileInList(r.name,local,ref lastLocalIndex);
+                AAPakFileInfo l = FindPatchFileInList2(r.name,ref local,ref lastLocalIndex);
                 if (l == null)
                 {
                     // We don't have a local copy of this file
@@ -2244,7 +2299,7 @@ namespace AAEmu.Launcher
                 else
                 {
                     
-                    if ((l.size != r.size) || (l.md5.Equals(r.md5)))
+                    if ((l.size != r.size) || (!l.md5.Equals(r.md5)))
                     {
                         // Local Filesize or Hash is different from remote
                         dl.Add(r);
@@ -2419,6 +2474,7 @@ namespace AAEmu.Launcher
 
             long totSize = 0;
             int lastLocalIndex = 0; // used for search optimization, without this, it takes roughly half a hour on my PC, with about 10 seconds
+            seekerSteps = 0;
             for(int i = 0 ; i < remotePakFileList.Count;i++)
             {
                 AAPakFileInfo r = remotePakFileList[i];
@@ -2426,7 +2482,7 @@ namespace AAEmu.Launcher
                 // Don't download empty files or entries marked as directories (-1)
                 if (r.size <= 0) continue;
 
-                AAPakFileInfo l = FindPatchFileInList(r.name, pak.files,ref lastLocalIndex);
+                AAPakFileInfo l = FindPatchFileInList2(r.name, ref pak.files,ref lastLocalIndex);
                 if (l == null)
                 {
                     // We don't have a local copy of this file
@@ -2437,7 +2493,7 @@ namespace AAEmu.Launcher
                 else
                 {
 
-                    if ((l.size != r.size) || (l.md5.Equals(r.md5)))
+                    if ( (l.size != r.size) || (l.md5.SequenceEqual(r.md5) == false) )
                     {
                         // Local Filesize or Hash is different from remote
                         // Redownload it
@@ -2455,6 +2511,9 @@ namespace AAEmu.Launcher
             }
             aaPatcher.FileDownloadSizeTotal = totSize;
 
+            if (debugModeToolStripMenuItem.Checked)
+                MessageBox.Show("Seeker Steps" + seekerSteps.ToString());
+
             if ((aaPatcher.FileDownloadSizeTotal <= 0) || (dlPakFileList.Count <= 0))
             {
                 aaPatcher.Fase = PatchFase.Done;
@@ -2466,11 +2525,21 @@ namespace AAEmu.Launcher
             //-------------------------------------------------
             // Initialize download.patch file (patch pak file)
             //-------------------------------------------------
+            if (PatchDownloadPak == null)
+                PatchDownloadPak = new AAPak("");
+
+            
+
             if (!File.Exists(aaPatcher.localPatchDirectory + localPatchPakFileName))
             {
                 try
                 {
-                    PatchDownloadPak = new AAPak(aaPatcher.localPatchDirectory + localPatchPakFileName, false, true);
+                    if (!PatchDownloadPak.NewPak(aaPatcher.localPatchDirectory + localPatchPakFileName))
+                    {
+                        aaPatcher.Fase = PatchFase.Error;
+                        aaPatcher.ErrorMsg = "Error creating patch cache. ";
+                        return;
+                    }
                     PatchDownloadPak.SaveHeader();
                     PatchDownloadPak.ClosePak();
                 }
@@ -2482,17 +2551,18 @@ namespace AAEmu.Launcher
                 }
             }
 
-            PatchDownloadPak = new AAPak(aaPatcher.localPatchDirectory + localPatchPakFileName, false, false);
+            PatchDownloadPak.OpenPak(aaPatcher.localPatchDirectory + localPatchPakFileName, false);
             if (!PatchDownloadPak.isOpen)
             {
                 // TODO: Add better support in case of fails
                 //aaPatcher.Fase = PatchFase.Error;
                 //aaPatcher.ErrorMsg = "Failed to open patch cache for writing, might be corrupted !";
                 //return;
-                MessageBox.Show("Failed to open patch cache for writing, might be corrupted !\r\nTrying again with a new cache.", "CACHE ERROR", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Failed to open patch cache, might be corrupted !\r\nTrying again with a clean cache.", "CACHE ERROR", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 try
                 {
-                    PatchDownloadPak = new AAPak(aaPatcher.localPatchDirectory + localPatchPakFileName, false, true);
+                    PatchDownloadPak.ClosePak();
+                    PatchDownloadPak.NewPak(aaPatcher.localPatchDirectory + localPatchPakFileName);
                 }
                 catch
                 {
@@ -2635,6 +2705,7 @@ namespace AAEmu.Launcher
 
 
             aaPatcher.FileDownloadSizeDownloaded = 0; // using downloadedsize as progress bar
+            aaPatcher.Fase = PatchFase.AddFiles;
             //---------------------------------------------
             // Apply downloaded files, export where needed
             //---------------------------------------------
@@ -2726,7 +2797,7 @@ namespace AAEmu.Launcher
             aaPatcher.Fase = PatchFase.Done;
             aaPatcher.DoneMsg = L.PatchComplete;
             bgwPatcher.ReportProgress(100, aaPatcher);
-            System.Threading.Thread.Sleep(2500);
+            System.Threading.Thread.Sleep(1500);
         }
 
         private void bgwPatcher_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -2780,22 +2851,31 @@ namespace AAEmu.Launcher
 
         private void bgwPatcher_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+
+            try
+            {
+                // Try saving out patch data if possible
+                if (PatchDownloadPak != null)
+                {
+                    PatchDownloadPak.ClosePak();
+                    PatchDownloadPak = null;
+                }
+            }
+            catch { }
+
             // Patch Finished
             // Revert server status to unknown
             if (aaPatcher.Fase == PatchFase.Error)
             {
                 MessageBox.Show(aaPatcher.ErrorMsg, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
             if (aaPatcher.Fase == PatchFase.Done)
             {
                 try
                 {
                     // Save our .ver file again
                     File.WriteAllText(aaPatcher.localPatchDirectory + patchVersionFileName, aaPatcher.remoteVersionString);
-                    if ((PatchDownloadPak != null) && (PatchDownloadPak.isOpen))
-                    {
-                        PatchDownloadPak.ClosePak();
-                    }
                     // Delete Patch Pak if completed succesfully
                     // Keep patch cache file if debugging
                     if (debugModeToolStripMenuItem.Checked == false)
