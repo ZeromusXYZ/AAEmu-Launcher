@@ -2591,7 +2591,9 @@ namespace AAEmu.Launcher
             }
             PatchDownloadPak.SaveHeader();
 
+            //------------------------------------
             // Check if we need to extract the DB
+            //------------------------------------
             bool exportDBAsWell = false;
             var dbNameInPak = "game/db/compact.sqlite3";
             if (PatchDownloadPak.FileExists(dbNameInPak))
@@ -2612,7 +2614,9 @@ namespace AAEmu.Launcher
             }
             var bin32Dir = "bin32/";
 
+            //--------------------------------------------------------------------------------------
             // Recalculate the total size to apply (including data to copy outside of the game_pak)
+            //--------------------------------------------------------------------------------------
             aaPatcher.FileDownloadSizeTotal = 0;
             foreach(AAPakFileInfo pfi in PatchDownloadPak.files)
             {
@@ -2630,26 +2634,90 @@ namespace AAEmu.Launcher
             }
 
 
-
-            //-------------------
-            // Apply Patch Stuff
-            //-------------------
-            aaPatcher.Fase = PatchFase.AddFiles;
-            bgwPatcher.ReportProgress(0, aaPatcher);
-            for (int i = 0; i <= 100; i++)
+            aaPatcher.FileDownloadSizeDownloaded = 0; // using downloadedsize as progress bar
+            //---------------------------------------------
+            // Apply downloaded files, export where needed
+            //---------------------------------------------
+            foreach (AAPakFileInfo pfi in PatchDownloadPak.files)
             {
-                bgwPatcher.ReportProgress(i, aaPatcher);
-                System.Threading.Thread.Sleep(100);
+                Stream exportStream = PatchDownloadPak.ExportFileAsStream(pfi);
+                exportStream.Position = 0;
+                var respfi = pak.nullAAPakFileInfo;
+                var addRes = pak.AddFileFromStream(pfi.name, exportStream, DateTime.FromFileTime(pfi.createTime), DateTime.FromFileTime(pfi.modifyTime), false, out respfi);
+                if (!addRes)
+                {
+                    aaPatcher.Fase = PatchFase.Error;
+                    aaPatcher.ErrorMsg = "Error applying patch file to game client:\r\n" + pfi.name;
+                    exportStream.Dispose();
+                    return;
+                }
+                aaPatcher.FileDownloadSizeDownloaded += pfi.size;
+
+                // always export files inside bin32
+                if ((pfi.name.Length > bin32Dir.Length) && (pfi.name.Substring(0, bin32Dir.Length) == bin32Dir))
+                {
+                    try
+                    {
+                        var destName = Path.GetDirectoryName(aaPatcher.localGame_Pak) + Path.DirectorySeparatorChar + pfi.name.Replace('/', Path.DirectorySeparatorChar);
+                        Directory.CreateDirectory(Path.GetDirectoryName(destName));
+                        FileStream fs = new FileStream(destName, FileMode.Create);
+                        exportStream.Position = 0;
+
+                        exportStream.CopyTo(fs);
+
+                        fs.Dispose();
+
+                        // Update file details
+                        File.SetCreationTime(destName, DateTime.FromFileTime(pfi.createTime));
+                        File.SetLastWriteTime(destName, DateTime.FromFileTime(pfi.modifyTime));
+                        aaPatcher.FileDownloadSizeDownloaded += pfi.size;
+                    }
+                    catch
+                    {
+                        aaPatcher.Fase = PatchFase.Error;
+                        aaPatcher.ErrorMsg = "Error exporting patch file to game client:\r\n" + pfi.name;
+                        exportStream.Dispose();
+                        return;
+                    }
+
+                }
+
+                // export compact.sqlite3 if it's not encrypted
+                if ((pfi.name == dbNameInPak) && (exportDBAsWell))
+                {
+                    try
+                    {
+                        var destName = Path.GetDirectoryName(aaPatcher.localGame_Pak) + Path.DirectorySeparatorChar + pfi.name.Replace('/', Path.DirectorySeparatorChar);
+                        Directory.CreateDirectory(Path.GetDirectoryName(destName));
+                        FileStream fs = new FileStream(destName, FileMode.Create);
+                        exportStream.Position = 0;
+
+                        exportStream.CopyTo(fs);
+
+                        fs.Dispose();
+
+                        // Update file details
+                        File.SetCreationTime(destName, DateTime.FromFileTime(pfi.createTime));
+                        File.SetLastWriteTime(destName, DateTime.FromFileTime(pfi.modifyTime));
+                        aaPatcher.FileDownloadSizeDownloaded += pfi.size;
+                    }
+                    catch
+                    {
+                        aaPatcher.Fase = PatchFase.Error;
+                        aaPatcher.ErrorMsg = "Error exporting DB to game client:\r\n" + pfi.name;
+                        exportStream.Dispose();
+                        return;
+                    }
+                }
+                if (exportStream != null)
+                    exportStream.Dispose();
+
+                var patchprogress = (aaPatcher.FileDownloadSizeDownloaded * 100) / aaPatcher.FileDownloadSizeTotal;
+                bgwPatcher.ReportProgress((int)patchprogress, aaPatcher);
+
             }
 
-            //----------------------------------------------------
-            // Extract bin32 and optional DB from the updated pak
-            //----------------------------------------------------
-            
-            // TODO: Extract bin32
-            // TODO: Check if game/db/compact.sqlite3 is encrypted, if not, extract it
             System.Threading.Thread.Sleep(1000);
-
 
             //----------------------------------
             // All done, back to the login page
