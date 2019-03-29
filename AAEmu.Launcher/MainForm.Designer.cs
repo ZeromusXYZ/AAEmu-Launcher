@@ -31,16 +31,17 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LauncherForm));
             this.panelLoginAndPatch = new System.Windows.Forms.Panel();
+            this.pPatchSteps = new System.Windows.Forms.Panel();
             this.rbDownloadFiles = new System.Windows.Forms.RadioButton();
+            this.rbInit = new System.Windows.Forms.RadioButton();
             this.rbDone = new System.Windows.Forms.RadioButton();
+            this.rbDownloadVerFile = new System.Windows.Forms.RadioButton();
             this.rbAddFiles = new System.Windows.Forms.RadioButton();
+            this.rbComparingVersion = new System.Windows.Forms.RadioButton();
             this.rbCalculateDownloads = new System.Windows.Forms.RadioButton();
+            this.rbCheckLocalFiles = new System.Windows.Forms.RadioButton();
             this.rbDownloadPatchFilesInfo = new System.Windows.Forms.RadioButton();
             this.rbReHashLocalFiles = new System.Windows.Forms.RadioButton();
-            this.rbCheckLocalFiles = new System.Windows.Forms.RadioButton();
-            this.rbComparingVersion = new System.Windows.Forms.RadioButton();
-            this.rbDownloadVerFile = new System.Windows.Forms.RadioButton();
-            this.rbInit = new System.Windows.Forms.RadioButton();
             this.lPatchProgressBarText = new System.Windows.Forms.Label();
             this.pgbFrontTotal = new System.Windows.Forms.PictureBox();
             this.pgbBackTotal = new System.Windows.Forms.PictureBox();
@@ -66,7 +67,7 @@
             this.minimizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.troubleshootToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.forcePatchDownloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.skipPatchtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.skipPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.deleteShaderCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteGameConfigurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -116,8 +117,8 @@
             this.bgwNewsFeed = new System.ComponentModel.BackgroundWorker();
             this.bgwServerStatusCheck = new System.ComponentModel.BackgroundWorker();
             this.bgwPatcher = new System.ComponentModel.BackgroundWorker();
-            this.pPatchSteps = new System.Windows.Forms.Panel();
             this.panelLoginAndPatch.SuspendLayout();
+            this.pPatchSteps.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pgbFrontTotal)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pgbBackTotal)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgBigNews)).BeginInit();
@@ -131,7 +132,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.btnGithub)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnLauncherLangChange)).BeginInit();
             this.panelSettings.SuspendLayout();
-            this.pPatchSteps.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelLoginAndPatch
@@ -163,6 +163,23 @@
             this.panelLoginAndPatch.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
             this.panelLoginAndPatch.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
             // 
+            // pPatchSteps
+            // 
+            this.pPatchSteps.Controls.Add(this.rbDownloadFiles);
+            this.pPatchSteps.Controls.Add(this.rbInit);
+            this.pPatchSteps.Controls.Add(this.rbDone);
+            this.pPatchSteps.Controls.Add(this.rbDownloadVerFile);
+            this.pPatchSteps.Controls.Add(this.rbAddFiles);
+            this.pPatchSteps.Controls.Add(this.rbComparingVersion);
+            this.pPatchSteps.Controls.Add(this.rbCalculateDownloads);
+            this.pPatchSteps.Controls.Add(this.rbCheckLocalFiles);
+            this.pPatchSteps.Controls.Add(this.rbDownloadPatchFilesInfo);
+            this.pPatchSteps.Controls.Add(this.rbReHashLocalFiles);
+            this.pPatchSteps.Location = new System.Drawing.Point(49, 95);
+            this.pPatchSteps.Name = "pPatchSteps";
+            this.pPatchSteps.Size = new System.Drawing.Size(361, 210);
+            this.pPatchSteps.TabIndex = 52;
+            // 
             // rbDownloadFiles
             // 
             this.rbDownloadFiles.AutoSize = true;
@@ -174,6 +191,19 @@
             this.rbDownloadFiles.TabStop = true;
             this.rbDownloadFiles.Text = "Download patch files";
             this.rbDownloadFiles.UseVisualStyleBackColor = true;
+            // 
+            // rbInit
+            // 
+            this.rbInit.AutoSize = true;
+            this.rbInit.Checked = true;
+            this.rbInit.Enabled = false;
+            this.rbInit.Location = new System.Drawing.Point(3, 3);
+            this.rbInit.Name = "rbInit";
+            this.rbInit.Size = new System.Drawing.Size(114, 22);
+            this.rbInit.TabIndex = 1;
+            this.rbInit.TabStop = true;
+            this.rbInit.Text = "Initialization";
+            this.rbInit.UseVisualStyleBackColor = true;
             // 
             // rbDone
             // 
@@ -187,6 +217,18 @@
             this.rbDone.Text = "Completed";
             this.rbDone.UseVisualStyleBackColor = true;
             // 
+            // rbDownloadVerFile
+            // 
+            this.rbDownloadVerFile.AutoSize = true;
+            this.rbDownloadVerFile.Enabled = false;
+            this.rbDownloadVerFile.Location = new System.Drawing.Point(3, 23);
+            this.rbDownloadVerFile.Name = "rbDownloadVerFile";
+            this.rbDownloadVerFile.Size = new System.Drawing.Size(237, 22);
+            this.rbDownloadVerFile.TabIndex = 2;
+            this.rbDownloadVerFile.TabStop = true;
+            this.rbDownloadVerFile.Text = "Download version information";
+            this.rbDownloadVerFile.UseVisualStyleBackColor = true;
+            // 
             // rbAddFiles
             // 
             this.rbAddFiles.AutoSize = true;
@@ -199,6 +241,18 @@
             this.rbAddFiles.Text = "Updating game client files";
             this.rbAddFiles.UseVisualStyleBackColor = true;
             // 
+            // rbComparingVersion
+            // 
+            this.rbComparingVersion.AutoSize = true;
+            this.rbComparingVersion.Enabled = false;
+            this.rbComparingVersion.Location = new System.Drawing.Point(3, 43);
+            this.rbComparingVersion.Name = "rbComparingVersion";
+            this.rbComparingVersion.Size = new System.Drawing.Size(159, 22);
+            this.rbComparingVersion.TabIndex = 3;
+            this.rbComparingVersion.TabStop = true;
+            this.rbComparingVersion.Text = "Comparing version";
+            this.rbComparingVersion.UseVisualStyleBackColor = true;
+            // 
             // rbCalculateDownloads
             // 
             this.rbCalculateDownloads.AutoSize = true;
@@ -210,6 +264,18 @@
             this.rbCalculateDownloads.TabStop = true;
             this.rbCalculateDownloads.Text = "Calculating download information";
             this.rbCalculateDownloads.UseVisualStyleBackColor = true;
+            // 
+            // rbCheckLocalFiles
+            // 
+            this.rbCheckLocalFiles.AutoSize = true;
+            this.rbCheckLocalFiles.Enabled = false;
+            this.rbCheckLocalFiles.Location = new System.Drawing.Point(3, 63);
+            this.rbCheckLocalFiles.Name = "rbCheckLocalFiles";
+            this.rbCheckLocalFiles.Size = new System.Drawing.Size(209, 22);
+            this.rbCheckLocalFiles.TabIndex = 4;
+            this.rbCheckLocalFiles.TabStop = true;
+            this.rbCheckLocalFiles.Text = "Checking local game client";
+            this.rbCheckLocalFiles.UseVisualStyleBackColor = true;
             // 
             // rbDownloadPatchFilesInfo
             // 
@@ -234,55 +300,6 @@
             this.rbReHashLocalFiles.TabStop = true;
             this.rbReHashLocalFiles.Text = "Initialize game client for update";
             this.rbReHashLocalFiles.UseVisualStyleBackColor = true;
-            // 
-            // rbCheckLocalFiles
-            // 
-            this.rbCheckLocalFiles.AutoSize = true;
-            this.rbCheckLocalFiles.Enabled = false;
-            this.rbCheckLocalFiles.Location = new System.Drawing.Point(3, 63);
-            this.rbCheckLocalFiles.Name = "rbCheckLocalFiles";
-            this.rbCheckLocalFiles.Size = new System.Drawing.Size(209, 22);
-            this.rbCheckLocalFiles.TabIndex = 4;
-            this.rbCheckLocalFiles.TabStop = true;
-            this.rbCheckLocalFiles.Text = "Checking local game client";
-            this.rbCheckLocalFiles.UseVisualStyleBackColor = true;
-            // 
-            // rbComparingVersion
-            // 
-            this.rbComparingVersion.AutoSize = true;
-            this.rbComparingVersion.Enabled = false;
-            this.rbComparingVersion.Location = new System.Drawing.Point(3, 43);
-            this.rbComparingVersion.Name = "rbComparingVersion";
-            this.rbComparingVersion.Size = new System.Drawing.Size(159, 22);
-            this.rbComparingVersion.TabIndex = 3;
-            this.rbComparingVersion.TabStop = true;
-            this.rbComparingVersion.Text = "Comparing version";
-            this.rbComparingVersion.UseVisualStyleBackColor = true;
-            // 
-            // rbDownloadVerFile
-            // 
-            this.rbDownloadVerFile.AutoSize = true;
-            this.rbDownloadVerFile.Enabled = false;
-            this.rbDownloadVerFile.Location = new System.Drawing.Point(3, 23);
-            this.rbDownloadVerFile.Name = "rbDownloadVerFile";
-            this.rbDownloadVerFile.Size = new System.Drawing.Size(237, 22);
-            this.rbDownloadVerFile.TabIndex = 2;
-            this.rbDownloadVerFile.TabStop = true;
-            this.rbDownloadVerFile.Text = "Download version information";
-            this.rbDownloadVerFile.UseVisualStyleBackColor = true;
-            // 
-            // rbInit
-            // 
-            this.rbInit.AutoSize = true;
-            this.rbInit.Checked = true;
-            this.rbInit.Enabled = false;
-            this.rbInit.Location = new System.Drawing.Point(3, 3);
-            this.rbInit.Name = "rbInit";
-            this.rbInit.Size = new System.Drawing.Size(114, 22);
-            this.rbInit.TabIndex = 1;
-            this.rbInit.TabStop = true;
-            this.rbInit.Text = "Initialization";
-            this.rbInit.UseVisualStyleBackColor = true;
             // 
             // lPatchProgressBarText
             // 
@@ -560,12 +577,12 @@
             this.toolStripSeparator1,
             this.closeToolStripMenuItem});
             this.cmsAAEmuButton.Name = "cmsAAEmuButton";
-            this.cmsAAEmuButton.Size = new System.Drawing.Size(145, 98);
+            this.cmsAAEmuButton.Size = new System.Drawing.Size(181, 120);
             // 
             // minimizeToolStripMenuItem
             // 
             this.minimizeToolStripMenuItem.Name = "minimizeToolStripMenuItem";
-            this.minimizeToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.minimizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.minimizeToolStripMenuItem.Text = "Minimize";
             this.minimizeToolStripMenuItem.Click += new System.EventHandler(this.minimizeToolStripMenuItem_Click);
             // 
@@ -573,13 +590,13 @@
             // 
             this.troubleshootToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.forcePatchDownloadToolStripMenuItem,
-            this.skipPatchtToolStripMenuItem,
+            this.skipPatchToolStripMenuItem,
             this.toolStripSeparator5,
             this.deleteShaderCacheToolStripMenuItem,
             this.deleteGameConfigurationToolStripMenuItem,
             this.deleteAllArcheAgeSettingsToolStripMenuItem});
             this.troubleshootToolStripMenuItem.Name = "troubleshootToolStripMenuItem";
-            this.troubleshootToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.troubleshootToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.troubleshootToolStripMenuItem.Text = "Troubleshoot";
             this.troubleshootToolStripMenuItem.Visible = false;
             // 
@@ -590,12 +607,12 @@
             this.forcePatchDownloadToolStripMenuItem.Text = "Force Patch Download";
             this.forcePatchDownloadToolStripMenuItem.Click += new System.EventHandler(this.forcePatchDownloadToolStripMenuItem_Click);
             // 
-            // skipPatchtToolStripMenuItem
+            // skipPatchToolStripMenuItem
             // 
-            this.skipPatchtToolStripMenuItem.Name = "skipPatchtToolStripMenuItem";
-            this.skipPatchtToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
-            this.skipPatchtToolStripMenuItem.Text = "Skip Patch";
-            this.skipPatchtToolStripMenuItem.Click += new System.EventHandler(this.skipPatchtToolStripMenuItem_Click);
+            this.skipPatchToolStripMenuItem.Name = "skipPatchToolStripMenuItem";
+            this.skipPatchToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.skipPatchToolStripMenuItem.Text = "Skip Patch";
+            this.skipPatchToolStripMenuItem.Click += new System.EventHandler(this.skipPatchToolStripMenuItem_Click);
             // 
             // toolStripSeparator5
             // 
@@ -608,6 +625,7 @@
             this.deleteShaderCacheToolStripMenuItem.Name = "deleteShaderCacheToolStripMenuItem";
             this.deleteShaderCacheToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.deleteShaderCacheToolStripMenuItem.Text = "Delete Shader Cache";
+            this.deleteShaderCacheToolStripMenuItem.Click += new System.EventHandler(this.deleteShaderCacheToolStripMenuItem_Click);
             // 
             // deleteGameConfigurationToolStripMenuItem
             // 
@@ -626,7 +644,7 @@
             // debugModeToolStripMenuItem
             // 
             this.debugModeToolStripMenuItem.Name = "debugModeToolStripMenuItem";
-            this.debugModeToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.debugModeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.debugModeToolStripMenuItem.Text = "Debug Mode";
             this.debugModeToolStripMenuItem.Visible = false;
             this.debugModeToolStripMenuItem.Click += new System.EventHandler(this.debugModeToolStripMenuItem_Click);
@@ -634,12 +652,12 @@
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(141, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
@@ -1118,23 +1136,6 @@
             this.bgwPatcher.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgwPatcher_ProgressChanged);
             this.bgwPatcher.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwPatcher_RunWorkerCompleted);
             // 
-            // pPatchSteps
-            // 
-            this.pPatchSteps.Controls.Add(this.rbDownloadFiles);
-            this.pPatchSteps.Controls.Add(this.rbInit);
-            this.pPatchSteps.Controls.Add(this.rbDone);
-            this.pPatchSteps.Controls.Add(this.rbDownloadVerFile);
-            this.pPatchSteps.Controls.Add(this.rbAddFiles);
-            this.pPatchSteps.Controls.Add(this.rbComparingVersion);
-            this.pPatchSteps.Controls.Add(this.rbCalculateDownloads);
-            this.pPatchSteps.Controls.Add(this.rbCheckLocalFiles);
-            this.pPatchSteps.Controls.Add(this.rbDownloadPatchFilesInfo);
-            this.pPatchSteps.Controls.Add(this.rbReHashLocalFiles);
-            this.pPatchSteps.Location = new System.Drawing.Point(49, 95);
-            this.pPatchSteps.Name = "pPatchSteps";
-            this.pPatchSteps.Size = new System.Drawing.Size(361, 210);
-            this.pPatchSteps.TabIndex = 52;
-            // 
             // LauncherForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -1170,6 +1171,8 @@
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseUp);
             this.panelLoginAndPatch.ResumeLayout(false);
             this.panelLoginAndPatch.PerformLayout();
+            this.pPatchSteps.ResumeLayout(false);
+            this.pPatchSteps.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pgbFrontTotal)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pgbBackTotal)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgBigNews)).EndInit();
@@ -1184,8 +1187,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.btnLauncherLangChange)).EndInit();
             this.panelSettings.ResumeLayout(false);
             this.panelSettings.PerformLayout();
-            this.pPatchSteps.ResumeLayout(false);
-            this.pPatchSteps.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1276,7 +1277,7 @@
         private System.Windows.Forms.RadioButton rbDone;
         private System.Windows.Forms.RadioButton rbAddFiles;
         private System.Windows.Forms.RadioButton rbDownloadFiles;
-        private System.Windows.Forms.ToolStripMenuItem skipPatchtToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem skipPatchToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.Panel pPatchSteps;
     }

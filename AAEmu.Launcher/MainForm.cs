@@ -1447,6 +1447,20 @@ namespace AAEmu.Launcher
             updateGameClientTypeLabel();
         }
 
+        private void ClearArcheAgeCache(bool clearShaders)
+        {
+            // C:\ArcheAge\Documents => UserHomeFolder\ArcheAge
+            string aaDocumentsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ArcheAge\\";
+
+            if (MessageBox.Show("Are you sure you want to delete the shader cache ?", "Delete Shader Cache", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                return;
+
+            string[] rootDirs = Directory.GetDirectories(aaDocumentsFolder);
+
+            // TODO: find cache and delete it
+
+        }
+
         private void UpdateGameSystemConfigFile(bool enableUpdateLocale, string locale, bool enableSkipIntro)
         {
             // C:\ArcheAge\Documents => UserHomeFolder\ArcheAge
@@ -2851,7 +2865,10 @@ namespace AAEmu.Launcher
 
         private void bgwPatcher_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            // Patch Finished
+            // Revert server status to unknown, and do some cleaning
 
+            // Close the patch cache file (if open)
             try
             {
                 // Try saving out patch data if possible
@@ -2863,8 +2880,18 @@ namespace AAEmu.Launcher
             }
             catch { }
 
-            // Patch Finished
-            // Revert server status to unknown
+            // Close the client game_pak file (if open)
+            try
+            {
+                // Try saving out patch data if possible
+                if (pak != null)
+                {
+                    pak.ClosePak();
+                    pak = null;
+                }
+            }
+            catch { }
+
             if (aaPatcher.Fase == PatchFase.Error)
             {
                 MessageBox.Show(aaPatcher.ErrorMsg, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -2898,14 +2925,6 @@ namespace AAEmu.Launcher
             ShowPanelControls(0);
         }
 
-        // Create a method for a delegate.
-        public void XLPakToolProgressCallback(long progress)
-        {
-            aaPatcher.FileDownloadSizeDownloaded += progress;
-            bgwPatcher.ReportProgress(aaPatcher.GetDownloadProgressPercent(), aaPatcher);
-            // System.Console.WriteLine("Callback: progress: "+progress.ToString());
-        }
-
         public byte[] StringToByteArray(string hex)
         {
             int NumberChars = hex.Length;
@@ -2915,13 +2934,18 @@ namespace AAEmu.Launcher
             return bytes;
         }
 
-        private void skipPatchtToolStripMenuItem_Click(object sender, EventArgs e)
+        private void skipPatchToolStripMenuItem_Click(object sender, EventArgs e)
         {
             serverCheckStatus = serverCheck.Unknown; // Force to unknown mode
             nextServerCheck = -1;
             updatePlayButton(serverCheckStatus, false);
             ShowPanelControls(0); // Update Panel
 
+        }
+
+        private void deleteShaderCacheToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ClearArcheAgeCache();
         }
     }
 }
