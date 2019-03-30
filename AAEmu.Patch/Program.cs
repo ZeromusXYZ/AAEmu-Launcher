@@ -12,7 +12,8 @@ namespace AAEmu.Patch
 {
     public class Settings
     {
-        public static string appVer = "V0.2";
+        public static string appVer = "V0.2.1";
+        public static string patchSystemVersion = "aaemu.patch.1";
         public static List<string> ignoreList = new List<string>();
         public static string patchListFileName = "patchfiles.csv";
         public static string patchVersionFileName = "patchfiles.ver";
@@ -212,7 +213,7 @@ namespace AAEmu.Patch
         private static void SavePatchVersion()
         {
             string listHash = GetMD5ForFile(Settings.patchListFileName);
-            string verFile = DateTime.Now.ToString("yyyyMMdd-HHmmss") + ";" + listHash + ";1" ; // 1 = patch system version
+            string verFile = DateTime.Now.ToString("yyyyMMdd-HHmmss") + ";" + listHash + ";"+ Settings.patchSystemVersion ;
             File.WriteAllText(Settings.patchVersionFileName, verFile);
             Log("Save", "Saved patch version");
         }

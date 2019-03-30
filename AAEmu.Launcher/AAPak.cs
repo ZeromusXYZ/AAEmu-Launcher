@@ -1022,6 +1022,11 @@ namespace AAPakEditor
             {
                 var reservedSizeMax = pfi.size + pfi.paddingSize;
                 addAsNew = (sourceStream.Length > reservedSizeMax);
+                // Bugfix: If we have inssuficient space, make sure to delete the old file first as well
+                if (addAsNew)
+                {
+                    DeleteFile(pfi);
+                }
             }
 
             if (addAsNew)

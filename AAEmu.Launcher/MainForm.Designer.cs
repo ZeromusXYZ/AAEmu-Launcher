@@ -66,12 +66,12 @@
             this.cmsAAEmuButton = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.minimizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.troubleshootToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteGameConfigurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteShaderCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteAllArcheAgeSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.forcePatchDownloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.skipPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.deleteShaderCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteGameConfigurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteAllArcheAgeSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -175,7 +175,7 @@
             this.pPatchSteps.Controls.Add(this.rbCheckLocalFiles);
             this.pPatchSteps.Controls.Add(this.rbDownloadPatchFilesInfo);
             this.pPatchSteps.Controls.Add(this.rbReHashLocalFiles);
-            this.pPatchSteps.Location = new System.Drawing.Point(49, 95);
+            this.pPatchSteps.Location = new System.Drawing.Point(39, 93);
             this.pPatchSteps.Name = "pPatchSteps";
             this.pPatchSteps.Size = new System.Drawing.Size(361, 210);
             this.pPatchSteps.TabIndex = 52;
@@ -565,7 +565,7 @@
             this.lAppVersion.Name = "lAppVersion";
             this.lAppVersion.Size = new System.Drawing.Size(95, 21);
             this.lAppVersion.TabIndex = 17;
-            this.lAppVersion.Text = "V 0.3.1";
+            this.lAppVersion.Text = "V 0.4";
             this.lAppVersion.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
             // cmsAAEmuButton
@@ -589,16 +589,42 @@
             // troubleshootToolStripMenuItem
             // 
             this.troubleshootToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.forcePatchDownloadToolStripMenuItem,
-            this.skipPatchToolStripMenuItem,
-            this.toolStripSeparator5,
-            this.deleteShaderCacheToolStripMenuItem,
             this.deleteGameConfigurationToolStripMenuItem,
-            this.deleteAllArcheAgeSettingsToolStripMenuItem});
+            this.deleteShaderCacheToolStripMenuItem,
+            this.deleteAllArcheAgeSettingsToolStripMenuItem,
+            this.toolStripSeparator5,
+            this.forcePatchDownloadToolStripMenuItem,
+            this.skipPatchToolStripMenuItem});
             this.troubleshootToolStripMenuItem.Name = "troubleshootToolStripMenuItem";
             this.troubleshootToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.troubleshootToolStripMenuItem.Text = "Troubleshoot";
-            this.troubleshootToolStripMenuItem.Visible = false;
+            // 
+            // deleteGameConfigurationToolStripMenuItem
+            // 
+            this.deleteGameConfigurationToolStripMenuItem.Name = "deleteGameConfigurationToolStripMenuItem";
+            this.deleteGameConfigurationToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.deleteGameConfigurationToolStripMenuItem.Text = "Delete Game Settings";
+            this.deleteGameConfigurationToolStripMenuItem.Click += new System.EventHandler(this.deleteGameConfigurationToolStripMenuItem_Click);
+            // 
+            // deleteShaderCacheToolStripMenuItem
+            // 
+            this.deleteShaderCacheToolStripMenuItem.Name = "deleteShaderCacheToolStripMenuItem";
+            this.deleteShaderCacheToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.deleteShaderCacheToolStripMenuItem.Text = "Delete Shader Cache";
+            this.deleteShaderCacheToolStripMenuItem.Click += new System.EventHandler(this.deleteShaderCacheToolStripMenuItem_Click);
+            // 
+            // deleteAllArcheAgeSettingsToolStripMenuItem
+            // 
+            this.deleteAllArcheAgeSettingsToolStripMenuItem.Enabled = false;
+            this.deleteAllArcheAgeSettingsToolStripMenuItem.Name = "deleteAllArcheAgeSettingsToolStripMenuItem";
+            this.deleteAllArcheAgeSettingsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.deleteAllArcheAgeSettingsToolStripMenuItem.Text = "Delete all ArcheAge settings";
+            this.deleteAllArcheAgeSettingsToolStripMenuItem.Visible = false;
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(218, 6);
             // 
             // forcePatchDownloadToolStripMenuItem
             // 
@@ -613,33 +639,6 @@
             this.skipPatchToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.skipPatchToolStripMenuItem.Text = "Skip Patch";
             this.skipPatchToolStripMenuItem.Click += new System.EventHandler(this.skipPatchToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator5
-            // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(218, 6);
-            // 
-            // deleteShaderCacheToolStripMenuItem
-            // 
-            this.deleteShaderCacheToolStripMenuItem.Enabled = false;
-            this.deleteShaderCacheToolStripMenuItem.Name = "deleteShaderCacheToolStripMenuItem";
-            this.deleteShaderCacheToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
-            this.deleteShaderCacheToolStripMenuItem.Text = "Delete Shader Cache";
-            this.deleteShaderCacheToolStripMenuItem.Click += new System.EventHandler(this.deleteShaderCacheToolStripMenuItem_Click);
-            // 
-            // deleteGameConfigurationToolStripMenuItem
-            // 
-            this.deleteGameConfigurationToolStripMenuItem.Enabled = false;
-            this.deleteGameConfigurationToolStripMenuItem.Name = "deleteGameConfigurationToolStripMenuItem";
-            this.deleteGameConfigurationToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
-            this.deleteGameConfigurationToolStripMenuItem.Text = "Delete game configuration";
-            // 
-            // deleteAllArcheAgeSettingsToolStripMenuItem
-            // 
-            this.deleteAllArcheAgeSettingsToolStripMenuItem.Enabled = false;
-            this.deleteAllArcheAgeSettingsToolStripMenuItem.Name = "deleteAllArcheAgeSettingsToolStripMenuItem";
-            this.deleteAllArcheAgeSettingsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
-            this.deleteAllArcheAgeSettingsToolStripMenuItem.Text = "Delete all ArcheAge settings";
             // 
             // debugModeToolStripMenuItem
             // 
