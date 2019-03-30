@@ -103,6 +103,16 @@ namespace AAEmu.Launcher.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap bg_patch {
+            get {
+                object obj = ResourceManager.GetObject("bg_patch", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap bg_setup {
             get {
                 object obj = ResourceManager.GetObject("bg_setup", resourceCulture);
@@ -451,6 +461,26 @@ namespace AAEmu.Launcher.Properties {
         internal static System.Drawing.Bitmap mini_locale_ru {
             get {
                 object obj = ResourceManager.GetObject("mini_locale_ru", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap pgbar_back {
+            get {
+                object obj = ResourceManager.GetObject("pgbar_back", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap pgbar_front {
+            get {
+                object obj = ResourceManager.GetObject("pgbar_front", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

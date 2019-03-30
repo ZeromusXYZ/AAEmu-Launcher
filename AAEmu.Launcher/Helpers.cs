@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net.Sockets;
-using System.Threading.Tasks;
-using System.Threading;
-using System.Net;
 using System.IO;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+using System.Security.Cryptography;
 
 namespace AAEmu.Launcher
 {
@@ -91,11 +90,18 @@ namespace AAEmu.Launcher
             request.UserAgent = "AAEmu.Launcher";
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
 
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            using (Stream stream = response.GetResponseStream())
-            using (StreamReader reader = new StreamReader(stream))
+            try
             {
-                return reader.ReadToEnd();
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                using (Stream stream = response.GetResponseStream())
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    return reader.ReadToEnd();
+                }
+            }
+            catch
+            {
+                return "";
             }
         }
 
@@ -103,20 +109,38 @@ namespace AAEmu.Launcher
         {
             MemoryStream ms = new MemoryStream();
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-            request.UserAgent = "AAEmu.Launcher";
-            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            using (Stream stream = response.GetResponseStream())
+            try
             {
-                stream.CopyTo(ms);
-                return ms ;
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+                request.UserAgent = "AAEmu.Launcher";
+                request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                using (Stream stream = response.GetResponseStream())
+                {
+                    stream.CopyTo(ms);
+                    return ms;
+                }
+            }
+            catch
+            {
+                ms.SetLength(0);
+                return ms;
             }
         }
+
+        public static string GetMD5FromStream(Stream fs)
+        {
+            MD5 hash = MD5.Create();
+            fs.Position = 0;
+            var newHash = hash.ComputeHash(fs);
+            hash.Dispose();
+            return BitConverter.ToString(newHash).Replace("-", "").ToLower(); // Return the (updated) md5 as a string
+        }
+
     }
 
-    public struct AAEmuNewsFeedLinksItem
+public struct AAEmuNewsFeedLinksItem
     {
         [JsonProperty("self")]
         public string self { get; set; }
@@ -157,6 +181,149 @@ namespace AAEmu.Launcher
 
         [JsonProperty("links")]
         public AAEmuNewsFeedLinksItem links { get; set; }
+    }
+
+    public class PakFileInfo
+    {
+        public string filePath;
+        public Int64 fileSize;
+        public string fileHash;
+        public FileSystemInfo fileInfo;
+    }
+
+    public enum PatchFase { Error, Init, DownloadVerFile, CompareVersion, CheckLocalFiles, ReHashLocalFiles, DownloadPatchFilesInfo, CalculateDownloads, DownloadFiles, AddFiles, Done };
+    public class AAPatchProgress
+    {
+        public PatchFase Fase = PatchFase.Init;
+        public string localVersion = "";
+        public string remoteVersionString = "";
+        public string remoteVersion = "";
+        public string remotePatchFileHash = "";
+        public string remotePatchSystemVersion = "0";
+        public string localGame_Pak = "";
+        public string localGameFolder = "";
+        public string localPatchDirectory = ".patch\\";
+        public string ErrorMsg = "NO_ERROR";
+        public string DoneMsg = "";
+        public List<PakFileInfo> localPakFileList = new List<PakFileInfo>();
+        public List<PakFileInfo> remotePakFileList = new List<PakFileInfo>();
+
+        public Int64 FileDownloadSizeTotal = 0;
+        public Int64 FileDownloadSizeDownloaded = 0;
+        public Int64 FileApplySize = 0;
+
+        public void Init(string ArcheAgeExeLocation)
+        {
+            Fase = PatchFase.Init;
+            remotePatchSystemVersion = "0";
+            localVersion = "";
+            remoteVersion = "";
+            localGameFolder = Path.GetDirectoryName(Path.GetDirectoryName(ArcheAgeExeLocation)) + Path.DirectorySeparatorChar ;
+            localGame_Pak = localGameFolder + "game_pak";
+            localPatchDirectory = localGameFolder + ".patch" + Path.DirectorySeparatorChar;
+            localPakFileList = new List<PakFileInfo>();
+            remotePakFileList = new List<PakFileInfo>();
+
+            FileDownloadSizeTotal = 0;
+            FileDownloadSizeDownloaded = 0;
+            FileApplySize = 0;
+            ErrorMsg = "NO_ERROR";
+            DoneMsg = "";
+        }
+
+        public void RecalculateTotalDownloadSize()
+        {
+            Int64 c = 0;
+            for (int i = 0; i < remotePakFileList.Count;i++)
+            {
+                c += remotePakFileList[i].fileSize;
+            }
+            FileDownloadSizeTotal = c;
+        }
+
+        public bool SetRemoteVersionByString(string verStr)
+        {
+            string[] strItems = verStr.Split(';');
+            if (strItems.Length >= 3) // Only check if 3 or more, might extend later versions
+            {
+                // Primitive check for size mismatch
+                if ((strItems[0].Length != 15) || (strItems[1].Length != 32))
+                {
+                    return false;
+                }
+                remoteVersion = strItems[0];
+                remotePatchFileHash = strItems[1];
+                remotePatchSystemVersion = strItems[2];
+                return true;
+            }
+            return false;
+        }
+
+        public bool SetLocalVersionByString(string verStr)
+        {
+            string[] strItems = verStr.Split(';');
+            if (strItems.Length >= 3) // Only check if 3 or more, might extend later versions, only first is used for local patch info
+            {
+                // Primitive check for size mismatch
+                if ((strItems[0].Length != 15))
+                {
+                    return false;
+                }
+                localVersion = strItems[0];
+                return true;
+            }
+            return false;
+        }
+
+        public int GetDownloadProgressPercent()
+        {
+            long p = FileDownloadSizeDownloaded * 100 / FileDownloadSizeTotal ;
+            return (int)p;
+        }
+
+        public static string DateTimeToPAtchDateTimeStr(DateTime aTime)
+        {
+            string res = "";
+            try
+            {
+                res = aTime.ToString("yyyyMMdd-HHmmss");
+            }
+            catch
+            {
+                res = "00000000-000000";
+            }
+            return res;
+        }
+
+        public static long PatchDateTimeStrToFILETIME(string encodedString)
+        {
+            long res = 0 ;
+
+            int yyyy = 0;
+            int mm = 0;
+            int dd = 0;
+            int hh = 0;
+            int nn = 0;
+            int ss = 0;
+
+            try
+            {
+                if (!int.TryParse(encodedString.Substring(0, 4), out yyyy)) yyyy = 0;
+                if (!int.TryParse(encodedString.Substring(4, 2), out mm)) mm = 0;
+                if (!int.TryParse(encodedString.Substring(6, 2), out dd)) dd = 0;
+                if (!int.TryParse(encodedString.Substring(9, 2), out hh)) hh = 0;
+                if (!int.TryParse(encodedString.Substring(11, 2), out nn)) nn = 0;
+                if (!int.TryParse(encodedString.Substring(13, 2), out ss)) ss = 0;
+
+                res = (new DateTime(yyyy, mm, dd, hh, nn, ss)).ToFileTime();
+            }
+            catch
+            {
+                res = 0;
+            }
+            return res;
+        }
+
     }
 
 }

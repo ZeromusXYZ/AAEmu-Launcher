@@ -150,6 +150,15 @@
         GIaqpRG78ByHdCAjmgb6rl5bR+tALbX8PykU/gC68uomP7skigAAAABJRU5ErkJggg==
 </value>
   </data>
+  <metadata name="bgwNewsFeed.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>738, 17</value>
+  </metadata>
+  <metadata name="bgwServerStatusCheck.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>869, 17</value>
+  </metadata>
+  <metadata name="bgwPatcher.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1044, 17</value>
+  </metadata>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAEAAAAAAAEACABYPgUAFgAAACgAAAAlAgAASgQAAAEACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
