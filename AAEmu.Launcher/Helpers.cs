@@ -273,6 +273,7 @@ public struct AAEmuNewsFeedLinksItem
         public string remotePatchFileHash = "";
         public string remotePatchSystemVersion = "0";
         public string localGame_Pak = "";
+        public string localGameFolder = "";
         public string localPatchDirectory = ".patch\\";
         public string ErrorMsg = "NO_ERROR";
         public string DoneMsg = "";
@@ -289,8 +290,9 @@ public struct AAEmuNewsFeedLinksItem
             remotePatchSystemVersion = "0";
             localVersion = "";
             remoteVersion = "";
-            localGame_Pak = Path.GetDirectoryName(Path.GetDirectoryName(ArcheAgeExeLocation)) + "\\game_pak";
-            localPatchDirectory = Path.GetDirectoryName(Path.GetDirectoryName(ArcheAgeExeLocation)) + "\\.patch\\";
+            localGameFolder = Path.GetDirectoryName(Path.GetDirectoryName(ArcheAgeExeLocation)) + Path.DirectorySeparatorChar ;
+            localGame_Pak = localGameFolder + "game_pak";
+            localPatchDirectory = localGameFolder + ".patch" + Path.DirectorySeparatorChar;
             localPakFileList = new List<PakFileInfo>();
             remotePakFileList = new List<PakFileInfo>();
 

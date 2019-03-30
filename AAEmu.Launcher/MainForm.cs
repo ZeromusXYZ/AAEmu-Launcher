@@ -2938,7 +2938,7 @@ namespace AAEmu.Launcher
                 {
                     try
                     {
-                        var destName = Path.GetDirectoryName(aaPatcher.localGame_Pak) + Path.DirectorySeparatorChar + pfi.name.Replace('/', Path.DirectorySeparatorChar);
+                        var destName = aaPatcher.localGameFolder + pfi.name.Replace('/', Path.DirectorySeparatorChar);
                         Directory.CreateDirectory(Path.GetDirectoryName(destName));
                         FileStream fs = new FileStream(destName, FileMode.Create);
                         exportStream.Position = 0;
@@ -2967,7 +2967,7 @@ namespace AAEmu.Launcher
                 {
                     try
                     {
-                        var destName = Path.GetDirectoryName(aaPatcher.localGame_Pak) + Path.DirectorySeparatorChar + pfi.name.Replace('/', Path.DirectorySeparatorChar);
+                        var destName = aaPatcher.localGameFolder + pfi.name.Replace('/', Path.DirectorySeparatorChar);
                         Directory.CreateDirectory(Path.GetDirectoryName(destName));
                         FileStream fs = new FileStream(destName, FileMode.Create);
                         exportStream.Position = 0;
@@ -2996,6 +2996,35 @@ namespace AAEmu.Launcher
                 bgwPatcher.ReportProgress((int)patchprogress, aaPatcher);
 
             }
+
+            //-------------------------------------------
+            // Delete all files mentioned in deleted.txt
+            //-------------------------------------------
+            try
+            {
+                var delFile = "deleted.txt";
+                PatchDownloadPak.FileExists(delFile);
+                Stream exportStream = PatchDownloadPak.ExportFileAsStream(delFile);
+                exportStream.Position = 0;
+                List<string> slDelFiles = new List<string>();
+                using (StreamReader reader = new StreamReader(exportStream))
+                {
+                    while (!reader.EndOfStream)
+                    {
+                        var s = reader.ReadLine();
+                        slDelFiles.Add(s);
+                    }
+                }
+                exportStream.Dispose();
+
+                foreach(string s in slDelFiles)
+                {
+                    var delName = s.Replace('/', Path.DirectorySeparatorChar);
+                    if (File.Exists(aaPatcher.localGameFolder + delName))
+                        File.Delete(aaPatcher.localGameFolder + delName);
+                }
+            }
+            catch { }
 
             System.Threading.Thread.Sleep(250);
 
