@@ -9,7 +9,7 @@
   "hideSplashLogo": "False",
   "lastLoginUser": "test",
   "lastLoginPass": "test",
-  "loginType": "mailru_1_0",
+  "loginType": "trino_1_2",
   "updateLocale": "True",
   "allowGameUpdates": "False",
   "serverGameUpdateURL": "",

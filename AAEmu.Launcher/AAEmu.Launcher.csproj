@@ -95,7 +95,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AAPak.cs" />
-    <Compile Include="ChunkedMemStream.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

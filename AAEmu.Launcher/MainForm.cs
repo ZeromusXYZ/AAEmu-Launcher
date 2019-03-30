@@ -824,6 +824,7 @@ namespace AAEmu.Launcher
         private void LauncherForm_Load(object sender, EventArgs e)
         {
             Application.UseWaitCursor = true;
+            SetDefaultSettings();
             InitDefaultLanguage();
 
             // Helps to keep the editing window cleaner
@@ -851,7 +852,8 @@ namespace AAEmu.Launcher
             // Load local settings file if no external config specified, or if it failed to load
             if (openCommandLineSettingsFile == "")
             {
-                LoadSettings(Application.StartupPath + Path.DirectorySeparatorChar + launcherDefaultConfigFile);
+                if (!LoadSettings(Application.StartupPath + Path.DirectorySeparatorChar + launcherDefaultConfigFile))
+                    SetDefaultSettings();
             }
 
             if ((Setting.PathToGame == null) || (Setting.PathToGame == "") || (File.Exists(Setting.PathToGame) == false))
@@ -933,12 +935,36 @@ namespace AAEmu.Launcher
             return res;
         }
 
+        private void SetDefaultSettings()
+        {
+            Setting.configName = "";
+            Setting.Lang = settingsLangEN_US;
+            Setting.LauncherLang = settingsLangEN_US;
+            Setting.PathToGame = "";
+            Setting.ServerIpAddress = "127.0.0.1";
+            Setting.SaveLoginAndPassword = "False";
+            Setting.SkipIntro = "False";
+            Setting.HideSplashLogo = "False";
+            Setting.LastLoginUser = "";
+            Setting.LastLoginPass = "";
+            Setting.ClientLoginType = stringTrino_1_2;
+            Setting.UpdateLocale = "False";
+            Setting.AllowGameUpdates = "False";
+            Setting.ServerGameUpdateURL = "";
+            Setting.ServerWebSiteURL = "http://aaemi.info/";
+            Setting.ServerNewsFeedURL = "";
+            Setting.UserHistory = new List<string>();
+        }
+
         private bool LoadSettings(string configFileName)
         {
             bool res = false;
 
+            if (!File.Exists(configFileName))
+                return res;
+
             StreamReader reader = null ;
-            Console.WriteLine(configFileName);
+            //Console.WriteLine(configFileName);
             try
             {
                 reader = new StreamReader(configFileName);
@@ -977,13 +1003,12 @@ namespace AAEmu.Launcher
                 Setting.LastLoginPass = "test";
                 Setting.UserHistory = new List<string>();
                 Setting.UserHistory.Clear();
-                Setting.ClientLoginType = stringMailRu_1_0;
+                Setting.ClientLoginType = stringTrino_1_2;
                 Setting.UpdateLocale = "False";
                 Setting.AllowGameUpdates = "False";
                 Setting.ServerGameUpdateURL = ""; // Not allowed without a server settings file by default
                 Setting.ServerWebSiteURL = urlWebsite; // default to aaemu.info
                 Setting.ServerNewsFeedURL = ""; // Not implemented yet
-
             }
             finally
             {
@@ -1379,7 +1404,7 @@ namespace AAEmu.Launcher
                 {
                     return;
                 }
-                var ClientLookupJson = JsonConvert.SerializeObject(ClientLookup);
+                var ClientLookupJson = JsonConvert.SerializeObject(ClientLookup,Formatting.Indented);
                 try
                 {
                     File.WriteAllText(configFileName, ClientLookupJson);
@@ -1424,7 +1449,7 @@ namespace AAEmu.Launcher
             foreach(Object o in cbLoginList.Items)
                 Setting.UserHistory.Add(cbLoginList.GetItemText(o));
 
-            var SettingJson = JsonConvert.SerializeObject(Setting);
+            var SettingJson = JsonConvert.SerializeObject(Setting,Formatting.Indented);
 
             if ((launcherOpenedConfigFile == null) || (launcherOpenedConfigFile == "") || (File.Exists(launcherOpenedConfigFile) == false))
             {
@@ -1865,7 +1890,12 @@ namespace AAEmu.Launcher
                 }
             }
 
-            string configPath = Path.GetDirectoryName(launcherOpenedConfigFile);
+            string configPath = "";
+            if (launcherOpenedConfigFile != "")
+            {
+                Path.GetDirectoryName(launcherOpenedConfigFile);
+            }
+               
             // Yes I know this trim looks silly, but it's to prevent stuff like "C:\\\\directory\\pathtogame.exe"
             if (configPath == "")
             {
