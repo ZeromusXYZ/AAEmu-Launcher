@@ -54,8 +54,8 @@ namespace AA.Trion.Launcher
             [MarshalAs(UnmanagedType.LPWStr)] string lpName);
 
         [DllImport("kernel32.dll")]
-        internal static extern IntPtr MapViewOfFile(IntPtr hFileMapping, FileMapAccess dwDesiredAccess, Int32 dwFileOffsetHigh,
-            Int32 dwFileOffsetLow, Int32 dwNumberOfBytesToMap);
+        internal static extern IntPtr MapViewOfFile(IntPtr hFileMapping, FileMapAccess dwDesiredAccess, UInt32 dwFileOffsetHigh,
+            UInt32 dwFileOffsetLow, UInt32 dwNumberOfBytesToMap);
 
         [DllImport("kernel32.dll")]
         internal static extern bool FlushViewOfFile(IntPtr lpBaseAddress, Int32 dwNumberOfBytesToFlush);
@@ -65,6 +65,9 @@ namespace AA.Trion.Launcher
 
         [DllImport("kernel32", SetLastError = true)]
         internal static extern bool CloseHandle(IntPtr hFile);
+
+        [DllImport("kernel32", SetLastError = true)]
+        internal static extern int WaitForSingleObject(IntPtr hHandle,uint dwMilliseconds);
 
         [DllImport("msvcrt.dll", EntryPoint = "memcpy", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
         public static extern IntPtr MemCpy(IntPtr dest, IntPtr src, uint count);

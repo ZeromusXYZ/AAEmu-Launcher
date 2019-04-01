@@ -1090,9 +1090,10 @@ namespace AAEmu.Launcher
 
             var pointer = Marshal.AllocHGlobal(result.Length);
             Marshal.Copy(result, 0, pointer, result.Length);
-            // TODO Marshal.FreeHGlobal(pointer);
 
             Win32.MemCpy(fileMapView, pointer, (uint)result.Length);
+
+            Marshal.FreeHGlobal(pointer);
         }
 
         public static IntPtr CreateFileMappingHandle(string ticketString)
@@ -1109,35 +1110,38 @@ namespace AAEmu.Launcher
             IntPtr sa_pointer = Marshal.AllocHGlobal(sa.nLength);
             Marshal.StructureToPtr(sa, sa_pointer, false);
 
-            var credentialFileMap = Win32.CreateFileMappingW(
+            uint maxMapSize = 4096; // TODO: 0x20000 or 0x1000
+            maxMapSize = (uint)ticketString.Length + 0xc;
+
+            var credentialFileMapHandle = Win32.CreateFileMappingW(
                 Win32.INVALID_HANDLE_VALUE,
-                IntPtr.Zero, //sa_pointer,
+                sa_pointer, // IntPtr.Zero, //sa_pointer,
                 FileMapProtection.PageReadWrite,
                 0,
-                4096, // TODO: 0x20000 or 0x1000
+                maxMapSize, 
                 "archeage_auth_ticket_map");
 
             Marshal.FreeHGlobal(sa_pointer);
 
-            if (credentialFileMap == IntPtr.Zero)
+            if (credentialFileMapHandle == IntPtr.Zero)
             {
                 Console.WriteLine("Failed to create credential file mapping");
                 return IntPtr.Zero;
             }
 
-            var fileMapView = Win32.MapViewOfFile(credentialFileMap, FileMapAccess.FileMapAllAccessFull, 0, 0, 4096);
+            var fileMapViewHandle = Win32.MapViewOfFile(credentialFileMapHandle, FileMapAccess.FileMapAllAccessFull, 0, 0, maxMapSize);
 
-            if (fileMapView == IntPtr.Zero)
+            if (fileMapViewHandle == IntPtr.Zero)
             {
                 Console.WriteLine("Failed to create credential file mapping view");
-                Win32.CloseHandle(credentialFileMap);
+                Win32.CloseHandle(credentialFileMapHandle);
                 return IntPtr.Zero;
             }
 
-            EncryptFileMapData(fileMapView,ticketString);
+            EncryptFileMapData(fileMapViewHandle,ticketString);
 
-            Win32.UnmapViewOfFile(fileMapView);
-            return credentialFileMap;
+            // Win32.UnmapViewOfFile(fileMapViewHandle);
+            return credentialFileMapHandle;
         }
 
         public static bool generateHandlesForTrionLogin(string ticketString, string signatureString, ref int handle1, ref int handle2)
@@ -1165,6 +1169,7 @@ namespace AAEmu.Launcher
             };
             IntPtr sa_pointer = Marshal.AllocHGlobal(sa.nLength);
             Marshal.StructureToPtr(sa, sa_pointer, false);
+            //var credentialEvent = Win32.CreateEventW((IntPtr)null, true, false, "archeage_auth_ticket_event");
             var credentialEvent = Win32.CreateEventW(sa_pointer, true, false, "archeage_auth_ticket_event");
             Marshal.FreeHGlobal(sa_pointer);
 
@@ -1484,7 +1489,24 @@ namespace AAEmu.Launcher
                     // Minimize after launching AA
                     if (startOK)
                     {
-                        WindowState = FormWindowState.Minimized;
+                        if (Setting.ClientLoginType == stringTrino_1_2)
+                        {
+                            var waitRes = Win32.WaitForSingleObject((IntPtr)savedID1FileMap, 10000);
+                            if (waitRes != 0)
+                            {
+                                MessageBox.Show("WaitForSingleObject\r\nResult: " + waitRes.ToString("X8")+"\r\nGetLastWin32Error:"+ Marshal.GetLastWin32Error().ToString("X8"));
+                            }
+                            else
+                            {
+                                Win32.UnmapViewOfFile((IntPtr)savedID1FileMap);
+                                Win32.CloseHandle((IntPtr)savedID1FileMap);
+                                WindowState = FormWindowState.Minimized;
+                            }
+                        }
+                        else
+                        {
+                            WindowState = FormWindowState.Minimized;
+                        }
                     }
 
                 }
