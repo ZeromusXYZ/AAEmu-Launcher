@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace AA.Trion.Launcher
@@ -53,7 +55,7 @@ namespace AA.Trion.Launcher
             uint dwMaximumSizeLow,
             [MarshalAs(UnmanagedType.LPWStr)] string lpName);
 
-        [DllImport("kernel32.dll")]
+        [DllImport("kernel32.dll", SetLastError = true)]
         internal static extern IntPtr MapViewOfFile(IntPtr hFileMapping, FileMapAccess dwDesiredAccess, UInt32 dwFileOffsetHigh,
             UInt32 dwFileOffsetLow, UInt32 dwNumberOfBytesToMap);
 
@@ -71,6 +73,33 @@ namespace AA.Trion.Launcher
 
         [DllImport("msvcrt.dll", EntryPoint = "memcpy", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
         public static extern IntPtr MemCpy(IntPtr dest, IntPtr src, uint count);
+
+        public static string DumpMemFile(int handle, string fname)
+        {
+            try
+            {
+                IntPtr testMemPtr = MapViewOfFile((IntPtr)handle, FileMapAccess.FileMapRead, 0, 0, 4096);
+                if (testMemPtr == IntPtr.Zero)
+                {
+                    return "Win32Error:" + Marshal.GetLastWin32Error().ToString("X8");
+                }
+                List<byte> bytes = new List<byte>();
+                for(int i = 0;i < 1028;i++)
+                {
+                    var b = Marshal.ReadByte(testMemPtr, i);
+                    bytes.Add(b);
+                }
+                // string s = Marshal.PtrToStringUni(testMemPtr);
+                UnmapViewOfFile(testMemPtr);
+                File.WriteAllBytes(fname, bytes.ToArray());
+            }
+            catch (Exception x)
+            {
+                return "EXCEPTION: "+x.Message;
+            }
+            return "";
+        }
+
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -138,4 +167,5 @@ namespace AA.Trion.Launcher
 
         FileMapAllAccessFull = 0xf001f // TODO ...
     }
+
 }

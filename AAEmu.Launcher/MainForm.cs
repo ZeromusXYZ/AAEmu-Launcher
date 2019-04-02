@@ -1408,6 +1408,8 @@ namespace AAEmu.Launcher
                     }
 
 
+                    var dres = Win32.DumpMemFile(savedID1FileMap, "mapfiledump.txt");
+
                     /*
                     // required for 1.2+
                     PROCESS_INFORMATION pi = new PROCESS_INFORMATION();
@@ -1483,7 +1485,7 @@ namespace AAEmu.Launcher
                         startOK = false;
                     }
 
-                    //DumpMemFile(savedID1FileMap, "ticket-post-1.txt");
+                    //var dres = Win32.DumpMemFile(savedID1FileMap, "ticket-post-1.txt");
                     //DumpMemFile(savedID2, "ticket-post-2.txt");
 
                     // Minimize after launching AA
@@ -2398,21 +2400,6 @@ namespace AAEmu.Launcher
             //Console.WriteLine("Updating Locale Language: {0}", Setting.Lang);
             UpdateLocaleLanguage();
             btnLocaleLang.Refresh();
-        }
-
-        private static void DumpMemFile(int handle, string fname)
-        {
-            try
-            {
-                IntPtr testMemPtr = Win32.MapViewOfFile((IntPtr)handle, FileMapAccess.FileMapRead, 0, 0, 0);
-                string s = Marshal.PtrToStringUni(testMemPtr);
-                Win32.UnmapViewOfFile(testMemPtr);
-                File.WriteAllText(fname, s, Encoding.UTF8);
-            }
-            catch
-            {
-                MessageBox.Show("Error creating dump for " + fname);
-            }
         }
 
         private void CreateNewsFeedFromJSON(string JSONString)
