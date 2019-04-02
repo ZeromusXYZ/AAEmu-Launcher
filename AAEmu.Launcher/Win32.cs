@@ -81,7 +81,7 @@ namespace AA.Trion.Launcher
                 IntPtr testMemPtr = MapViewOfFile((IntPtr)handle, FileMapAccess.FileMapRead, 0, 0, 4096);
                 if (testMemPtr == IntPtr.Zero)
                 {
-                    return "Win32Error:" + Marshal.GetLastWin32Error().ToString("X8");
+                    return "Win32Error: 0x" + Marshal.GetLastWin32Error().ToString("X8");
                 }
                 List<byte> bytes = new List<byte>();
                 for(int i = 0;i < 1028;i++)
@@ -89,7 +89,6 @@ namespace AA.Trion.Launcher
                     var b = Marshal.ReadByte(testMemPtr, i);
                     bytes.Add(b);
                 }
-                // string s = Marshal.PtrToStringUni(testMemPtr);
                 UnmapViewOfFile(testMemPtr);
                 File.WriteAllBytes(fname, bytes.ToArray());
             }
