@@ -1083,7 +1083,7 @@ namespace AAEmu.Launcher
             var xml = ticketString;
                 //"123\n<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><authTicket version=\"1.2\"><storeToken>1</storeToken><password>test</password></authTicket>";
             //var xmlBytes = Encoding.ASCII.GetBytes(xml);
-            var xmlBytes = Encoding.Unicode.GetBytes(xml);
+            var xmlBytes = Encoding.UTF8.GetBytes(xml);
             //File.WriteAllBytes("ticket-raw.txt", xmlBytes);
             var result = rc4encoder.Encode(xmlBytes, xmlBytes.Length);
             //File.WriteAllBytes("ticket-rc4.txt",result);
