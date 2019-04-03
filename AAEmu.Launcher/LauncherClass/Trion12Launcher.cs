@@ -35,7 +35,8 @@ namespace AAEmu.Launcher.Trion12
             base.InitializeForLaunch();
             var res = true;
             string languageArgs = "";
-            if ((locale == "en_us") || (locale == "fr") || (locale == "de"))
+            //if ((locale == "en_us") || (locale == "fr") || (locale == "de"))
+            if (locale != "")
                 languageArgs += " -lang " + locale;
             if (CreateTrinoHandleIDs() == false)
                 res = false;
