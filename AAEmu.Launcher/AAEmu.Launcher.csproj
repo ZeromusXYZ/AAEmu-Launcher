@@ -24,8 +24,8 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ProductName>AAEmu Launcher</ProductName>
     <SuiteName>AAEmu Launcher</SuiteName>
-    <ApplicationRevision>2</ApplicationRevision>
-    <ApplicationVersion>0.3.1.%2a</ApplicationVersion>
+    <ApplicationRevision>10</ApplicationRevision>
+    <ApplicationVersion>0.4.5.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -96,6 +96,8 @@
   <ItemGroup>
     <Compile Include="AAPak.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="LauncherClass\Trion12Launcher.cs" />
+    <Compile Include="LauncherClass\MailRu10Launcher.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -115,6 +117,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="LauncherClass\BaseLauncher.cs" />
     <Compile Include="SubStream.cs" />
     <EmbeddedResource Include="DebugHelperForm.resx">
       <DependentUpon>DebugHelperForm.cs</DependentUpon>
@@ -211,9 +214,6 @@
     <None Include="Res\pgbar_back.png" />
     <None Include="Res\pgbar_front.png" />
     <None Include="Res\bg_patch.png" />
-    <Content Include="ToolsA.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="Res\btn_green_d.png" />
     <None Include="Res\bg_setup.png" />
     <None Include="Res\bg_login.png" />

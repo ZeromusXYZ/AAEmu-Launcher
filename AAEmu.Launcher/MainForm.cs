@@ -18,75 +18,18 @@ using System.Security.AccessControl;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Net.Sockets;
+using AAEmu.Launcher.LauncherBase;
+using AAEmu.Launcher.MailRu10;
+using AAEmu.Launcher.Trion12;
+using System.IO.MemoryMappedFiles;
 using AAPakEditor;
 // using XLPakTool;
-
 
 namespace AAEmu.Launcher
 {
 
     public partial class LauncherForm : Form
     {
-        // I'm keeping the CreateProcess structs and imports here in case I'll need'm again later
-        //------------------------------------------------------------------------------------------------------
-        /*
-        public struct PROCESS_INFORMATION
-        {
-            public IntPtr hProcess;
-            public IntPtr hThread;
-            public uint dwProcessId;
-            public uint dwThreadId;
-        }
-
-        public struct STARTUPINFO
-        {
-            public uint cb;
-            public string lpReserved;
-            public string lpDesktop;
-            public string lpTitle;
-            public uint dwX;
-            public uint dwY;
-            public uint dwXSize;
-            public uint dwYSize;
-            public uint dwXCountChars;
-            public uint dwYCountChars;
-            public uint dwFillAttribute;
-            public uint dwFlags;
-            public short wShowWindow;
-            public short cbReserved2;
-            public IntPtr lpReserved2;
-            public IntPtr hStdInput;
-            public IntPtr hStdOutput;
-            public IntPtr hStdError;
-        }
-
-        public struct SECURITY_ATTRIBUTES
-        {
-            public int length;
-            public IntPtr lpSecurityDescriptor;
-            public bool bInheritHandle;
-        }
-
-        [DllImport("Kernel32.dll")]
-        private static extern bool CreateProcess(string lpApplicationName, string lpCommandLine, IntPtr lpProcessAttributes, IntPtr lpThreadAttributes, bool bInheritHandles, uint dwCreationFlags, IntPtr lpEnvironment, string lpCurrentDirectory, ref STARTUPINFO lpStartupInfo, out PROCESS_INFORMATION lpProcessInformation);
-
-        [DllImport("Kernel32.dll")]
-        private static extern int ResumeThread(IntPtr hThread);
-
-        [DllImport("Kernel32.dll")]
-        private static extern uint GetLastError();
-        //------------------------------------------------------------------------------------------------------
-        */
-
-        //------------------------------------------------------------------------------------------------------
-        // Imports for using ToolsA.dll, currently required to be able to use Trion-style login authentication
-        //------------------------------------------------------------------------------------------------------
-        // [DllImport("ToolsA.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "?_g3@@YA_NPAEH0HPAPAX1@Z")] // named entrypoint is ugly
-        [DllImport("ToolsA.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "#15")]
-        public static extern bool generateInitStr(byte[] byte_0, int int_28, byte[] byte_1, int int_29, ref uint uint_0, ref uint uint_1);
-        //------------------------------------------------------------------------------------------------------
-
-        
 
         public partial class Settings
         {
@@ -443,6 +386,9 @@ namespace AAEmu.Launcher
         private int bigNewsIndex = -1;
         private int bigNewsTimer = -1;
 
+        AAEmuLauncherBase aaLauncher = null ;
+        private bool checkGameIsRunning = false;
+
         private AAPatchProgress aaPatcher = new AAPatchProgress();
         private AAPak pak = null;
         private AAPak PatchDownloadPak = null;
@@ -546,12 +492,12 @@ namespace AAEmu.Launcher
             string lngFileName = Path.GetDirectoryName(Application.ExecutablePath) + Path.DirectorySeparatorChar + "lng" + Path.DirectorySeparatorChar + languageID + ".lng";
 
             StreamReader reader = null;
-            Console.WriteLine(lngFileName);
+            //Console.WriteLine(lngFileName);
             try
             {
                 reader = new StreamReader(lngFileName);
                 var ConfigFile = reader.ReadToEnd();
-                Console.Write(ConfigFile.ToString());
+                //Console.Write(ConfigFile.ToString());
 
                 L = JsonConvert.DeserializeObject<LanguageSettings>(ConfigFile);
                 res = true;
@@ -908,12 +854,12 @@ namespace AAEmu.Launcher
             string configFileName = Application.StartupPath + Path.DirectorySeparatorChar + clientLookupDefaultFile;
 
             StreamReader reader = null;
-            Console.WriteLine(configFileName);
+            // Console.WriteLine(configFileName);
             try
             {
                 reader = new StreamReader(configFileName);
                 var ConfigFile = reader.ReadToEnd();
-                Console.Write(ConfigFile.ToString());
+                // Console.Write(ConfigFile.ToString());
 
                 ClientLookup = JsonConvert.DeserializeObject<ClientLookupHelper>(ConfigFile);
                 res = true;
@@ -964,12 +910,11 @@ namespace AAEmu.Launcher
                 return res;
 
             StreamReader reader = null ;
-            //Console.WriteLine(configFileName);
             try
             {
                 reader = new StreamReader(configFileName);
                 var ConfigFile = reader.ReadToEnd();
-                Console.Write(ConfigFile.ToString());
+                // Console.Write(ConfigFile.ToString());
 
                 Setting = JsonConvert.DeserializeObject<Settings>(ConfigFile);
                 res = true;
@@ -1050,109 +995,6 @@ namespace AAEmu.Launcher
             return res;
         }
 
-        private static string CreateTrinoHandleIDs(string user, string pass)
-        {
-            byte[] data = Encoding.Default.GetBytes(pass);
-            var passHash = new SHA256Managed().ComputeHash(data);
-
-            uint handleID1 = 0;
-            uint handleID2 = 0;
-
-            string stringForSignature = "dGVzdA==";
-            //string stringForSignature = "Signature 1:";
-
-            string stringForTicket = "<?xml version=\"1.0\" encoding=\"UTF - 8\" standalone=\"yes\"?>";
-            stringForTicket += "<authTicket version = \"1.2\">";
-            stringForTicket += "<storeToken>1</storeToken>";
-            stringForTicket += "<username>" + user + "</username>";
-            stringForTicket += "<password>" + BitConverter.ToString(passHash).Replace("-", "").ToLower() + "</password>";
-            stringForTicket += "</authTicket>";
-
-            // Basically A complex way of doing stringForSignature + LineFeed + stringForTicket in a byte array
-            byte[] bufferIntPtrID1 = Encoding.UTF8.GetBytes(stringForSignature);
-            byte[] bufferIntPtrID2 = Encoding.UTF8.GetBytes(stringForTicket);
-            byte[] bufferTotal = new byte[(bufferIntPtrID2.Length + 1) + bufferIntPtrID1.Length];
-            Array.Copy(bufferIntPtrID1, 0, bufferTotal, 0, bufferIntPtrID1.Length);
-            bufferTotal[bufferIntPtrID1.Length] = 10;
-            Array.Copy(bufferIntPtrID2, 0, bufferTotal, bufferIntPtrID1.Length + 1, bufferIntPtrID2.Length);
-
-            bool genRes = false ;
-            try
-            {
-                genRes = generateInitStr(bufferTotal, bufferTotal.Length, bufferIntPtrID1, bufferIntPtrID1.Length, ref handleID1, ref handleID2);
-            }
-            catch
-            {
-                MessageBox.Show(L.ToolsAFailed);
-            }
-            if (genRes == false)
-            {
-                //MessageBox.Show("Error generating login handle");
-                return "00000000:00000000";
-            }
-            else
-            {
-                return handleID1.ToString("X8") + ":" + handleID2.ToString("X8");
-            }
-
-        }
-
-        private string CreateArgsMailRU_1_0(string user, string pass, string serverIP, ushort serverPort)
-        {
-            byte[] data = Encoding.Default.GetBytes(pass);
-            var passHash = new SHA256Managed().ComputeHash(data);
-
-            string gameProviderArg, languageArg;
-            switch(Setting.Lang)
-            {
-                case settingsLangRU:
-                    gameProviderArg = "-r ";
-                    languageArg = "";
-                    break;
-                case settingsLangFR:
-                    gameProviderArg = "-r ";
-                    languageArg = "";
-                    break;
-                case settingsLangDE:
-                    gameProviderArg = "-r ";
-                    languageArg = "";
-                    break;
-                case settingsLangEN_US:
-                default:
-                    gameProviderArg = "-r ";
-                    languageArg = "";
-                    break;
-            }
-            return gameProviderArg + "+auth_ip " + serverIP + ":" + serverPort.ToString() + " -uid " + eLogin.Text + " -token " + BitConverter.ToString(passHash).Replace("-", "").ToLower()+languageArg;
-        }
-
-        private string CreateArgsTrino_1_2(string user, string pass, string serverIP, ushort serverPort)
-        {
-
-            string gameProviderArg, languageArg;
-            switch (Setting.Lang)
-            {
-                // This will likely need some tweaking in the future
-                case settingsLangRU:
-                case settingsLangFR:
-                case settingsLangDE:
-                case settingsLangEN_US:
-                    gameProviderArg = "-t ";
-                    languageArg = " -lang "+Setting.Lang ;
-                    break;
-                default:
-                    gameProviderArg = "-t ";
-                    languageArg = "";
-                    break;
-            }
-
-            // string handleArgs = "-handle " + GetHandleIDs(user, pass);
-            string handleArgs = "-handle " + CreateTrinoHandleIDs(user, pass);
-
-            // archeage.exe -t -auth_ip 127.0.0.1 -auth_port 1237 -handle 00000000:00000000 -lang en_us
-            return gameProviderArg + "+auth_ip " + serverIP + " -auth_port " + serverPort.ToString() + " " + handleArgs + languageArg;
-        }
-
         private void StartGame()
         { 
             if (Setting.PathToGame != "")
@@ -1183,121 +1025,69 @@ namespace AAEmu.Launcher
 
                     string LoginArg = "";
 
+                    // Clean up previous instance
+                    if (aaLauncher != null)
+                    {
+                        aaLauncher.Dispose();
+                        aaLauncher = null;
+                    }
+
                     switch(Setting.ClientLoginType)
                     {
                         case stringTrino_1_2:
-                            // Trion style auth ticket with handles, generated by ToolsA.dll
-                            LoginArg = CreateArgsTrino_1_2(eLogin.Text, ePassword.Text, serverIP, serverPort);
+                            // Trion style auth ticket with handles
+                            aaLauncher = new Trion_1_2_Launcher();
                             break;
                         case stringMailRu_1_0:
                             // Original style using uid and hashed password as token
-                            LoginArg = CreateArgsMailRU_1_0(eLogin.Text, ePassword.Text, serverIP, serverPort);
+                            aaLauncher = new MailRu_1_0_Launcher();
                             break;
                         default:
                             MessageBox.Show(L.UnknownLauncherProtocol,Setting.ClientLoginType);
                             return;
                     }
 
-                    if (Setting.HideSplashLogo == "True")
-                    {
-                        LoginArg += " -nosplash";
-                    }
+                    aaLauncher.userName = eLogin.Text;
+                    aaLauncher.SetPassword(ePassword.Text);
+                    aaLauncher.loginServerAdress = serverIP;
+                    aaLauncher.loginServerPort = serverPort;
+                    aaLauncher.gameExeFilePath = Setting.PathToGame;
+                    if (Setting.UpdateLocale == "True")
+                        aaLauncher.locale = Setting.Lang;
+                    aaLauncher.hShieldArgs = "+acpxmk";
 
-                    string HShield = " +acpxmk";
+                    if (Setting.HideSplashLogo == "True")
+                        aaLauncher.extraArguments += "-nosplash";
+
+                    aaLauncher.InitializeForLaunch();
 
                     if (debugModeToolStripMenuItem.Checked)
                     {
                         DebugHelperForm dlg = new DebugHelperForm();
-                        dlg.eArgs.Text = LoginArg;
-                        dlg.eHackShieldArg.Text = HShield;
+                        dlg.eArgs.Text = aaLauncher.launchArguments ;
+                        dlg.eHackShieldArg.Text = aaLauncher.hShieldArgs ;
                         if (dlg.ShowDialog() == DialogResult.OK)
                         {
-                            LoginArg = dlg.eArgs.Text;
-                            HShield = dlg.eHackShieldArg.Text;
+                            aaLauncher.launchArguments = dlg.eArgs.Text;
+                            aaLauncher.hShieldArgs = dlg.eHackShieldArg.Text;
                         }
                         dlg.Dispose();
                     }
 
-
-                    /*
-                    // required for 1.2+
-                    PROCESS_INFORMATION pi = new PROCESS_INFORMATION();
-                    STARTUPINFO si = new STARTUPINFO();
-                    uint lerr = 0;
-
-                    try
-                    {
-
-                        bool isCreated = CreateProcess(
-                            Setting.PathToGame, // app
-                            "\"" + Setting.PathToGame + "\" " + LoginArg + HShield, //cmdline
-                            IntPtr.Zero, // ProcAttrib
-                            IntPtr.Zero, // ThreadAttrib
-                            true, // inherit handles
-                            0x00000004, // create flags: 0x00000004 = CREATE_SUSPENDED ;
-                            IntPtr.Zero, // envi (null = inherit)
-                            null, // current dir (null = app's dir)
-                            ref si, // start info
-                            out pi // proc info
-                            );
-
-                        lerr = GetLastError();
-
-                        if (isCreated == false)
-                        {
-                            if (lerr == 740) // 0x2E4
-                            {
-                                MessageBox.Show("Elevation required ! Please run the launcher with admin rights.");
-                            }
-                            else if (lerr != 0)
-                            {
-                                MessageBox.Show("Failed to create process, error: " + lerr.ToString());
-                            }
-                            return;
-                        }
-
-                        if (ResumeThread(pi.hThread) == -1)
-                        {
-                            lerr = GetLastError();
-                            if (lerr != 0)
-                            {
-                                MessageBox.Show("Failed to resume thread, error: " + lerr.ToString());
-                                return;
-                            }
-                        }
-
-
-                        if (Setting.SaveLoginAndPassword == "true")
-                            SaveSettings();
-
-                        // Minimize after launching AA
-                        WindowState = FormWindowState.Minimized;
-                    }
-                    catch {
-                        MessageBox.Show("Error: Failed to start the game");
-                        // MessageBox.Show("Ошибка: Проверьте указанный путь до клиента игры!");
-                    }
-                    */
-
-                    // Loading using Process.Start();
-                    ProcessStartInfo GameClientProcessInfo;
-                    GameClientProcessInfo = new ProcessStartInfo(Setting.PathToGame, LoginArg + HShield);
-                    GameClientProcessInfo.UseShellExecute = true;
-                    GameClientProcessInfo.Verb = "runas";
-                    bool startOK = false;
-                    try
-                    {
-                        Process.Start(GameClientProcessInfo);
-                        startOK = true;
-                    } catch
-                    {
-                        startOK = false;
-                    }
-                    // Minimize after launching AA
+                    var startOK = aaLauncher.Launch();
                     if (startOK)
                     {
                         WindowState = FormWindowState.Minimized;
+                        if (!aaLauncher.FinalizeLaunch())
+                        {
+                            WindowState = FormWindowState.Normal;
+                        }
+                        else
+                        {
+                            checkGameIsRunning = true;
+                        }
                     }
+
 
                 }
                 else
@@ -1357,8 +1147,8 @@ namespace AAEmu.Launcher
                 ePassword.Show();
                 ePassword.Focus();
                 ePassword.SelectAll();
-                eLogin.Hide();
-                cbLoginList.Hide();
+                //eLogin.Hide();
+                //cbLoginList.Hide();
             }
         }
 
@@ -1611,7 +1401,7 @@ namespace AAEmu.Launcher
                 //Get the path of specified file
                 Setting.PathToGame = openFileDialog.FileName;
                 lGamePath.Text = Setting.PathToGame;
-                Console.WriteLine(openFileDialog.OpenFile());
+                // Console.WriteLine(openFileDialog.OpenFile());
             }
         }
 
@@ -2000,6 +1790,19 @@ namespace AAEmu.Launcher
 
         private void timerGeneral_Tick(object sender, EventArgs e)
         {
+            if ((aaLauncher != null) && (aaLauncher.runningProcess != null) && (checkGameIsRunning == true))
+            {
+                if (aaLauncher.runningProcess.HasExited)
+                {
+                    checkGameIsRunning = false;
+                    WindowState = FormWindowState.Normal;
+                }
+            }
+            else
+            {
+                checkGameIsRunning = false;
+            }
+
             if (nextServerCheck > 0)
             {
                 nextServerCheck -= timerGeneral.Interval;

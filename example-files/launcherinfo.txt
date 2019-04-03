@@ -1,0 +1,152 @@
+
+    You guys are kinda wrong: HackShield doesn't prevent anything.
+
+    The actual problem resides in the launch-functionality and client-client communication between Glyph and ArcheAge.exe. It is actually possible to multi-client without editting any memory in ArcheAge.exe or any other program, but in order to do that, one has first to figure out how this whole scheme works. Since I'm already far past all these steps, I'll go ahead and give out a few clues.
+
+    So here's how the whole launch-scheme works. For me, ArcheAge is launched with the following Commandline:
+    Code:
+
+    "C:\Program Files (x86)\Glyph\Games\ArcheAge\Live\bin32\ArcheAge.exe" -t +auth_ip IP -auth_port PORT -handle XXXXXXXX:YYYYYYYY -lang en_us  -lang en_us
+
+    Where:
+    IP = the ip of the login/auth servers
+    PORT = the port of the login/auth servers
+    YYYYYYYY = The address of a credential event, only to be used by the ArcheAge.exe client.
+    XXXXXXXX = Now, this is where it gets tricky (and also, where magic has to happen). The Glyph game-launching engine creates a seed and uses it to further generate RD4-seeds used in RD4 encryption of important game-data. For anyone who doesn't know, RD4 is an encryption-type.
+
+    If you want to create a launcher for ArcheAge, you'll have to code a launcher which will use these parameters and append the proper data to the proper arguments. You'll also have to implant an RD4-encryption system to make game-readable data.
+
+    I'll once again be a very nice fella, and provide you with a C++ template, which will make things much easier for you, by giving you everything except the encryption-scheme. Here you go:
+
+    Code:
+
+    void generate_file_map_seed(unsigned char* output)
+    {
+    	/* Get to work bitch */
+    }
+
+    void encrypt_file_map_data(HANDLE& file_map_view, unsigned char* seed)
+    {
+    	/* Get to work bitch */
+    }
+
+    bool create_file_mapping_handle(HANDLE& credential_file_map)
+    {
+    	unsigned char file_mapping_seed[4096];
+    	memset(file_mapping_seed, 0, 4096);
+
+    	generate_file_map_seed(file_mapping_seed);
+
+    	credential_file_map = CreateFileMappingW(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, (((0x00000678 >> 16) + 2) << 16), 0);
+
+    	if (!credential_file_map)
+    	{
+    		std::cout << "Failed to create credential file mapping" << std::endl;
+    		return false;
+    	}
+
+    	void* file_map_view = MapViewOfFile(credential_file_map, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+
+    	if (!file_map_view)
+    	{
+    		CloseHandle(credential_file_map);
+    		std::cout << "Failed to create credential file mapping view" << std::endl;
+    		return false;
+    	}
+
+    	encrypt_file_map_data(file_map_view, file_mapping_seed);
+    	UnmapViewOfFile(file_map_view);
+    	return true;
+    }
+
+    int main()
+    {
+    	auto end = []() -> int
+    	{
+    		std::cin.ignore();
+    		std::cin.get();
+    		return 0;
+    	};
+
+    	/* directory, filename & verb */
+    	char temp_directory[256];
+
+    	if (!GetModuleFileName(NULL, temp_directory, 256))
+    	{
+    		std::cout << "Couldn't get module file name." << std::endl;
+    		return end();
+    	}
+
+    	*strrchr(temp_directory, '\\') = 0;
+    	
+    	std::string filename = std::string(temp_directory) + std::string("\\ArcheAge.exe");
+    	std::string verb = std::string("runas");
+    	
+    	std::string directory = std::string(temp_directory);
+    	std::replace(directory.begin(), directory.end(), '\\', '/');
+
+    	/* credential handles */
+    	HANDLE credential_event = CreateEventW(NULL, FALSE, FALSE, NULL);
+
+    	if (!credential_event)
+    	{
+    		std::cout << "Failed to create credential event" << std::endl;
+    		return end();
+    	}
+
+    	HANDLE credential_file_map = 0;
+    	
+    	if (!create_file_mapping_handle(credential_file_map))
+    	{
+    		return end();
+    	}
+
+    	/* parameters */
+    	const char ip[]			= "193.105.173.135";
+    	unsigned short port		= 1237;
+
+    	std::stringstream cmd_args;
+    	cmd_args << "-t";
+    	cmd_args << " +auth_ip " << ip;
+    	cmd_args << " -auth_port " << port;
+    	cmd_args << " -handle "; // {credentials}
+    	cmd_args << std::hex << std::setw(8) << std::setfill('0') << reinterpret_cast<unsigned int>(credential_file_map);
+    	cmd_args << ":";
+    	cmd_args << std::hex << std::setw(8) << std::setfill('0') << reinterpret_cast<unsigned int>(credential_event);
+    	cmd_args << " -lang en_us ";
+    	cmd_args << " -lang en_us";
+    	
+    	std::string parameters = cmd_args.str();
+
+    	SHELLEXECUTEINFO exe_info;
+    	memset(&exe_info, 0, sizeof(SHELLEXECUTEINFO));
+
+    	exe_info.cbSize = sizeof(SHELLEXECUTEINFO);
+    	exe_info.fMask = SEE_MASK_NOASYNC | SEE_MASK_NOCLOSEPROCESS;
+    	exe_info.hwnd = NULL;
+    	exe_info.lpVerb = verb.c_str();
+    	exe_info.lpFile = filename.c_str();
+    	exe_info.lpParameters = parameters.c_str();
+    	exe_info.lpDirectory = directory.c_str();
+    	exe_info.nShow = SW_SHOWNORMAL;
+
+    	if (!ShellExecuteEx(&exe_info))
+    	{
+    		std::cout << "Failed to create process" << std::endl;
+    		return end();
+    	}
+
+    	std::cout << "Succesfully created process" << std::endl;
+    	return 0;
+    }
+
+
+
+    You only have to code these two functions:
+    generate_file_map_seed
+    encrypt_file_map_data
+
+    Now, what are you waiting for? Get to work bitch <3 
+
+    Im teh GoD ! 
+
