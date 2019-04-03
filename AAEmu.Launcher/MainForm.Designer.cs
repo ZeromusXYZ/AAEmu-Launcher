@@ -565,7 +565,7 @@
             this.lAppVersion.Name = "lAppVersion";
             this.lAppVersion.Size = new System.Drawing.Size(95, 21);
             this.lAppVersion.TabIndex = 17;
-            this.lAppVersion.Text = "V 0.4";
+            this.lAppVersion.Text = "V 0.4.5";
             this.lAppVersion.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
             // cmsAAEmuButton
@@ -577,12 +577,12 @@
             this.toolStripSeparator1,
             this.closeToolStripMenuItem});
             this.cmsAAEmuButton.Name = "cmsAAEmuButton";
-            this.cmsAAEmuButton.Size = new System.Drawing.Size(181, 120);
+            this.cmsAAEmuButton.Size = new System.Drawing.Size(145, 98);
             // 
             // minimizeToolStripMenuItem
             // 
             this.minimizeToolStripMenuItem.Name = "minimizeToolStripMenuItem";
-            this.minimizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.minimizeToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.minimizeToolStripMenuItem.Text = "Minimize";
             this.minimizeToolStripMenuItem.Click += new System.EventHandler(this.minimizeToolStripMenuItem_Click);
             // 
@@ -596,7 +596,7 @@
             this.forcePatchDownloadToolStripMenuItem,
             this.skipPatchToolStripMenuItem});
             this.troubleshootToolStripMenuItem.Name = "troubleshootToolStripMenuItem";
-            this.troubleshootToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.troubleshootToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.troubleshootToolStripMenuItem.Text = "Troubleshoot";
             // 
             // deleteGameConfigurationToolStripMenuItem
@@ -643,7 +643,7 @@
             // debugModeToolStripMenuItem
             // 
             this.debugModeToolStripMenuItem.Name = "debugModeToolStripMenuItem";
-            this.debugModeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.debugModeToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.debugModeToolStripMenuItem.Text = "Debug Mode";
             this.debugModeToolStripMenuItem.Visible = false;
             this.debugModeToolStripMenuItem.Click += new System.EventHandler(this.debugModeToolStripMenuItem_Click);
@@ -651,12 +651,12 @@
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(141, 6);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 

@@ -18,7 +18,9 @@ using System.Security.AccessControl;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Net.Sockets;
-using AA.Trion.Launcher;
+using AAEmu.Launcher.LauncherBase;
+using AAEmu.Launcher.MailRu10;
+using AAEmu.Launcher.Trion12;
 using System.IO.MemoryMappedFiles;
 using AAPakEditor;
 // using XLPakTool;
@@ -28,109 +30,6 @@ namespace AAEmu.Launcher
 
     public partial class LauncherForm : Form
     {
-        // I'm keeping the CreateProcess structs and imports here in case I'll need'm again later
-        //------------------------------------------------------------------------------------------------------
-        /*
-        public struct PROCESS_INFORMATION
-        {
-            public IntPtr hProcess;
-            public IntPtr hThread;
-            public uint dwProcessId;
-            public uint dwThreadId;
-        }
-
-        public struct STARTUPINFO
-        {
-            public uint cb;
-            public string lpReserved;
-            public string lpDesktop;
-            public string lpTitle;
-            public uint dwX;
-            public uint dwY;
-            public uint dwXSize;
-            public uint dwYSize;
-            public uint dwXCountChars;
-            public uint dwYCountChars;
-            public uint dwFillAttribute;
-            public uint dwFlags;
-            public short wShowWindow;
-            public short cbReserved2;
-            public IntPtr lpReserved2;
-            public IntPtr hStdInput;
-            public IntPtr hStdOutput;
-            public IntPtr hStdError;
-        }
-
-        public struct SECURITY_ATTRIBUTES
-        {
-            public int length;
-            public IntPtr lpSecurityDescriptor;
-            public bool bInheritHandle;
-        }
-
-        [DllImport("Kernel32.dll")]
-        private static extern bool CreateProcess(
-            string lpApplicationName, 
-            string lpCommandLine, 
-            IntPtr lpProcessAttributes, 
-            IntPtr lpThreadAttributes, 
-            bool bInheritHandles, 
-            uint dwCreationFlags, 
-            IntPtr lpEnvironment, 
-            string lpCurrentDirectory, 
-            ref STARTUPINFO lpStartupInfo, 
-            out PROCESS_INFORMATION lpProcessInformation);
-
-        [DllImport("Kernel32.dll")]
-        private static extern int ResumeThread(IntPtr hThread);
-        */
-
-        /*
-        [DllImport("kernel32.dll")]
-        private static extern uint GetLastError();
-
-        [DllImport("kernel32.dll")]
-        private static extern IntPtr CreateFileMapping(
-            IntPtr hFile,
-            IntPtr lpFileMappingAttributes,
-            uint flProtect,
-            uint dwMaximumSizeHigh,
-            uint dwMaximumSizeLow,
-            StringBuilder lpName);
-            //[MarshalAs(UnmanagedType.LPStr)] string lpName);
-
-        [DllImport("kernel32.dll")]
-        private static extern IntPtr OpenFileMapping(int dwDesiredAccess,
-            bool bInheritHandle, StringBuilder lpName);
-
-        [DllImport("kernel32.dll")]
-        private static extern IntPtr MapViewOfFile(IntPtr hFileMapping,
-            uint dwDesiredAccess, 
-            uint dwFileOffsetHigh, 
-            uint dwFileOffsetLow,
-            uint dwNumberOfBytesToMap);
-
-        [DllImport("kernel32.dll")]
-        private static extern bool UnmapViewOfFile(IntPtr map);
-
-        [DllImport("kernel32.dll")]
-        private static extern bool CloseHandle(IntPtr hObject);
-        */
-
-        public static int FILE_MAP_READ = 0x0004;
-        public static uint INVALID_HANDLE_VALUE = 0xFFFFFFFF;
-        public static uint PAGE_READWRITE = 0x04;
-        public static uint FILE_MAP_ALL_ACCESS = 0x04;
-
-        static int savedID1FileMap = -1 ;
-
-        //------------------------------------------------------------------------------------------------------
-        // Imports for using ToolsA.dll, currently required to be able to use Trion-style login authentication
-        //------------------------------------------------------------------------------------------------------
-        // [DllImport("ToolsA.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "?_g3@@YA_NPAEH0HPAPAX1@Z")] // named entrypoint is ugly
-        [DllImport("ToolsA.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "#15")]
-        public static extern bool generateHandlesWithToolsA(byte[] byte_0, int int_28, byte[] byte_1, int int_29, ref int uint_0, ref int uint_1);
-        //------------------------------------------------------------------------------------------------------
 
         public partial class Settings
         {
@@ -486,6 +385,9 @@ namespace AAEmu.Launcher
         AAEmuNewsFeed newsFeed = null ;
         private int bigNewsIndex = -1;
         private int bigNewsTimer = -1;
+
+        AAEmuLauncherBase aaLauncher = null ;
+        private bool checkGameIsRunning = false;
 
         private AAPatchProgress aaPatcher = new AAPatchProgress();
         private AAPak pak = null;
@@ -1069,224 +971,6 @@ namespace AAEmu.Launcher
             return res;
         }
 
-        public static void EncryptFileMapData(IntPtr fileMapView, string ticketString, string signatureString) // TODO copy enc xml data to MMF
-        {
-            // This fixed value was used by ToolsA when testing
-            // var key = new byte[8] { 0x29, 0x6B, 0xD6, 0xEB, 0x2C, 0xA9, 0x03, 0x21 };
-
-            var key = new byte[8] { 0,0,0,0,0,0,0,0 };
-            Random r = new Random();
-            r.NextBytes(key);
-
-            // var rc4encoder = new AA.Trion.Launcher.RC4(key);
-            // TFIR is the header for this ?
-            var xml = "TFIR" + signatureString + '\n' + ticketString;
-                //"123\n<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><authTicket version=\"1.2\"><storeToken>1</storeToken><password>test</password></authTicket>";
-            var xmlBytes = Encoding.UTF8.GetBytes(xml);
-            // var ticketEncrypted = rc4encoder.Encode(xmlBytes, xmlBytes.Length);
-            var ticketEncrypted = AAEmu.Launcher.RC4.Encrypt(key,xmlBytes);
-            // Use a temporary memorystream for ease
-            MemoryStream ms = new MemoryStream();
-            var writer = new BinaryWriter(ms);
-            writer.Write(key, 0, key.Length);
-            Int32 ticketSize = ticketEncrypted.Length ;
-            writer.Write((int)ticketSize);
-            writer.Write(ticketEncrypted);
-            ms.Position = 0;
-            var result = new byte[ms.Length];
-            ms.Read(result, 0, (int)ms.Length);
-
-            // Copy data to MemoryMappedFile
-            // Structure
-            // 8 bytes: RC4 Key
-            // 4 bytes: Actual Data Size
-            // ? bytes: Encrypted data
-            var pointer = Marshal.AllocHGlobal(result.Length);
-            Marshal.Copy(result, 0, pointer, result.Length);
-            Win32.MemCpy(fileMapView, pointer, (uint)result.Length);
-            Marshal.FreeHGlobal(pointer);
-
-            writer.Dispose();
-            ms.Dispose();
-        }
-
-        public static IntPtr CreateFileMappingHandle(string ticketString,string signatureString)
-        {
-
-            // MSDN Documentation says SECURITY_ATTRIBUTES needs to be set (not null) for child processes to be able to inherit the handle from CreateEvent
-            Win32.SECURITY_ATTRIBUTES sa = new Win32.SECURITY_ATTRIBUTES
-            {
-                nLength = Marshal.SizeOf(typeof(Win32.SECURITY_ATTRIBUTES)),
-                lpSecurityDescriptor = IntPtr.Zero,
-                bInheritHandle = true
-            };
-
-            IntPtr sa_pointer = Marshal.AllocHGlobal(sa.nLength);
-            Marshal.StructureToPtr(sa, sa_pointer, false);
-
-            uint maxMapSize = 4096; // TODO: 0x20000 or 0x1000
-            maxMapSize = (uint)ticketString.Length + 0xc;
-
-            var credentialFileMapHandle = Win32.CreateFileMappingW(
-                Win32.INVALID_HANDLE_VALUE,
-                sa_pointer, // IntPtr.Zero, //sa_pointer,
-                FileMapProtection.PageReadWrite,
-                0,
-                maxMapSize, 
-                "archeage_auth_ticket_map");
-
-            Marshal.FreeHGlobal(sa_pointer);
-
-            if (credentialFileMapHandle == IntPtr.Zero)
-            {
-                //Console.WriteLine("Failed to create credential file mapping");
-                return IntPtr.Zero;
-            }
-
-            var fileMapViewHandle = Win32.MapViewOfFile(credentialFileMapHandle, FileMapAccess.FileMapAllAccessFull, 0, 0, maxMapSize);
-
-            if (fileMapViewHandle == IntPtr.Zero)
-            {
-                //Console.WriteLine("Failed to create credential file mapping view");
-                Win32.CloseHandle(credentialFileMapHandle);
-                return IntPtr.Zero;
-            }
-
-            EncryptFileMapData(fileMapViewHandle,ticketString,signatureString);
-
-            // Win32.UnmapViewOfFile(fileMapViewHandle);
-            return credentialFileMapHandle;
-        }
-
-        public static bool generateHandlesForTrionLogin(string ticketString, string signatureString, ref int handle1, ref int handle2)
-        {
-            handle1 = 0x00000000;
-            handle2 = 0x00000000;
-
-            var credentialFileMap = CreateFileMappingHandle(ticketString,signatureString);
-            if (credentialFileMap == IntPtr.Zero)
-            {
-                // TODO ...
-                // Win32.CloseHandle(credentialEvent);
-                return false;
-            }
-
-            // MSDN Documentation says SECURITY_ATTRIBUTES needs to be set (not null) for child processes to be able to inherit the handle from CreateEvent
-            Win32.SECURITY_ATTRIBUTES sa = new Win32.SECURITY_ATTRIBUTES
-            {
-                nLength = Marshal.SizeOf(typeof(Win32.SECURITY_ATTRIBUTES)),
-                lpSecurityDescriptor = IntPtr.Zero,
-                bInheritHandle = true
-            };
-            IntPtr sa_pointer = Marshal.AllocHGlobal(sa.nLength);
-            Marshal.StructureToPtr(sa, sa_pointer, false);
-            var credentialEvent = Win32.CreateEventW(sa_pointer, true, false, "archeage_auth_ticket_event");
-            Marshal.FreeHGlobal(sa_pointer);
-
-            if (credentialEvent == IntPtr.Zero)
-            {
-                // Console.WriteLine("Failed to create credential event");
-                return false;
-            }
-
-            handle1 = credentialFileMap.ToInt32();
-            handle2 = credentialEvent.ToInt32();
-            return true;
-        }
-
-        private static string CreateTrinoHandleIDs(string user, string pass)
-        {
-            byte[] data = Encoding.Default.GetBytes(pass);
-            var passHash = new SHA256Managed().ComputeHash(data);
-
-            int handleID1FileMap = 0;
-            int handleID2Event = 0;
-            bool genRes = false;
-
-            // Not sure if we actually need this part or not
-            string stringForSignature = "dGVzdA==";
-            //string stringForSignature = "Signature 1:";
-
-            string stringForTicket = "<?xml version=\"1.0\" encoding=\"UTF - 8\" standalone=\"yes\"?>";
-            stringForTicket += "<authTicket version = \"1.2\">";
-            stringForTicket += "<storeToken>1</storeToken>";
-            stringForTicket += "<username>" + user + "</username>";
-            stringForTicket += "<password>" + BitConverter.ToString(passHash).Replace("-", "").ToLower() + "</password>";
-            stringForTicket += "</authTicket>";
-
-            genRes = generateHandlesForTrionLogin(stringForTicket, stringForSignature, ref handleID1FileMap, ref handleID2Event);
-
-            savedID1FileMap = handleID1FileMap;
-            //DumpMemFile(handleID1FileMap, "ticket-pre-1.txt");
-
-            if (genRes == false)
-            {
-                //MessageBox.Show("Error generating login handle");
-                return "00000000:00000000";
-            }
-            else
-            {
-                return handleID1FileMap.ToString("X8") + ":" + handleID2Event.ToString("X8");
-            }
-
-        }
-
-        private string CreateArgsMailRU_1_0(string user, string pass, string serverIP, ushort serverPort)
-        {
-            byte[] data = Encoding.Default.GetBytes(pass);
-            var passHash = new SHA256Managed().ComputeHash(data);
-
-            string gameProviderArg, languageArg;
-            switch(Setting.Lang)
-            {
-                case settingsLangRU:
-                    gameProviderArg = "-r ";
-                    languageArg = "";
-                    break;
-                case settingsLangFR:
-                    gameProviderArg = "-r ";
-                    languageArg = "";
-                    break;
-                case settingsLangDE:
-                    gameProviderArg = "-r ";
-                    languageArg = "";
-                    break;
-                case settingsLangEN_US:
-                default:
-                    gameProviderArg = "-r ";
-                    languageArg = "";
-                    break;
-            }
-            return gameProviderArg + "+auth_ip " + serverIP + ":" + serverPort.ToString() + " -uid " + eLogin.Text + " -token " + BitConverter.ToString(passHash).Replace("-", "").ToLower()+languageArg;
-        }
-
-        private string CreateArgsTrino_1_2(string user, string pass, string serverIP, ushort serverPort)
-        {
-
-            string gameProviderArg, languageArg;
-            switch (Setting.Lang)
-            {
-                // This will likely need some tweaking in the future
-                case settingsLangRU:
-                case settingsLangFR:
-                case settingsLangDE:
-                case settingsLangEN_US:
-                    gameProviderArg = "-t ";
-                    languageArg = " -lang "+Setting.Lang ;
-                    break;
-                default:
-                    gameProviderArg = "-t ";
-                    languageArg = "";
-                    break;
-            }
-
-            // string handleArgs = "-handle " + GetHandleIDs(user, pass);
-            string handleArgs = "-handle " + CreateTrinoHandleIDs(user, pass);
-
-            // archeage.exe -t -auth_ip 127.0.0.1 -auth_port 1237 -handle 00000000:00000000 -lang en_us
-            return gameProviderArg + "+auth_ip " + serverIP + " -auth_port " + serverPort.ToString() + " " + handleArgs + languageArg;
-        }
-
         private void StartGame()
         { 
             if (Setting.PathToGame != "")
@@ -1317,147 +1001,69 @@ namespace AAEmu.Launcher
 
                     string LoginArg = "";
 
+                    // Clean up previous instance
+                    if (aaLauncher != null)
+                    {
+                        aaLauncher.Dispose();
+                        aaLauncher = null;
+                    }
+
                     switch(Setting.ClientLoginType)
                     {
                         case stringTrino_1_2:
-                            // Trion style auth ticket with handles, generated by ToolsA.dll
-                            LoginArg = CreateArgsTrino_1_2(eLogin.Text, ePassword.Text, serverIP, serverPort);
+                            // Trion style auth ticket with handles
+                            aaLauncher = new Trion_1_2_Launcher();
                             break;
                         case stringMailRu_1_0:
                             // Original style using uid and hashed password as token
-                            LoginArg = CreateArgsMailRU_1_0(eLogin.Text, ePassword.Text, serverIP, serverPort);
+                            aaLauncher = new MailRu_1_0_Launcher();
                             break;
                         default:
                             MessageBox.Show(L.UnknownLauncherProtocol,Setting.ClientLoginType);
                             return;
                     }
 
-                    if (Setting.HideSplashLogo == "True")
-                    {
-                        LoginArg += " -nosplash";
-                    }
+                    aaLauncher.userName = eLogin.Text;
+                    aaLauncher.SetPassword(ePassword.Text);
+                    aaLauncher.loginServerAdress = serverIP;
+                    aaLauncher.loginServerPort = serverPort;
+                    aaLauncher.gameExeFilePath = Setting.PathToGame;
+                    if (Setting.UpdateLocale == "True")
+                        aaLauncher.locale = Setting.Lang;
+                    aaLauncher.hShieldArgs = "+acpxmk";
 
-                    string HShield = " +acpxmk"; // client safely ignores this if no HackShield is present or disabled
+                    if (Setting.HideSplashLogo == "True")
+                        aaLauncher.extraArguments += "-nosplash";
+
+                    aaLauncher.InitializeForLaunch();
 
                     if (debugModeToolStripMenuItem.Checked)
                     {
                         DebugHelperForm dlg = new DebugHelperForm();
-                        dlg.eArgs.Text = LoginArg + " -devmode";
-                        dlg.eHackShieldArg.Text = HShield;
+                        dlg.eArgs.Text = aaLauncher.launchArguments ;
+                        dlg.eHackShieldArg.Text = aaLauncher.hShieldArgs ;
                         if (dlg.ShowDialog() == DialogResult.OK)
                         {
-                            LoginArg = dlg.eArgs.Text;
-                            HShield = dlg.eHackShieldArg.Text;
+                            aaLauncher.launchArguments = dlg.eArgs.Text;
+                            aaLauncher.hShieldArgs = dlg.eHackShieldArg.Text;
                         }
                         dlg.Dispose();
                     }
 
-
-                    /*
-                    // required for 1.2+
-                    PROCESS_INFORMATION pi = new PROCESS_INFORMATION();
-                    STARTUPINFO si = new STARTUPINFO();
-                    uint lerr = 0;
-
-                    try
-                    {
-
-                        bool isCreated = CreateProcess(
-                            Setting.PathToGame, // app
-                            "\"" + Setting.PathToGame + "\" " + LoginArg + HShield, //cmdline
-                            IntPtr.Zero, // ProcAttrib
-                            IntPtr.Zero, // ThreadAttrib
-                            true, // inherit handles
-                            0x00000004, // create flags: 0x00000004 = CREATE_SUSPENDED ;
-                            IntPtr.Zero, // envi (null = inherit)
-                            null, // current dir (null = app's dir)
-                            ref si, // start info
-                            out pi // proc info
-                            );
-
-                        lerr = GetLastError();
-
-                        if (isCreated == false)
-                        {
-                            if (lerr == 740) // 0x2E4
-                            {
-                                MessageBox.Show("Elevation required ! Please run the launcher with admin rights.");
-                            }
-                            else if (lerr != 0)
-                            {
-                                MessageBox.Show("Failed to create process, error: " + lerr.ToString());
-                            }
-                            return;
-                        }
-
-                        if (ResumeThread(pi.hThread) == -1)
-                        {
-                            lerr = GetLastError();
-                            if (lerr != 0)
-                            {
-                                MessageBox.Show("Failed to resume thread, error: " + lerr.ToString());
-                                return;
-                            }
-                        }
-
-
-                        if (Setting.SaveLoginAndPassword == "true")
-                            SaveSettings();
-
-                        // Minimize after launching AA
-                        WindowState = FormWindowState.Minimized;
-                    }
-                    catch {
-                        MessageBox.Show("Error: Failed to start the game");
-                        // MessageBox.Show("Ошибка: Проверьте указанный путь до клиента игры!");
-                    }
-                    */
-
-                    // Loading using Process.Start();
-                    ProcessStartInfo GameClientProcessInfo;
-                    GameClientProcessInfo = new ProcessStartInfo(Setting.PathToGame, LoginArg + HShield);
-                    GameClientProcessInfo.UseShellExecute = true;
-                    GameClientProcessInfo.Verb = "runas";
-                    bool startOK = false;
-                    try
-                    {
-                        Process.Start(GameClientProcessInfo);
-                        startOK = true;
-                    } catch
-                    {
-                        startOK = false;
-                    }
-
-                    //var dres = Win32.DumpMemFile(savedID1FileMap, "ticket-post-1.txt");
-                    //DumpMemFile(savedID2, "ticket-post-2.txt");
-
-                    // Minimize after launching AA
+                    var startOK = aaLauncher.Launch();
                     if (startOK)
                     {
-                        if (Setting.ClientLoginType == stringTrino_1_2)
+                        WindowState = FormWindowState.Minimized;
+                        if (!aaLauncher.FinalizeLaunch())
                         {
-                            System.Threading.Thread.Sleep(2500);
-                            var waitRes = Win32.WaitForSingleObject((IntPtr)savedID1FileMap, 10000);
-                            if (waitRes != 0)
-                            {
-                                // MessageBox.Show("WaitForSingleObject\r\nResult: " + waitRes.ToString("X8")+"\r\nGetLastWin32Error:"+ Marshal.GetLastWin32Error().ToString("X8"));
-                            }
-
-                            try
-                            {
-                                WindowState = FormWindowState.Minimized;
-                                System.Threading.Thread.Sleep(1000);
-                                Win32.UnmapViewOfFile((IntPtr)savedID1FileMap);
-                                Win32.CloseHandle((IntPtr)savedID1FileMap);
-                            }
-                            catch { }
-
+                            WindowState = FormWindowState.Normal;
                         }
                         else
                         {
-                            WindowState = FormWindowState.Minimized;
+                            checkGameIsRunning = true;
                         }
                     }
+
 
                 }
                 else
@@ -1517,8 +1123,8 @@ namespace AAEmu.Launcher
                 ePassword.Show();
                 ePassword.Focus();
                 ePassword.SelectAll();
-                eLogin.Hide();
-                cbLoginList.Hide();
+                //eLogin.Hide();
+                //cbLoginList.Hide();
             }
         }
 
@@ -2155,6 +1761,19 @@ namespace AAEmu.Launcher
 
         private void timerGeneral_Tick(object sender, EventArgs e)
         {
+            if ((aaLauncher != null) && (aaLauncher.runningProcess != null) && (checkGameIsRunning == true))
+            {
+                if (aaLauncher.runningProcess.HasExited)
+                {
+                    checkGameIsRunning = false;
+                    WindowState = FormWindowState.Normal;
+                }
+            }
+            else
+            {
+                checkGameIsRunning = false;
+            }
+
             if (nextServerCheck > 0)
             {
                 nextServerCheck -= timerGeneral.Interval;

@@ -83,10 +83,11 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(12, 46);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(422, 39);
+            this.label3.Size = new System.Drawing.Size(285, 52);
             this.label3.TabIndex = 5;
-            this.label3.Text = "Note:\r\nAdding \"-devmode\" as parameter will make the game give somewhat more usefu" +
-    "ll errors.\r\nBut will not generate a crash dump.\r\n";
+            this.label3.Text = "Note:\r\nSome clients allow adding \"-devmode\" as parameter.\r\nThis will make the gam" +
+    "e give somewhat more usefull errors.\r\nBut will not generate a crash dump, and ex" +
+    "it on any error.\r\n";
             // 
             // DebugHelperForm
             // 
