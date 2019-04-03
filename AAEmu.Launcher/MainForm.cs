@@ -1078,12 +1078,13 @@ namespace AAEmu.Launcher
             Random r = new Random();
             r.NextBytes(key);
 
-            var rc4encoder = new RC4(key);
+            // var rc4encoder = new AA.Trion.Launcher.RC4(key);
             // TFIR is the header for this ?
             var xml = "TFIR" + signatureString + '\n' + ticketString;
                 //"123\n<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><authTicket version=\"1.2\"><storeToken>1</storeToken><password>test</password></authTicket>";
             var xmlBytes = Encoding.UTF8.GetBytes(xml);
-            var ticketEncrypted = rc4encoder.Encode(xmlBytes, xmlBytes.Length);
+            // var ticketEncrypted = rc4encoder.Encode(xmlBytes, xmlBytes.Length);
+            var ticketEncrypted = AAEmu.Launcher.RC4.Encrypt(key,xmlBytes);
             // Use a temporary memorystream for ease
             MemoryStream ms = new MemoryStream();
             var writer = new BinaryWriter(ms);
@@ -1435,7 +1436,7 @@ namespace AAEmu.Launcher
                     {
                         if (Setting.ClientLoginType == stringTrino_1_2)
                         {
-                            System.Threading.Thread.Sleep(500);
+                            System.Threading.Thread.Sleep(2500);
                             var waitRes = Win32.WaitForSingleObject((IntPtr)savedID1FileMap, 10000);
                             if (waitRes != 0)
                             {
