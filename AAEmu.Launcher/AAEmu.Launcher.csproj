@@ -131,9 +131,7 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="aaemu.info.aelcf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="aaemu.info.aelcf" />
     <None Include="lng\de.lng">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
