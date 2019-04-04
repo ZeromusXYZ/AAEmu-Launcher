@@ -706,6 +706,9 @@ namespace AAEmu.Launcher
                 case settingsLangFR:
                     btnLocaleLang.Image = Properties.Resources.mini_locale_fr;
                     break;
+                case settingsLangJP:
+                    btnLocaleLang.Image = Properties.Resources.mini_locale_jp;
+                    break;
                 case settingsLangEN_US:
                 default:
                     Setting.Lang = settingsLangEN_US;
@@ -1052,8 +1055,8 @@ namespace AAEmu.Launcher
                     aaLauncher.loginServerAdress = serverIP;
                     aaLauncher.loginServerPort = serverPort;
                     aaLauncher.gameExeFilePath = Setting.PathToGame;
-                    if (Setting.UpdateLocale == "True")
-                        aaLauncher.locale = Setting.Lang;
+                    // if (Setting.UpdateLocale == "True")
+                    aaLauncher.locale = Setting.Lang;
                     aaLauncher.hShieldArgs = "+acpxmk";
 
                     if (Setting.HideSplashLogo == "True")

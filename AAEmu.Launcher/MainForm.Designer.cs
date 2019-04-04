@@ -104,9 +104,7 @@
             this.miLocaleFrench = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.miLocaleRussian = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.miLocaleKorean = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.japaneseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnLocaleLang = new System.Windows.Forms.PictureBox();
             this.btnSystem = new System.Windows.Forms.PictureBox();
@@ -551,7 +549,7 @@
             this.lPathToGameLabel.ForeColor = System.Drawing.Color.White;
             this.lPathToGameLabel.Location = new System.Drawing.Point(22, 230);
             this.lPathToGameLabel.Name = "lPathToGameLabel";
-            this.lPathToGameLabel.Size = new System.Drawing.Size(155, 20);
+            this.lPathToGameLabel.Size = new System.Drawing.Size(225, 20);
             this.lPathToGameLabel.TabIndex = 2;
             this.lPathToGameLabel.Text = "gamepath";
             this.lPathToGameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -565,7 +563,7 @@
             this.lAppVersion.Name = "lAppVersion";
             this.lAppVersion.Size = new System.Drawing.Size(95, 21);
             this.lAppVersion.TabIndex = 17;
-            this.lAppVersion.Text = "V 0.4.5";
+            this.lAppVersion.Text = "V 0.4.6";
             this.lAppVersion.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
             // cmsAAEmuButton
@@ -665,11 +663,11 @@
             this.lSettingsBack.BackColor = System.Drawing.Color.Transparent;
             this.lSettingsBack.Cursor = System.Windows.Forms.Cursors.Hand;
             this.lSettingsBack.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.lSettingsBack.Font = new System.Drawing.Font("Georgia", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lSettingsBack.Font = new System.Drawing.Font("Georgia", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lSettingsBack.ForeColor = System.Drawing.Color.White;
-            this.lSettingsBack.Location = new System.Drawing.Point(12, 355);
+            this.lSettingsBack.Location = new System.Drawing.Point(15, 355);
             this.lSettingsBack.Name = "lSettingsBack";
-            this.lSettingsBack.Size = new System.Drawing.Size(165, 36);
+            this.lSettingsBack.Size = new System.Drawing.Size(200, 40);
             this.lSettingsBack.TabIndex = 29;
             this.lSettingsBack.Text = "Back";
             this.lSettingsBack.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -682,7 +680,7 @@
             this.lIPAddress.ForeColor = System.Drawing.Color.White;
             this.lIPAddress.Location = new System.Drawing.Point(22, 138);
             this.lIPAddress.Name = "lIPAddress";
-            this.lIPAddress.Size = new System.Drawing.Size(155, 24);
+            this.lIPAddress.Size = new System.Drawing.Size(225, 24);
             this.lIPAddress.TabIndex = 0;
             this.lIPAddress.Text = "Server";
             this.lIPAddress.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -790,7 +788,7 @@
             this.lGameClientType.BackColor = System.Drawing.Color.Transparent;
             this.lGameClientType.Cursor = System.Windows.Forms.Cursors.Hand;
             this.lGameClientType.ForeColor = System.Drawing.Color.White;
-            this.lGameClientType.Location = new System.Drawing.Point(24, 302);
+            this.lGameClientType.Location = new System.Drawing.Point(22, 308);
             this.lGameClientType.Name = "lGameClientType";
             this.lGameClientType.Size = new System.Drawing.Size(104, 18);
             this.lGameClientType.TabIndex = 39;
@@ -937,12 +935,10 @@
             this.miLocaleFrench,
             this.toolStripSeparator2,
             this.miLocaleRussian,
-            this.toolStripSeparator3,
             this.miLocaleKorean,
-            this.toolStripSeparator4,
             this.japaneseToolStripMenuItem});
             this.cmsLocaleLanguage.Name = "cmsLanguage";
-            this.cmsLocaleLanguage.Size = new System.Drawing.Size(120, 154);
+            this.cmsLocaleLanguage.Size = new System.Drawing.Size(120, 142);
             // 
             // miLocaleEnglish
             // 
@@ -985,33 +981,20 @@
             this.miLocaleRussian.Text = "Русский";
             this.miLocaleRussian.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
             // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(116, 6);
-            this.toolStripSeparator3.Visible = false;
-            // 
             // miLocaleKorean
             // 
             this.miLocaleKorean.Image = global::AAEmu.Launcher.Properties.Resources.flag_ko;
             this.miLocaleKorean.Name = "miLocaleKorean";
-            this.miLocaleKorean.Size = new System.Drawing.Size(119, 22);
+            this.miLocaleKorean.Size = new System.Drawing.Size(180, 22);
             this.miLocaleKorean.Tag = "ko";
             this.miLocaleKorean.Text = "한국어";
-            this.miLocaleKorean.Visible = false;
             this.miLocaleKorean.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(116, 6);
-            this.toolStripSeparator4.Visible = false;
             // 
             // japaneseToolStripMenuItem
             // 
             this.japaneseToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_jp;
             this.japaneseToolStripMenuItem.Name = "japaneseToolStripMenuItem";
-            this.japaneseToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.japaneseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.japaneseToolStripMenuItem.Tag = "ja";
             this.japaneseToolStripMenuItem.Text = "日本語";
             this.japaneseToolStripMenuItem.Visible = false;
@@ -1107,9 +1090,9 @@
             this.panelSettings.Controls.Add(this.cbHideSplash);
             this.panelSettings.Controls.Add(this.cbUpdateLocale);
             this.panelSettings.Controls.Add(this.lHideSplash);
-            this.panelSettings.Location = new System.Drawing.Point(17, 231);
+            this.panelSettings.Location = new System.Drawing.Point(17, 247);
             this.panelSettings.Name = "panelSettings";
-            this.panelSettings.Size = new System.Drawing.Size(376, 226);
+            this.panelSettings.Size = new System.Drawing.Size(376, 218);
             this.panelSettings.TabIndex = 51;
             this.panelSettings.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseDown);
             this.panelSettings.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
@@ -1249,8 +1232,6 @@
         private System.Windows.Forms.ToolStripMenuItem miLocaleKorean;
         private System.Windows.Forms.ToolStripMenuItem japaneseToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem troubleshootToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteShaderCacheToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteGameConfigurationToolStripMenuItem;
