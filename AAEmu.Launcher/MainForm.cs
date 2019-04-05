@@ -363,9 +363,8 @@ namespace AAEmu.Launcher
         const string urlAAEmuGitHub = "https://github.com/atel0/AAEmu";
         const string urlLauncherGitHub = "https://github.com/ZeromusXYZ/AAEmu-Launcher";
         const string urlDiscordInvite = "https://discord.gg/vn8E8E6";
-        const string urlNews = "https://aaemu.pw/updater/";
+        const string urlNews = "https://aaemu.info/api/articles";
         const string urlWebsite = "https://aaemu.info/";
-        // const string urlNews = "https://cl2.widgetbot.io/channels/479677351618281472/481782245087248400";
         const string dx9downloadURL = "https://www.microsoft.com/en-us/download/confirmation.aspx?id=35";
 
 
@@ -770,9 +769,22 @@ namespace AAEmu.Launcher
             Process.Start(urlDiscordInvite);
         }
 
+        private void RegisterFileExt()
+        {
+            try
+            {
+                FileAssociations.SetAssociation(".aelcf", "AAEmu.Launcher", "ArcheAge Emu Launcher Configuration File", Application.ExecutablePath);
+            }
+            catch
+            {
+                // Set File Association failed ?
+            }
+        }
+
         private void LauncherForm_Load(object sender, EventArgs e)
         {
             Application.UseWaitCursor = true;
+            RegisterFileExt();
             SetDefaultSettings();
             InitDefaultLanguage();
 
