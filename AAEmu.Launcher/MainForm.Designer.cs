@@ -59,7 +59,6 @@
             this.lLogin = new System.Windows.Forms.Label();
             this.pb1 = new System.Windows.Forms.ProgressBar();
             this.timerGeneral = new System.Windows.Forms.Timer(this.components);
-            this.pb2 = new System.Windows.Forms.ProgressBar();
             this.eServerIP = new System.Windows.Forms.TextBox();
             this.lPathToGameLabel = new System.Windows.Forms.Label();
             this.lAppVersion = new System.Windows.Forms.Label();
@@ -429,9 +428,9 @@
             this.lNewsFeed.Name = "lNewsFeed";
             this.lNewsFeed.Size = new System.Drawing.Size(201, 263);
             this.lNewsFeed.TabIndex = 24;
-            this.lNewsFeed.Text = "Launcher News\r\n\r\n\r\nPatch support for servers\r\nthat implement it.\r\n\r\nYou are now a" +
-    "ble to set\r\nyour game language\r\ndifferent from the launcher\r\n\r\nNow able to launc" +
-    "h the\r\ngame using -t\r\n";
+            this.lNewsFeed.Text = "Launcher News\r\n\r\n\r\nAdded support to\r\nlaunch game directly\r\nfrom a website\r\n\r\nPatc" +
+    "h support for servers\r\nthat implement it\r\n\r\nAllow to set in-game\r\nlanguage diffe" +
+    "rent\r\nfrom launcher";
             this.lNewsFeed.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // btnSettings
@@ -519,14 +518,6 @@
             this.timerGeneral.Enabled = true;
             this.timerGeneral.Interval = 250;
             this.timerGeneral.Tick += new System.EventHandler(this.timerGeneral_Tick);
-            // 
-            // pb2
-            // 
-            this.pb2.Location = new System.Drawing.Point(16, 47);
-            this.pb2.Name = "pb2";
-            this.pb2.Size = new System.Drawing.Size(513, 10);
-            this.pb2.TabIndex = 4;
-            this.pb2.Visible = false;
             // 
             // eServerIP
             // 
@@ -985,7 +976,7 @@
             // 
             this.miLocaleKorean.Image = global::AAEmu.Launcher.Properties.Resources.flag_ko;
             this.miLocaleKorean.Name = "miLocaleKorean";
-            this.miLocaleKorean.Size = new System.Drawing.Size(180, 22);
+            this.miLocaleKorean.Size = new System.Drawing.Size(119, 22);
             this.miLocaleKorean.Tag = "ko";
             this.miLocaleKorean.Text = "한국어";
             this.miLocaleKorean.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
@@ -994,7 +985,7 @@
             // 
             this.japaneseToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_jp;
             this.japaneseToolStripMenuItem.Name = "japaneseToolStripMenuItem";
-            this.japaneseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.japaneseToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
             this.japaneseToolStripMenuItem.Tag = "ja";
             this.japaneseToolStripMenuItem.Text = "日本語";
             this.japaneseToolStripMenuItem.Visible = false;
@@ -1131,7 +1122,6 @@
             this.Controls.Add(this.btnDiscord);
             this.Controls.Add(this.btnGithub);
             this.Controls.Add(this.btnLauncherLangChange);
-            this.Controls.Add(this.pb2);
             this.Controls.Add(this.pb1);
             this.Controls.Add(this.panelLoginAndPatch);
             this.Controls.Add(this.panelSettings);
@@ -1179,7 +1169,6 @@
         private System.Windows.Forms.TextBox ePassword;
         private System.Windows.Forms.ProgressBar pb1;
         private System.Windows.Forms.Timer timerGeneral;
-        private System.Windows.Forms.ProgressBar pb2;
         private System.Windows.Forms.PictureBox btnLauncherLangChange;
         private System.Windows.Forms.PictureBox btnGithub;
         private System.Windows.Forms.PictureBox btnDiscord;
