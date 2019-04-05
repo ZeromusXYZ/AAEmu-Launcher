@@ -353,11 +353,17 @@ namespace AAEmu.Launcher
             EnsureAssociationsSet(
                 new FileAssociation
                 {
-                    Extension = ".ucs",
-                    ProgId = "UCS_Editor_File",
-                    FileTypeDescription = "UCS File",
+                    Extension = ".aelcf",
+                    ProgId = "AAEmu_Launcher_Config",
+                    FileTypeDescription = "ArcheAge Emu Launcher Configuration File",
                     ExecutableFilePath = filePath
                 });
+        }
+
+        public static void EnsureURIAssociationsSet()
+        {
+            var filePath = Process.GetCurrentProcess().MainModule.FileName;
+            SetURIAssociation("aelcf", "AAEmu Launcher Protocol", filePath);
         }
 
         public static void EnsureAssociationsSet(params FileAssociation[] associations)
@@ -400,6 +406,31 @@ namespace AAEmu.Launcher
 
             return false;
         }
+
+        private static bool SetKeyValue(string keyPath, string keyName, string value)
+        {
+            using (var key = Registry.CurrentUser.CreateSubKey(keyPath))
+            {
+                if (key.GetValue(keyName) as string != value)
+                {
+                    key.SetValue(keyName, value);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool SetURIAssociation(string protocolID, string protocolName, string applicationFilePath)
+        {
+            bool madeChanges = false;
+            madeChanges |= SetKeyDefaultValue(@"Software\Classes\" + protocolID, "URL:"+protocolName);
+            madeChanges |= SetKeyValue(@"Software\Classes\" + protocolID, "URL PRotocol", "");
+            madeChanges |= SetKeyDefaultValue(@"Software\Classes\" + protocolID + @"\DefaultIcon", "\"" + applicationFilePath+",1\"");
+            madeChanges |= SetKeyDefaultValue(@"Software\Classes\" + protocolID + @"\shell\open\command", "\"" + applicationFilePath + "\" \"%1\"");
+            return madeChanges;
+        }
+
 
     }
 

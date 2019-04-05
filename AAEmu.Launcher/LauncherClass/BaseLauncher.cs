@@ -73,6 +73,7 @@ namespace AAEmu.Launcher.LauncherBase
 
         public virtual bool Launch()
         {
+            System.Threading.Thread.Sleep(100);
             ProcessStartInfo GameClientProcessInfo;
             var fullArgs = launchArguments;
             if (extraArguments != "")
