@@ -2,25 +2,25 @@
 using System.Text;
 using System.IO;
 using System.Runtime.InteropServices;
-using AAEmu.Launcher.LauncherBase;
+using AAEmu.Launcher.Basic;
 
 namespace AAEmu.Launcher.Trion12
 {
     public class Trion_1_2_Launcher: AAEmuLauncherBase
     {
 
-        public bool useCustomTicketData { get; set; }
-        public string customTicketData { get; set; }
-        public int handleID1FileMap { get; protected set; }
-        public int handleID2Event { get; protected set; }
+        public bool UseCustomTicketData { get; set; }
+        public string CustomTicketData { get; set; }
+        public int HandleID1FileMap { get; protected set; }
+        public int HandleID2Event { get; protected set; }
         public byte[] encryptionKey ;
 
         public Trion_1_2_Launcher()
         {
-            useCustomTicketData = false;
-            customTicketData = "";
-            handleID1FileMap = 0;
-            handleID2Event = 0;
+            UseCustomTicketData = false;
+            CustomTicketData = "";
+            HandleID1FileMap = 0;
+            HandleID2Event = 0;
 
             // This fixed value was used by ToolsA when testing
             // var key = new byte[8] { 0x29, 0x6B, 0xD6, 0xEB, 0x2C, 0xA9, 0x03, 0x21 };
@@ -32,75 +32,75 @@ namespace AAEmu.Launcher.Trion12
 
         public override bool InitializeForLaunch()
         {
-            base.InitializeForLaunch();
-            var res = true;
+            var res = base.InitializeForLaunch();
+
             string languageArgs = "";
-            if ((locale == "en_us") || (locale == "fr") || (locale == "de"))
-                languageArgs += " -lang " + locale;
+            if (Locale != "")
+                languageArgs += " -lang " + Locale;
+               
             if (CreateTrinoHandleIDs() == false)
                 res = false;
-            string handleArgs = "-handle " + handleID1FileMap.ToString("X8") + ":" + handleID2Event.ToString("X8");
+            string handleArgs = "-handle " + HandleID1FileMap.ToString("X8") + ":" + HandleID2Event.ToString("X8");
             // archeage.exe -t -auth_ip 127.0.0.1 -auth_port 1237 -handle 00000000:00000000 -lang en_us
-            launchArguments = "-t +auth_ip " + loginServerAdress + " -auth_port " + loginServerPort.ToString() + " " + handleArgs + languageArgs;
+            LaunchArguments = "-t +auth_ip " + LoginServerAdress + " -auth_port " + LoginServerPort.ToString() + " " + handleArgs + languageArgs;
 
             return res;
         }
 
         public override bool FinalizeLaunch()
         {
-            if ((handleID1FileMap == 0) || (handleID2Event == 0))
+            if ((HandleID1FileMap == 0) || (HandleID2Event == 0))
                 return base.FinalizeLaunch();
 
-            // Wait 10 seconds if we are running
-            if (runningProcess != null)
+            if (RunningProcess != null)
             {
                 // Wait up to 30 seconds before continuing
                 for(int i = 0;i < 30;i++)
                 {
                     System.Threading.Thread.Sleep(1000);
-                    if (runningProcess.HasExited)
+                    if (RunningProcess.HasExited)
                         break;
-                    if (runningProcess.Responding)
+                    if (RunningProcess.Responding)
                         break;
                 }
             }
-            var waitRes = Win32.WaitForSingleObject((IntPtr)handleID1FileMap, 15000);
+
+            // This will likely toss a access denied error for whatever reason, but let's keep it here for now
+            var waitRes = Win32.WaitForSingleObject((IntPtr)HandleID1FileMap, 15000);
             if (waitRes != 0)
             {
                 // MessageBox.Show("WaitForSingleObject\r\nResult: " + waitRes.ToString("X8")+"\r\nGetLastWin32Error:"+ Marshal.GetLastWin32Error().ToString("X8"));
-            }
-            try
-            {
-                Win32.UnmapViewOfFile((IntPtr)handleID1FileMap);
-                Win32.CloseHandle((IntPtr)handleID1FileMap);
-            }
-            catch
-            {
-                return false;
             }
 
             return base.FinalizeLaunch();
         }
 
+        public override void Dispose()
+        {
+            CleanupHandles();
+
+            base.Dispose();
+        }
+
         public bool CreateTrinoHandleIDs()
         {
-            handleID1FileMap = 0;
-            handleID2Event = 0;
+            HandleID1FileMap = 0;
+            HandleID2Event = 0;
 
             // Not sure if we actually need this signature part or not
             string stringForSignature = "dGVzdA==";
 
             string ticketDataString = "";
-            if (useCustomTicketData)
+            if (UseCustomTicketData)
             {
-                ticketDataString = customTicketData;
+                ticketDataString = CustomTicketData;
             }
             else
             {
                 ticketDataString = "<?xml version=\"1.0\" encoding=\"UTF - 8\" standalone=\"yes\"?>";
                 ticketDataString += "<authTicket version = \"1.2\">";
                 ticketDataString += "<storeToken>1</storeToken>";
-                ticketDataString += "<username>" + userName + "</username>";
+                ticketDataString += "<username>" + UserName + "</username>";
                 ticketDataString += "<password>" + _passwordHash + "</password>";
                 ticketDataString += "</authTicket>";
             }
@@ -153,7 +153,7 @@ namespace AAEmu.Launcher.Trion12
             // TFIR is the header for this ?
             var ticket = "TFIR" + stringForSignature + '\n' + ticketDataString;
             var ticketBytes = Encoding.UTF8.GetBytes(ticket);
-            var ticketEncrypted = AAEmu.Launcher.LauncherBase.RC4.Encrypt(encryptionKey, ticketBytes);
+            var ticketEncrypted = AAEmu.Launcher.Basic.RC4.Encrypt(encryptionKey, ticketBytes);
 
             // Use a temporary memorystream for ease
             MemoryStream ms = new MemoryStream();
@@ -198,10 +198,32 @@ namespace AAEmu.Launcher.Trion12
                 return false;
             }
 
-            handleID1FileMap = credentialFileMapHandle.ToInt32();
-            handleID2Event = credentialEvent.ToInt32();
+            HandleID1FileMap = credentialFileMapHandle.ToInt32();
+            HandleID2Event = credentialEvent.ToInt32();
 
-            return ((handleID1FileMap != 0) && (handleID2Event != 0));
+            return ((HandleID1FileMap != 0) && (HandleID2Event != 0));
+        }
+
+        protected void CleanupHandles()
+        {
+            try
+            {
+                if (HandleID1FileMap != 0)
+                {
+                    Win32.UnmapViewOfFile((IntPtr)HandleID1FileMap);
+                    Win32.CloseHandle((IntPtr)HandleID1FileMap);
+                }
+                if (HandleID2Event != 0)
+                {
+                    // Remove it ? 
+                    Win32.CloseHandle((IntPtr)HandleID2Event);
+                }
+            }
+            catch
+            {
+            }
+            HandleID1FileMap = 0;
+            HandleID2Event = 0;
         }
     }
 }

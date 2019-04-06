@@ -18,7 +18,7 @@ using System.Security.AccessControl;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Net.Sockets;
-using AAEmu.Launcher.LauncherBase;
+using AAEmu.Launcher.Basic;
 using AAEmu.Launcher.MailRu10;
 using AAEmu.Launcher.Trion12;
 using System.IO.MemoryMappedFiles;
@@ -354,19 +354,21 @@ namespace AAEmu.Launcher
         const ushort defaultAuthPort = 1237 ;
         const string launcherDefaultConfigFile = "settings.aelcf"; // .aelcf = ArcheAge Emu Launcher Configuration File
         const string clientLookupDefaultFile = "clientslist.json";
-        string localPatchFolderName = ".patch" + Path.DirectorySeparatorChar;
         const string remotePatchFolderURI = ".patch/" ;
         const string patchListFileName = "patchfiles.csv";
         const string patchVersionFileName = "patchfiles.ver";
         const string localPatchPakFileName = "download.patch";
-        string launcherOpenedConfigFile = "";
+        const string launcherProtocolSchema = "aelcf";
         const string urlAAEmuGitHub = "https://github.com/atel0/AAEmu";
         const string urlLauncherGitHub = "https://github.com/ZeromusXYZ/AAEmu-Launcher";
         const string urlDiscordInvite = "https://discord.gg/vn8E8E6";
-        const string urlNews = "https://aaemu.pw/updater/";
+        const string urlNews = "https://aaemu.info/api/articles";
         const string urlWebsite = "https://aaemu.info/";
-        // const string urlNews = "https://cl2.widgetbot.io/channels/479677351618281472/481782245087248400";
         const string dx9downloadURL = "https://www.microsoft.com/en-us/download/confirmation.aspx?id=35";
+        string localPatchFolderName = ".patch" + Path.DirectorySeparatorChar;
+        string URIConfigFileData = "";
+        string URIConfigFileDataHost = "";
+        string launcherOpenedConfigFile = "";
 
 
         // launcher protocol indentifiers
@@ -706,6 +708,9 @@ namespace AAEmu.Launcher
                 case settingsLangFR:
                     btnLocaleLang.Image = Properties.Resources.mini_locale_fr;
                     break;
+                case settingsLangJP:
+                    btnLocaleLang.Image = Properties.Resources.mini_locale_jp;
+                    break;
                 case settingsLangEN_US:
                 default:
                     Setting.Lang = settingsLangEN_US;
@@ -767,9 +772,25 @@ namespace AAEmu.Launcher
             Process.Start(urlDiscordInvite);
         }
 
+        private void RegisterFileExt()
+        {
+            try
+            {
+                // Might also need to check
+                // HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\
+                FileAssociations.EnsureAssociationsSet();
+                FileAssociations.EnsureURIAssociationsSet();
+            }
+            catch
+            {
+                // Set File or URI Association failed ?
+            }
+        }
+
         private void LauncherForm_Load(object sender, EventArgs e)
         {
             Application.UseWaitCursor = true;
+            RegisterFileExt();
             SetDefaultSettings();
             InitDefaultLanguage();
 
@@ -779,26 +800,61 @@ namespace AAEmu.Launcher
             imgBigNews.Invalidate();
 
             string openCommandLineSettingsFile = "";
+            string openCommandLineURISettings = "";
             string[] args = Environment.GetCommandLineArgs();
             foreach (string arg in args)
             {
                 // No additional possible settings yet, only check if a argument is a valid file
-                if (File.Exists(arg))
+                if (File.Exists(arg) && (arg != Application.ExecutablePath))
                 {
                     openCommandLineSettingsFile = arg;
+                }
+                else
+                {
+                    if (arg.StartsWith(launcherProtocolSchema+"://"))
+                        openCommandLineURISettings = arg;
                 }
             }
 
             LoadClientLookup();
 
+            // Load settings from URI (if present)
+            URIConfigFileData = "";
+            if ((openCommandLineSettingsFile == "") && (openCommandLineURISettings != ""))
+            {
+                // var stripProtocol = openCommandLineURISettings.Substring(launcherProtocol.Length);
+
+                try
+                {
+                    Uri u = new Uri(openCommandLineURISettings);
+                    var encodedPath = u.AbsolutePath.Substring(1); // remove the first slash /
+                    // Check if protocol is aelcf:// and query get parameters are ?v=c (protocol version is configfile)
+                    if ((u.Scheme == launcherProtocolSchema) && u.Query.StartsWith("?v=c"))
+                        URIConfigFileData = System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(encodedPath));
+                    URIConfigFileDataHost = u.Host;
+                    
+                    // MessageBox.Show("Schema: " + u.Scheme + "\r\n" + "Host: " + u.Host + "\r\n" + "UserInfo: " + u.UserInfo + "\r\n" + "Path: " + u.AbsolutePath + "\r\n" + "Data: " + URIConfigFileData, "Open from URI", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch
+                {
+                    URIConfigFileData = "";
+                    openCommandLineURISettings = "";
+                }
+            }
+
+            if (URIConfigFileData != "")
+            {
+                if (!LoadSettingsFromString(URIConfigFileData,URIConfigFileDataHost)) URIConfigFileData = "";
+            }
+
             if (openCommandLineSettingsFile != "")
             {
-                if (!LoadSettings(openCommandLineSettingsFile)) openCommandLineSettingsFile = "";
+                if (!LoadSettingsFromFile(openCommandLineSettingsFile)) openCommandLineSettingsFile = "";
             }
             // Load local settings file if no external config specified, or if it failed to load
-            if (openCommandLineSettingsFile == "")
+            if ((openCommandLineSettingsFile == "") && (URIConfigFileData == ""))
             {
-                if (!LoadSettings(Application.StartupPath + Path.DirectorySeparatorChar + launcherDefaultConfigFile))
+                if (!LoadSettingsFromFile(Application.StartupPath + Path.DirectorySeparatorChar + launcherDefaultConfigFile))
                     SetDefaultSettings();
             }
 
@@ -902,30 +958,60 @@ namespace AAEmu.Launcher
             Setting.UserHistory = new List<string>();
         }
 
-        private bool LoadSettings(string configFileName)
+        private bool LoadSettingsFromFile(string configFileName)
         {
             bool res = false;
 
             if (!File.Exists(configFileName))
                 return res;
 
+            var fs = new FileStream(configFileName, FileMode.Open, FileAccess.Read);
+            res = LoadSettingsFromStream(fs,configFileName);
+            fs.Dispose();
+
+            if (res)
+                launcherOpenedConfigFile = configFileName;
+
+            return res;
+        }
+
+        private bool LoadSettingsFromString(string configDataString, string hostName)
+        {
+            bool res = false;
+            try
+            {
+                var ms = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(configDataString));
+                ms.Position = 0;
+                res = LoadSettingsFromStream(ms, hostName + ".aelcf");
+                ms.Dispose();
+            }
+            catch
+            {
+                res = false;
+            }
+            return res;
+        }
+
+        private bool LoadSettingsFromStream(Stream aStream,string configFileName)
+        {
+            bool res = false;
+
             StreamReader reader = null ;
             try
             {
-                reader = new StreamReader(configFileName);
+                reader = new StreamReader(aStream);
                 var ConfigFile = reader.ReadToEnd();
                 // Console.Write(ConfigFile.ToString());
 
                 Setting = JsonConvert.DeserializeObject<Settings>(ConfigFile);
                 res = true;
-                launcherOpenedConfigFile = configFileName;
 
-                if (launcherOpenedConfigFile == Application.StartupPath + Path.DirectorySeparatorChar + launcherDefaultConfigFile)
+                if (configFileName == Application.StartupPath + Path.DirectorySeparatorChar + launcherDefaultConfigFile)
                 {
                     lLoadedConfig.Text = "";
                 } else if ((Setting.configName == null) || (Setting.configName == ""))
                 {
-                    lLoadedConfig.Text = Path.GetFileNameWithoutExtension(launcherOpenedConfigFile);
+                    lLoadedConfig.Text = Path.GetFileNameWithoutExtension(configFileName);
                 }
                 else
                 {
@@ -1023,8 +1109,6 @@ namespace AAEmu.Launcher
 
                     UpdateGameSystemConfigFile((Setting.UpdateLocale == "True"),Setting.Lang, (Setting.SkipIntro == "True"));
 
-                    string LoginArg = "";
-
                     // Clean up previous instance
                     if (aaLauncher != null)
                     {
@@ -1047,29 +1131,29 @@ namespace AAEmu.Launcher
                             return;
                     }
 
-                    aaLauncher.userName = eLogin.Text;
+                    aaLauncher.UserName = eLogin.Text;
                     aaLauncher.SetPassword(ePassword.Text);
-                    aaLauncher.loginServerAdress = serverIP;
-                    aaLauncher.loginServerPort = serverPort;
-                    aaLauncher.gameExeFilePath = Setting.PathToGame;
-                    if (Setting.UpdateLocale == "True")
-                        aaLauncher.locale = Setting.Lang;
-                    aaLauncher.hShieldArgs = "+acpxmk";
+                    aaLauncher.LoginServerAdress = serverIP;
+                    aaLauncher.LoginServerPort = serverPort;
+                    aaLauncher.GameExeFilePath = Setting.PathToGame;
+                    // if (Setting.UpdateLocale == "True")
+                    aaLauncher.Locale = Setting.Lang;
+                    aaLauncher.HShieldArgs = "+acpxmk";
 
                     if (Setting.HideSplashLogo == "True")
-                        aaLauncher.extraArguments += "-nosplash";
+                        aaLauncher.ExtraArguments += "-nosplash";
 
                     aaLauncher.InitializeForLaunch();
 
                     if (debugModeToolStripMenuItem.Checked)
                     {
                         DebugHelperForm dlg = new DebugHelperForm();
-                        dlg.eArgs.Text = aaLauncher.launchArguments ;
-                        dlg.eHackShieldArg.Text = aaLauncher.hShieldArgs ;
+                        dlg.eArgs.Text = aaLauncher.LaunchArguments ;
+                        dlg.eHackShieldArg.Text = aaLauncher.HShieldArgs ;
                         if (dlg.ShowDialog() == DialogResult.OK)
                         {
-                            aaLauncher.launchArguments = dlg.eArgs.Text;
-                            aaLauncher.hShieldArgs = dlg.eHackShieldArg.Text;
+                            aaLauncher.LaunchArguments = dlg.eArgs.Text;
+                            aaLauncher.HShieldArgs = dlg.eHackShieldArg.Text;
                         }
                         dlg.Dispose();
                     }
@@ -1239,20 +1323,24 @@ namespace AAEmu.Launcher
             foreach(Object o in cbLoginList.Items)
                 Setting.UserHistory.Add(cbLoginList.GetItemText(o));
 
-            var SettingJson = JsonConvert.SerializeObject(Setting,Formatting.Indented);
+            if (URIConfigFileData == "")
+            {
+                // Save settings to disk unless it was opened from a URI
+                var SettingJson = JsonConvert.SerializeObject(Setting, Formatting.Indented);
 
-            if ((launcherOpenedConfigFile == null) || (launcherOpenedConfigFile == "") || (File.Exists(launcherOpenedConfigFile) == false))
-            {
-                launcherOpenedConfigFile = Application.StartupPath + Path.DirectorySeparatorChar + launcherDefaultConfigFile;
-            }
-            //Console.Write("Saving Settings to "+ launcherOpenedConfigFile +" :\n" + SettingJson);
-            try
-            {
-                File.WriteAllText(launcherOpenedConfigFile, SettingJson);
-            }
-            catch 
-            {
-                //Console.Write("Unable to save settings to :\n" + launcherOpenedConfigFile);
+                if ((launcherOpenedConfigFile == null) || (launcherOpenedConfigFile == "") || (File.Exists(launcherOpenedConfigFile) == false))
+                {
+                    launcherOpenedConfigFile = Application.StartupPath + Path.DirectorySeparatorChar + launcherDefaultConfigFile;
+                }
+                //Console.Write("Saving Settings to "+ launcherOpenedConfigFile +" :\n" + SettingJson);
+                try
+                {
+                    File.WriteAllText(launcherOpenedConfigFile, SettingJson);
+                }
+                catch
+                {
+                    //Console.Write("Unable to save settings to :\n" + launcherOpenedConfigFile);
+                }
             }
         }
 
@@ -1683,7 +1771,7 @@ namespace AAEmu.Launcher
             string configPath = "";
             if (launcherOpenedConfigFile != "")
             {
-                Path.GetDirectoryName(launcherOpenedConfigFile);
+               configPath = Path.GetDirectoryName(launcherOpenedConfigFile);
             }
                
             // Yes I know this trim looks silly, but it's to prevent stuff like "C:\\\\directory\\pathtogame.exe"
@@ -1790,12 +1878,15 @@ namespace AAEmu.Launcher
 
         private void timerGeneral_Tick(object sender, EventArgs e)
         {
-            if ((aaLauncher != null) && (aaLauncher.runningProcess != null) && (checkGameIsRunning == true))
+            if ((aaLauncher != null) && (aaLauncher.RunningProcess != null) && (checkGameIsRunning == true))
             {
-                if (aaLauncher.runningProcess.HasExited)
+                if (aaLauncher.RunningProcess.HasExited)
                 {
                     checkGameIsRunning = false;
+                    var eCode = aaLauncher.RunningProcess.ExitCode; 
                     WindowState = FormWindowState.Normal;
+                    if ((eCode != -1) && (debugModeToolStripMenuItem.Checked))
+                        MessageBox.Show("Client Exit Code: " + eCode.ToString());
                 }
             }
             else
