@@ -18,7 +18,7 @@ using System.Security.AccessControl;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Net.Sockets;
-using AAEmu.Launcher.LauncherBase;
+using AAEmu.Launcher.Basic;
 using AAEmu.Launcher.MailRu10;
 using AAEmu.Launcher.Trion12;
 using System.IO.MemoryMappedFiles;
@@ -828,9 +828,11 @@ namespace AAEmu.Launcher
                 {
                     Uri u = new Uri(openCommandLineURISettings);
                     var encodedPath = u.AbsolutePath.Substring(1); // remove the first slash /
-                    if (u.Scheme == launcherProtocolSchema)
+                    // Check if protocol is aelcf:// and query get parameters are ?v=c (protocol version is configfile)
+                    if ((u.Scheme == launcherProtocolSchema) && u.Query.StartsWith("?v=c"))
                         URIConfigFileData = System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(encodedPath));
                     URIConfigFileDataHost = u.Host;
+                    
                     // MessageBox.Show("Schema: " + u.Scheme + "\r\n" + "Host: " + u.Host + "\r\n" + "UserInfo: " + u.UserInfo + "\r\n" + "Path: " + u.AbsolutePath + "\r\n" + "Data: " + URIConfigFileData, "Open from URI", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch
@@ -1107,8 +1109,6 @@ namespace AAEmu.Launcher
 
                     UpdateGameSystemConfigFile((Setting.UpdateLocale == "True"),Setting.Lang, (Setting.SkipIntro == "True"));
 
-                    string LoginArg = "";
-
                     // Clean up previous instance
                     if (aaLauncher != null)
                     {
@@ -1131,29 +1131,29 @@ namespace AAEmu.Launcher
                             return;
                     }
 
-                    aaLauncher.userName = eLogin.Text;
+                    aaLauncher.UserName = eLogin.Text;
                     aaLauncher.SetPassword(ePassword.Text);
-                    aaLauncher.loginServerAdress = serverIP;
-                    aaLauncher.loginServerPort = serverPort;
-                    aaLauncher.gameExeFilePath = Setting.PathToGame;
+                    aaLauncher.LoginServerAdress = serverIP;
+                    aaLauncher.LoginServerPort = serverPort;
+                    aaLauncher.GameExeFilePath = Setting.PathToGame;
                     // if (Setting.UpdateLocale == "True")
-                    aaLauncher.locale = Setting.Lang;
-                    aaLauncher.hShieldArgs = "+acpxmk";
+                    aaLauncher.Locale = Setting.Lang;
+                    aaLauncher.HShieldArgs = "+acpxmk";
 
                     if (Setting.HideSplashLogo == "True")
-                        aaLauncher.extraArguments += "-nosplash";
+                        aaLauncher.ExtraArguments += "-nosplash";
 
                     aaLauncher.InitializeForLaunch();
 
                     if (debugModeToolStripMenuItem.Checked)
                     {
                         DebugHelperForm dlg = new DebugHelperForm();
-                        dlg.eArgs.Text = aaLauncher.launchArguments ;
-                        dlg.eHackShieldArg.Text = aaLauncher.hShieldArgs ;
+                        dlg.eArgs.Text = aaLauncher.LaunchArguments ;
+                        dlg.eHackShieldArg.Text = aaLauncher.HShieldArgs ;
                         if (dlg.ShowDialog() == DialogResult.OK)
                         {
-                            aaLauncher.launchArguments = dlg.eArgs.Text;
-                            aaLauncher.hShieldArgs = dlg.eHackShieldArg.Text;
+                            aaLauncher.LaunchArguments = dlg.eArgs.Text;
+                            aaLauncher.HShieldArgs = dlg.eHackShieldArg.Text;
                         }
                         dlg.Dispose();
                     }
@@ -1878,12 +1878,15 @@ namespace AAEmu.Launcher
 
         private void timerGeneral_Tick(object sender, EventArgs e)
         {
-            if ((aaLauncher != null) && (aaLauncher.runningProcess != null) && (checkGameIsRunning == true))
+            if ((aaLauncher != null) && (aaLauncher.RunningProcess != null) && (checkGameIsRunning == true))
             {
-                if (aaLauncher.runningProcess.HasExited)
+                if (aaLauncher.RunningProcess.HasExited)
                 {
                     checkGameIsRunning = false;
+                    var eCode = aaLauncher.RunningProcess.ExitCode; 
                     WindowState = FormWindowState.Normal;
+                    if ((eCode != -1) && (debugModeToolStripMenuItem.Checked))
+                        MessageBox.Show("Client Exit Code: " + eCode.ToString());
                 }
             }
             else
