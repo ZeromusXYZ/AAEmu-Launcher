@@ -76,5 +76,7 @@
   "tsdeletegamesetting": "Delete Game Settings",
   "tsdeleteall": "Delete all ArcheAge settings",
   "tsforcepatch": "Force Patch Download",
-  "tsforcenopatch": "Force Skip Patch"
+  "tsforcenopatch": "Force Skip Patch",
+  "tsfixbin32": "Fix bin32 and DB files",
+  "fixbin32files": "Overwrite all files in {0} with the original files from {1} ?"
 }

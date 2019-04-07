@@ -114,6 +114,7 @@
             this.bgwNewsFeed = new System.ComponentModel.BackgroundWorker();
             this.bgwServerStatusCheck = new System.ComponentModel.BackgroundWorker();
             this.bgwPatcher = new System.ComponentModel.BackgroundWorker();
+            this.fixBin32StripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelLoginAndPatch.SuspendLayout();
             this.pPatchSteps.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pgbFrontTotal)).BeginInit();
@@ -554,7 +555,7 @@
             this.lAppVersion.Name = "lAppVersion";
             this.lAppVersion.Size = new System.Drawing.Size(95, 21);
             this.lAppVersion.TabIndex = 17;
-            this.lAppVersion.Text = "V 0.4.6";
+            this.lAppVersion.Text = "V 0.4.7";
             this.lAppVersion.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
             // cmsAAEmuButton
@@ -571,7 +572,7 @@
             // minimizeToolStripMenuItem
             // 
             this.minimizeToolStripMenuItem.Name = "minimizeToolStripMenuItem";
-            this.minimizeToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.minimizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.minimizeToolStripMenuItem.Text = "Minimize";
             this.minimizeToolStripMenuItem.Click += new System.EventHandler(this.minimizeToolStripMenuItem_Click);
             // 
@@ -582,10 +583,11 @@
             this.deleteShaderCacheToolStripMenuItem,
             this.deleteAllArcheAgeSettingsToolStripMenuItem,
             this.toolStripSeparator5,
+            this.fixBin32StripMenuItem,
             this.forcePatchDownloadToolStripMenuItem,
             this.skipPatchToolStripMenuItem});
             this.troubleshootToolStripMenuItem.Name = "troubleshootToolStripMenuItem";
-            this.troubleshootToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.troubleshootToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.troubleshootToolStripMenuItem.Text = "Troubleshoot";
             // 
             // deleteGameConfigurationToolStripMenuItem
@@ -632,7 +634,7 @@
             // debugModeToolStripMenuItem
             // 
             this.debugModeToolStripMenuItem.Name = "debugModeToolStripMenuItem";
-            this.debugModeToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.debugModeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.debugModeToolStripMenuItem.Text = "Debug Mode";
             this.debugModeToolStripMenuItem.Visible = false;
             this.debugModeToolStripMenuItem.Click += new System.EventHandler(this.debugModeToolStripMenuItem_Click);
@@ -640,12 +642,12 @@
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(141, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
@@ -1109,6 +1111,13 @@
             this.bgwPatcher.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgwPatcher_ProgressChanged);
             this.bgwPatcher.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwPatcher_RunWorkerCompleted);
             // 
+            // fixBin32StripMenuItem
+            // 
+            this.fixBin32StripMenuItem.Name = "fixBin32StripMenuItem";
+            this.fixBin32StripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.fixBin32StripMenuItem.Text = "Fix bin32 and DB files";
+            this.fixBin32StripMenuItem.Click += new System.EventHandler(this.fixBin32StripMenuItem_Click);
+            // 
             // LauncherForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -1249,6 +1258,7 @@
         private System.Windows.Forms.ToolStripMenuItem skipPatchToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.Panel pPatchSteps;
+        private System.Windows.Forms.ToolStripMenuItem fixBin32StripMenuItem;
     }
 }
 

@@ -76,5 +76,7 @@
   "tsdeletegamesetting": "Supprimer les paramètres de jeu",
   "tsdeleteall": "Supprimer tous les paramètres d'ArcheAge",
   "tsforcepatch": "Force Patch Télécharger",
-  "tsforcenopatch": "Sauter le patch"
+  "tsforcenopatch": "Sauter le patch",
+  "tsfixbin32": "Correction des fichiers bin32 et DB",
+  "fixbin32files": "Remplacer tous les fichiers de {0} par les fichiers d'origine de {1}?"
 }
