@@ -2214,6 +2214,8 @@ namespace AAEmu.Launcher
                 if (img != null)
                 {
                     imgBigNews.Image = img;
+                    imgBigNews.SizeMode = PictureBoxSizeMode.Zoom;
+
                     lBigNewsImage.Text = newsItem.itemAttributes.itemTitle;
                     lBigNewsImage.Tag = newsItem.itemAttributes.itemLinks.self;
                     lBigNewsImage.Visible = (currentPanel == 0);
