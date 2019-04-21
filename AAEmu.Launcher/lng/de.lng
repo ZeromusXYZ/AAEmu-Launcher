@@ -76,5 +76,8 @@
   "tsdeletegamesetting": "Spieleinstellungen löschen",
   "tsdeleteall": "Löschen Sie alle ArcheAge-Einstellungen",
   "tsforcepatch": "Patch-Download erzwingen",
-  "tsforcenopatch": "Patch überspringen"
+  "tsforcenopatch": "Patch überspringen",
+  "tsfixbin32": "Reparieren Sie bin32 und DB-Dateien",
+  "fixbin32files": "Alle Dateien in {0} mit den Originaldateien von {1} überschreiben?",
+  "downloadlauncherupdate": "Launcher Version {0} verfügbar, klicken Sie zum herunterladen"
 }

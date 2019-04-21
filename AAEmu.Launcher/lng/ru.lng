@@ -76,5 +76,8 @@
   "tsdeletegamesetting": "Удалить настройки игры",
   "tsdeleteall": "Удалить все настройки ArcheAge",
   "tsforcepatch": "Принудительное обновление игры",
-  "tsforcenopatch": "Пропустить обновление"
+  "tsforcenopatch": "Пропустить обновление",
+  "tsfixbin32": "Исправьте файлы bin32 и DB",
+  "fixbin32files": "Перезаписать все файлы в {0} исходными файлами из {1} ?",
+  "downloadlauncherupdate": "Пусковая версия {0} доступна, нажмите, чтобы загрузить"
 }

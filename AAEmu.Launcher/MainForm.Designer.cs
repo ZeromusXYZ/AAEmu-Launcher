@@ -69,6 +69,9 @@
             this.deleteShaderCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteAllArcheAgeSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.directXtoolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.fixBin32StripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.forcePatchDownloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.skipPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -89,8 +92,8 @@
             this.cbAllowUpdates = new System.Windows.Forms.Label();
             this.lAllowUpdates = new System.Windows.Forms.Label();
             this.cmsGitHub = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.aAEmuServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aAEmuLauncherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aAEmuServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lLoadedConfig = new System.Windows.Forms.Label();
             this.cmsLauncherLanguage = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.englishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -114,6 +117,12 @@
             this.bgwNewsFeed = new System.ComponentModel.BackgroundWorker();
             this.bgwServerStatusCheck = new System.ComponentModel.BackgroundWorker();
             this.bgwPatcher = new System.ComponentModel.BackgroundWorker();
+            this.lDownloadLauncherUpdate = new System.Windows.Forms.Label();
+            this.cmsDiscord = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.customServerDiscordMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmsDiscordS1 = new System.Windows.Forms.ToolStripSeparator();
+            this.launcherDiscordMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aaEmuDiscordMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelLoginAndPatch.SuspendLayout();
             this.pPatchSteps.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pgbFrontTotal)).BeginInit();
@@ -129,6 +138,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.btnGithub)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.btnLauncherLangChange)).BeginInit();
             this.panelSettings.SuspendLayout();
+            this.cmsDiscord.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelLoginAndPatch
@@ -550,11 +560,11 @@
             this.lAppVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lAppVersion.BackColor = System.Drawing.Color.Transparent;
             this.lAppVersion.ForeColor = System.Drawing.Color.White;
-            this.lAppVersion.Location = new System.Drawing.Point(751, 477);
+            this.lAppVersion.Location = new System.Drawing.Point(744, 477);
             this.lAppVersion.Name = "lAppVersion";
-            this.lAppVersion.Size = new System.Drawing.Size(95, 21);
+            this.lAppVersion.Size = new System.Drawing.Size(102, 21);
             this.lAppVersion.TabIndex = 17;
-            this.lAppVersion.Text = "V 0.4.6";
+            this.lAppVersion.Text = "V x.x.x";
             this.lAppVersion.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
             // cmsAAEmuButton
@@ -582,6 +592,9 @@
             this.deleteShaderCacheToolStripMenuItem,
             this.deleteAllArcheAgeSettingsToolStripMenuItem,
             this.toolStripSeparator5,
+            this.directXtoolStripMenuItem,
+            this.toolStripSeparator3,
+            this.fixBin32StripMenuItem,
             this.forcePatchDownloadToolStripMenuItem,
             this.skipPatchToolStripMenuItem});
             this.troubleshootToolStripMenuItem.Name = "troubleshootToolStripMenuItem";
@@ -614,6 +627,25 @@
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(218, 6);
+            // 
+            // directXtoolStripMenuItem
+            // 
+            this.directXtoolStripMenuItem.Name = "directXtoolStripMenuItem";
+            this.directXtoolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.directXtoolStripMenuItem.Text = "DirectX 9";
+            this.directXtoolStripMenuItem.Click += new System.EventHandler(this.DirectXtoolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(218, 6);
+            // 
+            // fixBin32StripMenuItem
+            // 
+            this.fixBin32StripMenuItem.Name = "fixBin32StripMenuItem";
+            this.fixBin32StripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.fixBin32StripMenuItem.Text = "Fix bin32 and DB files";
+            this.fixBin32StripMenuItem.Click += new System.EventHandler(this.fixBin32StripMenuItem_Click);
             // 
             // forcePatchDownloadToolStripMenuItem
             // 
@@ -843,17 +875,10 @@
             // cmsGitHub
             // 
             this.cmsGitHub.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aAEmuServerToolStripMenuItem,
-            this.aAEmuLauncherToolStripMenuItem});
+            this.aAEmuLauncherToolStripMenuItem,
+            this.aAEmuServerToolStripMenuItem});
             this.cmsGitHub.Name = "cmsGitHub";
             this.cmsGitHub.Size = new System.Drawing.Size(167, 48);
-            // 
-            // aAEmuServerToolStripMenuItem
-            // 
-            this.aAEmuServerToolStripMenuItem.Name = "aAEmuServerToolStripMenuItem";
-            this.aAEmuServerToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
-            this.aAEmuServerToolStripMenuItem.Text = "AAEmu Server";
-            this.aAEmuServerToolStripMenuItem.Click += new System.EventHandler(this.aAEmuServerToolStripMenuItem_Click);
             // 
             // aAEmuLauncherToolStripMenuItem
             // 
@@ -861,6 +886,13 @@
             this.aAEmuLauncherToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.aAEmuLauncherToolStripMenuItem.Text = "AAEmu Launcher";
             this.aAEmuLauncherToolStripMenuItem.Click += new System.EventHandler(this.aAEmuLauncherToolStripMenuItem_Click);
+            // 
+            // aAEmuServerToolStripMenuItem
+            // 
+            this.aAEmuServerToolStripMenuItem.Name = "aAEmuServerToolStripMenuItem";
+            this.aAEmuServerToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.aAEmuServerToolStripMenuItem.Text = "AAEmu Server";
+            this.aAEmuServerToolStripMenuItem.Click += new System.EventHandler(this.aAEmuServerToolStripMenuItem_Click);
             // 
             // lLoadedConfig
             // 
@@ -1109,6 +1141,58 @@
             this.bgwPatcher.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgwPatcher_ProgressChanged);
             this.bgwPatcher.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwPatcher_RunWorkerCompleted);
             // 
+            // lDownloadLauncherUpdate
+            // 
+            this.lDownloadLauncherUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lDownloadLauncherUpdate.BackColor = System.Drawing.Color.Transparent;
+            this.lDownloadLauncherUpdate.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lDownloadLauncherUpdate.Font = new System.Drawing.Font("Georgia", 12F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lDownloadLauncherUpdate.ForeColor = System.Drawing.Color.Navy;
+            this.lDownloadLauncherUpdate.Location = new System.Drawing.Point(320, 8);
+            this.lDownloadLauncherUpdate.Name = "lDownloadLauncherUpdate";
+            this.lDownloadLauncherUpdate.Size = new System.Drawing.Size(502, 21);
+            this.lDownloadLauncherUpdate.TabIndex = 52;
+            this.lDownloadLauncherUpdate.Text = "Launcher Version x.x.x available, click to download";
+            this.lDownloadLauncherUpdate.TextAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.lDownloadLauncherUpdate.Visible = false;
+            this.lDownloadLauncherUpdate.Click += new System.EventHandler(this.LDownloadLauncherUpdate_Click);
+            // 
+            // cmsDiscord
+            // 
+            this.cmsDiscord.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.customServerDiscordMenuItem,
+            this.cmsDiscordS1,
+            this.launcherDiscordMenuItem,
+            this.aaEmuDiscordMenuItem});
+            this.cmsDiscord.Name = "cmsAAEmuButton";
+            this.cmsDiscord.Size = new System.Drawing.Size(181, 98);
+            // 
+            // customServerDiscordMenuItem
+            // 
+            this.customServerDiscordMenuItem.Name = "customServerDiscordMenuItem";
+            this.customServerDiscordMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.customServerDiscordMenuItem.Text = "Server Discord";
+            this.customServerDiscordMenuItem.Click += new System.EventHandler(this.CustomServerDiscordMenuItem_Click);
+            // 
+            // cmsDiscordS1
+            // 
+            this.cmsDiscordS1.Name = "cmsDiscordS1";
+            this.cmsDiscordS1.Size = new System.Drawing.Size(177, 6);
+            // 
+            // launcherDiscordMenuItem
+            // 
+            this.launcherDiscordMenuItem.Name = "launcherDiscordMenuItem";
+            this.launcherDiscordMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.launcherDiscordMenuItem.Text = "Launcher Discord";
+            this.launcherDiscordMenuItem.Click += new System.EventHandler(this.LauncherDiscordMenuItem_Click);
+            // 
+            // aaEmuDiscordMenuItem
+            // 
+            this.aaEmuDiscordMenuItem.Name = "aaEmuDiscordMenuItem";
+            this.aaEmuDiscordMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aaEmuDiscordMenuItem.Text = "AAEmu Discord";
+            this.aaEmuDiscordMenuItem.Click += new System.EventHandler(this.AaEmuDiscordMenuItem_Click);
+            // 
             // LauncherForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -1116,6 +1200,7 @@
             this.BackColor = System.Drawing.Color.DimGray;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(950, 510);
+            this.Controls.Add(this.lDownloadLauncherUpdate);
             this.Controls.Add(this.lLoadedConfig);
             this.Controls.Add(this.btnSystem);
             this.Controls.Add(this.lAppVersion);
@@ -1159,6 +1244,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.btnLauncherLangChange)).EndInit();
             this.panelSettings.ResumeLayout(false);
             this.panelSettings.PerformLayout();
+            this.cmsDiscord.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1249,6 +1335,15 @@
         private System.Windows.Forms.ToolStripMenuItem skipPatchToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.Panel pPatchSteps;
+        private System.Windows.Forms.ToolStripMenuItem fixBin32StripMenuItem;
+        private System.Windows.Forms.Label lDownloadLauncherUpdate;
+        private System.Windows.Forms.ContextMenuStrip cmsDiscord;
+        private System.Windows.Forms.ToolStripMenuItem customServerDiscordMenuItem;
+        private System.Windows.Forms.ToolStripSeparator cmsDiscordS1;
+        private System.Windows.Forms.ToolStripMenuItem launcherDiscordMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aaEmuDiscordMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem directXtoolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
     }
 }
 
