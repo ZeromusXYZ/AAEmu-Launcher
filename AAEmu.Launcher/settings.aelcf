@@ -15,5 +15,7 @@
   "serverGameUpdateURL": "",
   "serverWebsiteURL": "https://aaemu.info/",
   "serverNewsFeedURL": "",
+  "serverDiscordURL": "",
+  "serverDiscordName": "",
   "userHistory": [ "test" ]
 }

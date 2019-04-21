@@ -32,6 +32,9 @@ namespace AAEmu.Launcher
     public partial class LauncherForm : Form
     {
 
+        const string urlCheckLauncherUpdate = "https://raw.githubusercontent.com/ZeromusXYZ/AAEmu-Launcher/master/update.ver";
+        const string AppVersion = "0.4.7";
+
         public partial class Settings
         {
             [JsonProperty("configName")]
@@ -81,6 +84,12 @@ namespace AAEmu.Launcher
 
             [JsonProperty("serverNewsFeedURL")]
             public string ServerNewsFeedURL { get; set; }
+
+            [JsonProperty("serverDiscordURL")]
+            public string ServerDiscordURL { get; set; }
+
+            [JsonProperty("serverDiscordName")]
+            public string ServerDiscordName { get; set; }
 
             [JsonProperty("userHistory")]
             public List<string> UserHistory { get; set; }
@@ -348,6 +357,9 @@ namespace AAEmu.Launcher
 
             [JsonProperty("fixbin32files")]
             public string FixBin32Files { get; set; }
+
+            [JsonProperty("downloadlauncherupdate")]
+            public string DownloadLauncherUpdate { get; set; }
         }
 
 
@@ -368,7 +380,8 @@ namespace AAEmu.Launcher
         const string launcherProtocolSchema = "aelcf";
         const string urlAAEmuGitHub = "https://github.com/atel0/AAEmu";
         const string urlLauncherGitHub = "https://github.com/ZeromusXYZ/AAEmu-Launcher";
-        const string urlDiscordInvite = "https://discord.gg/vn8E8E6";
+        const string urlAAEmuDiscordInvite = "https://discord.gg/vn8E8E6";
+        const string urlLauncherDiscordInvite = "https://discord.gg/GhVfDtK";
         const string urlNews = "https://aaemu.info/api/articles";
         const string urlWebsite = "https://aaemu.info/";
         const string dx9downloadURL = "https://www.microsoft.com/en-us/download/confirmation.aspx?id=35";
@@ -376,6 +389,9 @@ namespace AAEmu.Launcher
         string URIConfigFileData = "";
         string URIConfigFileDataHost = "";
         string launcherOpenedConfigFile = "";
+        string urlLauncherUpdateDownload = "";
+        string LauncherUpdateVersion = "";
+        bool checkedForLauncherUpdates = false;
 
 
         // launcher protocol indentifiers
@@ -495,6 +511,8 @@ namespace AAEmu.Launcher
             L.TSForceNoPatch = "Force Skip Patch";
             L.TSFixBin32 = "Fix bin32 and DB files";
             L.FixBin32Files = "Overwrite all files in {0} with the original files from {1} ?";
+
+            L.DownloadLauncherUpdate = "Launcher Version {0} available, click to download";
         }
 
         private void LoadLanguageFromFile(string languageID)
@@ -698,6 +716,8 @@ namespace AAEmu.Launcher
             skipPatchToolStripMenuItem.Text = L.TSForceNoPatch;
             fixBin32StripMenuItem.Text = L.TSFixBin32;
 
+            lDownloadLauncherUpdate.Text = string.Format(L.DownloadLauncherUpdate, LauncherUpdateVersion);
+
             btnLauncherLangChange.Refresh();
         }
 
@@ -780,7 +800,13 @@ namespace AAEmu.Launcher
 
         private void PicButDiscord_Click(object sender, EventArgs e)
         {
-            Process.Start(urlDiscordInvite);
+            bool hasCustom = ((Setting.ServerDiscordURL != null) && (Setting.ServerDiscordURL != ""));
+            if ((Setting.ServerDiscordName != null) && (Setting.ServerDiscordName != ""))
+                customServerDiscordMenuItem.Text = Setting.ServerDiscordName;
+            customServerDiscordMenuItem.Visible = hasCustom;
+            cmsDiscordS1.Visible = hasCustom;
+            cmsDiscord.Show(btnDiscord, new Point(0, btnDiscord.Height));
+            // Process.Start(urlDiscordInvite);
         }
 
         private void RegisterFileExt()
@@ -800,6 +826,7 @@ namespace AAEmu.Launcher
 
         private void LauncherForm_Load(object sender, EventArgs e)
         {
+            lAppVersion.Text = "V " + AppVersion;
             Application.UseWaitCursor = true;
             RegisterFileExt();
             SetDefaultSettings();
@@ -1899,6 +1926,45 @@ namespace AAEmu.Launcher
 
         }
 
+        private void CheckForLauncherUpdates()
+        {
+            checkedForLauncherUpdates = true;
+            urlLauncherUpdateDownload = "";
+            LauncherUpdateVersion = "";
+            try
+            {
+                string verfile = WebHelper.SimpleGetURIAsString(urlCheckLauncherUpdate,5000);
+                verfile = verfile.Replace("\r", "");
+                List<string> sl = new List<string>();
+                sl.AddRange(verfile.Split('\n').ToList());
+                // Needs to be 2 lines
+                if (sl.Count < 2)
+                    return;
+                var verline = sl[0].Split(';');
+                var urlline = sl[1].Split(';');
+                if (verline.Length != 2)
+                    return;
+                if (urlline.Length != 2)
+                    return;
+                if (verline[0] != "version")
+                    return;
+                if (urlline[0] != "url")
+                    return;
+                LauncherUpdateVersion = verline[1];
+                urlLauncherUpdateDownload = urlline[1];
+
+                if (LauncherUpdateVersion.CompareTo(AppVersion) > 0)
+                {
+                    lDownloadLauncherUpdate.Text = string.Format(L.DownloadLauncherUpdate, LauncherUpdateVersion);
+                    lDownloadLauncherUpdate.Visible = true;
+                }
+            }
+            catch
+            {
+                urlLauncherUpdateDownload = "";
+                LauncherUpdateVersion = "";
+            }
+        }
 
         private void timerGeneral_Tick(object sender, EventArgs e)
         {
@@ -1916,6 +1982,11 @@ namespace AAEmu.Launcher
             else
             {
                 checkGameIsRunning = false;
+            }
+
+            if (checkedForLauncherUpdates == false)
+            {
+                CheckForLauncherUpdates();
             }
 
             if (nextServerCheck > 0)
@@ -3272,6 +3343,32 @@ namespace AAEmu.Launcher
             {
                 MessageBox.Show(L.PatchComplete, L.PatchDone, MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+
+        }
+
+        private void LDownloadLauncherUpdate_Click(object sender, EventArgs e)
+        {
+            Process.Start(urlLauncherUpdateDownload);
+        }
+
+        private void AaEmuDiscordMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start(urlAAEmuDiscordInvite);
+        }
+
+        private void LauncherDiscordMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start(urlLauncherDiscordInvite);
+        }
+
+        private void CustomServerDiscordMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start(Setting.ServerDiscordURL);
+        }
+
+        private void DirectXtoolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start(dx9downloadURL);
 
         }
     }

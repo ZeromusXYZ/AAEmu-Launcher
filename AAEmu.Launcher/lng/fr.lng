@@ -78,5 +78,6 @@
   "tsforcepatch": "Force Patch Télécharger",
   "tsforcenopatch": "Sauter le patch",
   "tsfixbin32": "Correction des fichiers bin32 et DB",
-  "fixbin32files": "Remplacer tous les fichiers de {0} par les fichiers d'origine de {1}?"
+  "fixbin32files": "Remplacer tous les fichiers de {0} par les fichiers d'origine de {1}?",
+  "downloadlauncherupdate": "Version du lanceur {0} disponible, cliquez pour télécharger"
 }

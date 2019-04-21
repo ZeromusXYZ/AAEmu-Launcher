@@ -78,5 +78,6 @@
   "tsforcepatch": "Force Patch Download",
   "tsforcenopatch": "Force Skip Patch",
   "tsfixbin32": "Fix bin32 and DB files",
-  "fixbin32files": "Overwrite all files in {0} with the original files from {1} ?"
+  "fixbin32files": "Overwrite all files in {0} with the original files from {1} ?",
+  "downloadlauncherupdate": "Launcher Version {0} available, click to download"
 }
