@@ -1591,8 +1591,8 @@ namespace AAEmu.Launcher
                     Setting.ClientLoginType = stringTrino_1_2;
                     break;
                 case stringTrino_1_2:
-                    Setting.ClientLoginType = stringTrino_3_5;
-                    break;
+                    // Setting.ClientLoginType = stringTrino_3_5;
+                    // break;
                 case stringTrino_3_5:
                 default:
                     Setting.ClientLoginType = stringMailRu_1_0;
