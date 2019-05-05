@@ -1165,38 +1165,37 @@
             this.launcherDiscordMenuItem,
             this.aaEmuDiscordMenuItem});
             this.cmsDiscord.Name = "cmsAAEmuButton";
-            this.cmsDiscord.Size = new System.Drawing.Size(181, 98);
+            this.cmsDiscord.Size = new System.Drawing.Size(167, 76);
             // 
             // customServerDiscordMenuItem
             // 
             this.customServerDiscordMenuItem.Name = "customServerDiscordMenuItem";
-            this.customServerDiscordMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.customServerDiscordMenuItem.Size = new System.Drawing.Size(166, 22);
             this.customServerDiscordMenuItem.Text = "Server Discord";
             this.customServerDiscordMenuItem.Click += new System.EventHandler(this.CustomServerDiscordMenuItem_Click);
             // 
             // cmsDiscordS1
             // 
             this.cmsDiscordS1.Name = "cmsDiscordS1";
-            this.cmsDiscordS1.Size = new System.Drawing.Size(177, 6);
+            this.cmsDiscordS1.Size = new System.Drawing.Size(163, 6);
             // 
             // launcherDiscordMenuItem
             // 
             this.launcherDiscordMenuItem.Name = "launcherDiscordMenuItem";
-            this.launcherDiscordMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.launcherDiscordMenuItem.Size = new System.Drawing.Size(166, 22);
             this.launcherDiscordMenuItem.Text = "Launcher Discord";
             this.launcherDiscordMenuItem.Click += new System.EventHandler(this.LauncherDiscordMenuItem_Click);
             // 
             // aaEmuDiscordMenuItem
             // 
             this.aaEmuDiscordMenuItem.Name = "aaEmuDiscordMenuItem";
-            this.aaEmuDiscordMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aaEmuDiscordMenuItem.Size = new System.Drawing.Size(166, 22);
             this.aaEmuDiscordMenuItem.Text = "AAEmu Discord";
             this.aaEmuDiscordMenuItem.Click += new System.EventHandler(this.AaEmuDiscordMenuItem_Click);
             // 
             // LauncherForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.DimGray;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(950, 510);

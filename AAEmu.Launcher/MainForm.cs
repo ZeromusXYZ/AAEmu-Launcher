@@ -33,7 +33,7 @@ namespace AAEmu.Launcher
     {
 
         const string urlCheckLauncherUpdate = "https://raw.githubusercontent.com/ZeromusXYZ/AAEmu-Launcher/master/update.ver";
-        const string AppVersion = "0.4.7";
+        const string AppVersion = "0.4.7.1";
 
         public partial class Settings
         {
@@ -1591,8 +1591,8 @@ namespace AAEmu.Launcher
                     Setting.ClientLoginType = stringTrino_1_2;
                     break;
                 case stringTrino_1_2:
-                    // Setting.ClientLoginType = stringTrino_3_5;
-                    // break;
+                    Setting.ClientLoginType = stringTrino_3_5;
+                    break;
                 case stringTrino_3_5:
                 default:
                     Setting.ClientLoginType = stringMailRu_1_0;
