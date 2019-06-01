@@ -33,7 +33,7 @@ namespace AAEmu.Launcher
     {
 
         const string urlCheckLauncherUpdate = "https://raw.githubusercontent.com/ZeromusXYZ/AAEmu-Launcher/master/update.ver";
-        const string AppVersion = "0.4.7.1";
+        string AppVersion = "?.?.?.?";
 
         public partial class Settings
         {
@@ -826,6 +826,23 @@ namespace AAEmu.Launcher
 
         private void LauncherForm_Load(object sender, EventArgs e)
         {
+            try
+            {
+                var AppVer = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+                string v = "";
+                v += AppVer.Major.ToString();
+                v += "." + AppVer.Minor.ToString();
+                if ((AppVer.Build > 0) || (AppVer.MinorRevision > 0))
+                    v += "." + AppVer.Build.ToString();
+                if (AppVer.MinorRevision > 0)
+                    v += "." + AppVer.MinorRevision.ToString();
+                AppVersion = v;
+            }
+            catch
+            {
+                AppVersion = "0.0.0.0";
+            }
+
             lAppVersion.Text = "V " + AppVersion;
             Application.UseWaitCursor = true;
             RegisterFileExt();
@@ -2649,7 +2666,10 @@ namespace AAEmu.Launcher
                 aaPatcher.Fase = PatchFase.CheckLocalFiles;
                 bgwPatcher.ReportProgress(2, aaPatcher);
 
-                pak = new AAPak(aaPatcher.localGame_Pak, false, false);
+                //pak = new AAPak(aaPatcher.localGame_Pak, false, false);
+                pak = new AAPak("");
+                TryLoadCustomKey(pak, aaPatcher.localGame_Pak);
+                pak.OpenPak(aaPatcher.localGame_Pak, false);
                 if (!pak.isOpen)
                 {
                     // Failed to open pak
@@ -2671,7 +2691,8 @@ namespace AAEmu.Launcher
                 var filesCount = 0;
                 foreach (AAPakFileInfo pfi in pak.files)
                 {
-                    if (BitConverter.ToString(pfi.md5).Replace("-", "") == pak._header.nullHashString)
+                    //if (BitConverter.ToString(pfi.md5).Replace("-", "") == AAPakFileHeader.nullHashString)
+                    if (Array.Equals(pfi.md5, AAPakFileHeader.nullHash))
                     {
                         aaPatcher.Fase = PatchFase.ReHashLocalFiles;
                         pak.UpdateMD5(pfi);
@@ -3251,7 +3272,12 @@ namespace AAEmu.Launcher
             }
 
             if (pak == null)
-                pak = new AAPak(aaPatcher.localGame_Pak);
+            {
+                //pak = new AAPak(aaPatcher.localGame_Pak, false, false);
+                pak = new AAPak("");
+                TryLoadCustomKey(pak, aaPatcher.localGame_Pak);
+                pak.OpenPak(aaPatcher.localGame_Pak, false);
+            }
 
             if (!pak.isOpen)
             {
@@ -3371,5 +3397,27 @@ namespace AAEmu.Launcher
             Process.Start(dx9downloadURL);
 
         }
+
+        private void TryLoadCustomKey(AAPak aPak, string pakFileName)
+        {
+            byte[] customKey = new byte[16];
+            string fn;
+
+            // PAK-Header Key
+            fn = Path.GetDirectoryName(pakFileName).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar + "game_pak.key";
+            if (File.Exists(fn))
+            {
+                FileStream fs = new FileStream(fn, FileMode.Open, FileAccess.Read);
+                if (fs.Length != 16)
+                {
+                    fs.Dispose();
+                    return;
+                }
+                fs.Read(customKey, 0, 16);
+                fs.Dispose();
+                aPak._header.SetCustomKey(customKey);
+            }
+        }
+
     }
 }
