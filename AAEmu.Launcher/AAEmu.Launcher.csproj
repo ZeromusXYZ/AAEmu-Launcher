@@ -104,6 +104,7 @@
   <ItemGroup>
     <Compile Include="AAPak.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="LauncherClass\Trion60Launcher.cs" />
     <Compile Include="LauncherClass\Trion35Launcher.cs" />
     <Compile Include="LauncherClass\Trion12Launcher.cs" />
     <Compile Include="LauncherClass\MailRu10Launcher.cs" />

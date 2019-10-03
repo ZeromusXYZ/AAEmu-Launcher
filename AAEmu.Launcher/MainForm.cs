@@ -18,12 +18,13 @@ using System.Security.AccessControl;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Net.Sockets;
+using System.IO.MemoryMappedFiles;
+using AAPakEditor;
 using AAEmu.Launcher.Basic;
 using AAEmu.Launcher.MailRu10;
 using AAEmu.Launcher.Trion12;
-using System.IO.MemoryMappedFiles;
-using AAPakEditor;
 using AAEmu.Launcher.Trion35;
+using AAEmu.Launcher.Trion60;
 // using XLPakTool;
 
 namespace AAEmu.Launcher
@@ -398,6 +399,7 @@ namespace AAEmu.Launcher
         private const string stringMailRu_1_0 = "mailru_1_0";
         private const string stringTrino_1_2 = "trino_1_2";
         private const string stringTrino_3_5 = "trino_3_5";
+        private const string stringTrino_6_0 = "trino_6_0";
 
         // Stuff for dragable form
         private bool formMouseDown;
@@ -1182,6 +1184,10 @@ namespace AAEmu.Launcher
                             // Trion style auth ticket with handles and username
                             aaLauncher = new Trion_3_5_Launcher();
                             break;
+                        case stringTrino_6_0:
+                            // Trion style auth ticket with handles and pid
+                            aaLauncher = new Trion_6_0_Launcher();
+                            break;
                         case stringMailRu_1_0:
                             // Original style using uid and hashed password as token
                             aaLauncher = new MailRu_1_0_Launcher();
@@ -1593,6 +1599,9 @@ namespace AAEmu.Launcher
                 case stringTrino_3_5:
                     lGameClientType.Text = "Trion 3.5 Auth (-t)";
                     break;
+                case stringTrino_6_0:
+                    lGameClientType.Text = "Trion 6.0 Auth (-t)";
+                    break;
                 default:
                     lGameClientType.Text = "???: " + Setting.ClientLoginType;
                     break;
@@ -1611,6 +1620,9 @@ namespace AAEmu.Launcher
                     Setting.ClientLoginType = stringTrino_3_5;
                     break;
                 case stringTrino_3_5:
+                    Setting.ClientLoginType = stringTrino_6_0;
+                    break;
+                case stringTrino_6_0:
                 default:
                     Setting.ClientLoginType = stringMailRu_1_0;
                     break;

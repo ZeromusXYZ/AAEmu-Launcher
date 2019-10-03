@@ -105,6 +105,8 @@ namespace AAEmu.Launcher.Trion12
                 ticketDataString += "</authTicket>";
             }
 
+            // File.WriteAllText("this_ticket.txt", ticketDataString);
+
             //------ IntPtr CreateFileMappingHandle(string ticketString,string signatureString)
 
             // MSDN Documentation says SECURITY_ATTRIBUTES needs to be set (not null) for child processes to be able to inherit the handle from CreateEvent
