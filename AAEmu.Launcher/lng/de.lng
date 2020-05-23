@@ -79,5 +79,9 @@
   "tsforcenopatch": "Patch überspringen",
   "tsfixbin32": "Reparieren Sie bin32 und DB-Dateien",
   "fixbin32files": "Alle Dateien in {0} mit den Originaldateien von {1} überschreiben?",
-  "downloadlauncherupdate": "Launcher Version {0} verfügbar, klicken Sie zum herunterladen"
+  "downloadlauncherupdate": "Launcher Version {0} verfügbar, klicken Sie zum herunterladen",
+  "troubleshootgame": "Fehlerbehebung beim spiel",
+  "troubleshootlauncher": "Fehlerbehebung beim launcher",
+  "defaultlocationwarning": "Es wird nicht empfohlen, den virtuellen Standardspeicherort zu verwenden. Suchen Sie stattdessen den tatsächlichen Speicherort der ausführbaren Spieldatei. Möchten Sie die aktuelle Datei trotzdem verwenden ?",
+  "urigen": "Generieren sie einen Server-URI-Link"
 }

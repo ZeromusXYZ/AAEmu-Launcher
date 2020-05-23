@@ -63,8 +63,7 @@
             this.lPathToGameLabel = new System.Windows.Forms.Label();
             this.lAppVersion = new System.Windows.Forms.Label();
             this.cmsAAEmuButton = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.minimizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.troubleshootToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.troubleshootGameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteGameConfigurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteShaderCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteAllArcheAgeSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -72,11 +71,13 @@
             this.directXtoolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.fixBin32StripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.troubleshootLauncherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.forcePatchDownloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.skipPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.debugModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.generateServerURILinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.debugModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lSettingsBack = new System.Windows.Forms.Label();
             this.lIPAddress = new System.Windows.Forms.Label();
             this.lGamePath = new System.Windows.Forms.Label();
@@ -125,8 +126,8 @@
             this.aaEmuDiscordMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsAuthType = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.stAuthAuto = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.generateServerURILinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnClose = new System.Windows.Forms.PictureBox();
+            this.btnMinimize = new System.Windows.Forms.PictureBox();
             this.panelLoginAndPatch.SuspendLayout();
             this.pPatchSteps.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pgbFrontTotal)).BeginInit();
@@ -144,6 +145,8 @@
             this.panelSettings.SuspendLayout();
             this.cmsDiscord.SuspendLayout();
             this.cmsAuthType.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.btnClose)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnMinimize)).BeginInit();
             this.SuspendLayout();
             // 
             // panelLoginAndPatch
@@ -574,24 +577,17 @@
             // cmsAAEmuButton
             // 
             this.cmsAAEmuButton.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.minimizeToolStripMenuItem,
-            this.troubleshootToolStripMenuItem,
-            this.debugModeToolStripMenuItem,
+            this.troubleshootGameToolStripMenuItem,
+            this.troubleshootLauncherToolStripMenuItem,
             this.toolStripSeparator1,
-            this.closeToolStripMenuItem});
+            this.generateServerURILinkToolStripMenuItem,
+            this.debugModeToolStripMenuItem});
             this.cmsAAEmuButton.Name = "cmsAAEmuButton";
-            this.cmsAAEmuButton.Size = new System.Drawing.Size(181, 120);
+            this.cmsAAEmuButton.Size = new System.Drawing.Size(203, 120);
             // 
-            // minimizeToolStripMenuItem
+            // troubleshootGameToolStripMenuItem
             // 
-            this.minimizeToolStripMenuItem.Name = "minimizeToolStripMenuItem";
-            this.minimizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.minimizeToolStripMenuItem.Text = "Minimize";
-            this.minimizeToolStripMenuItem.Click += new System.EventHandler(this.minimizeToolStripMenuItem_Click);
-            // 
-            // troubleshootToolStripMenuItem
-            // 
-            this.troubleshootToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.troubleshootGameToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.deleteGameConfigurationToolStripMenuItem,
             this.deleteShaderCacheToolStripMenuItem,
             this.deleteAllArcheAgeSettingsToolStripMenuItem,
@@ -599,13 +595,10 @@
             this.directXtoolStripMenuItem,
             this.toolStripSeparator3,
             this.fixBin32StripMenuItem,
-            this.forcePatchDownloadToolStripMenuItem,
-            this.skipPatchToolStripMenuItem,
-            this.toolStripMenuItem1,
-            this.generateServerURILinkToolStripMenuItem});
-            this.troubleshootToolStripMenuItem.Name = "troubleshootToolStripMenuItem";
-            this.troubleshootToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.troubleshootToolStripMenuItem.Text = "Troubleshoot";
+            this.toolStripMenuItem1});
+            this.troubleshootGameToolStripMenuItem.Name = "troubleshootGameToolStripMenuItem";
+            this.troubleshootGameToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.troubleshootGameToolStripMenuItem.Text = "Troubleshoot Game";
             // 
             // deleteGameConfigurationToolStripMenuItem
             // 
@@ -653,39 +646,53 @@
             this.fixBin32StripMenuItem.Text = "Fix bin32 and DB files";
             this.fixBin32StripMenuItem.Click += new System.EventHandler(this.fixBin32StripMenuItem_Click);
             // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(218, 6);
+            // 
+            // troubleshootLauncherToolStripMenuItem
+            // 
+            this.troubleshootLauncherToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.forcePatchDownloadToolStripMenuItem,
+            this.skipPatchToolStripMenuItem});
+            this.troubleshootLauncherToolStripMenuItem.Name = "troubleshootLauncherToolStripMenuItem";
+            this.troubleshootLauncherToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.troubleshootLauncherToolStripMenuItem.Text = "Troubleshoot Launcher";
+            // 
             // forcePatchDownloadToolStripMenuItem
             // 
             this.forcePatchDownloadToolStripMenuItem.Name = "forcePatchDownloadToolStripMenuItem";
-            this.forcePatchDownloadToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.forcePatchDownloadToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.forcePatchDownloadToolStripMenuItem.Text = "Force Patch Download";
             this.forcePatchDownloadToolStripMenuItem.Click += new System.EventHandler(this.forcePatchDownloadToolStripMenuItem_Click);
             // 
             // skipPatchToolStripMenuItem
             // 
             this.skipPatchToolStripMenuItem.Name = "skipPatchToolStripMenuItem";
-            this.skipPatchToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.skipPatchToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.skipPatchToolStripMenuItem.Text = "Skip Patch";
             this.skipPatchToolStripMenuItem.Click += new System.EventHandler(this.skipPatchToolStripMenuItem_Click);
-            // 
-            // debugModeToolStripMenuItem
-            // 
-            this.debugModeToolStripMenuItem.Name = "debugModeToolStripMenuItem";
-            this.debugModeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.debugModeToolStripMenuItem.Text = "Debug Mode";
-            this.debugModeToolStripMenuItem.Visible = false;
-            this.debugModeToolStripMenuItem.Click += new System.EventHandler(this.debugModeToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(199, 6);
             // 
-            // closeToolStripMenuItem
+            // generateServerURILinkToolStripMenuItem
             // 
-            this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.closeToolStripMenuItem.Text = "Close";
-            this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
+            this.generateServerURILinkToolStripMenuItem.Name = "generateServerURILinkToolStripMenuItem";
+            this.generateServerURILinkToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.generateServerURILinkToolStripMenuItem.Text = "Generate Server URI Link";
+            this.generateServerURILinkToolStripMenuItem.Click += new System.EventHandler(this.generateServerURILinkToolStripMenuItem_Click);
+            // 
+            // debugModeToolStripMenuItem
+            // 
+            this.debugModeToolStripMenuItem.Name = "debugModeToolStripMenuItem";
+            this.debugModeToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.debugModeToolStripMenuItem.Text = "Debug Mode";
+            this.debugModeToolStripMenuItem.Visible = false;
+            this.debugModeToolStripMenuItem.Click += new System.EventHandler(this.debugModeToolStripMenuItem_Click);
             // 
             // lSettingsBack
             // 
@@ -1048,14 +1055,16 @@
             this.btnSystem.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.btnSystem.ContextMenuStrip = this.cmsAAEmuButton;
             this.btnSystem.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSystem.Image = global::AAEmu.Launcher.Properties.Resources.aaemu_logo;
-            this.btnSystem.Location = new System.Drawing.Point(898, 2);
+            this.btnSystem.Image = global::AAEmu.Launcher.Properties.Resources.btn_aaemu;
+            this.btnSystem.Location = new System.Drawing.Point(804, 2);
             this.btnSystem.Name = "btnSystem";
             this.btnSystem.Size = new System.Drawing.Size(40, 40);
             this.btnSystem.TabIndex = 28;
             this.btnSystem.TabStop = false;
             this.btnSystem.Click += new System.EventHandler(this.btnSystem_Click);
             this.btnSystem.DoubleClick += new System.EventHandler(this.btnSystem_DoubleClick);
+            this.btnSystem.MouseEnter += new System.EventHandler(this.btnSystem_MouseEnter);
+            this.btnSystem.MouseLeave += new System.EventHandler(this.btnSystem_MouseLeave);
             // 
             // btnDiscord
             // 
@@ -1090,7 +1099,7 @@
             this.btnLauncherLangChange.BackColor = System.Drawing.Color.Transparent;
             this.btnLauncherLangChange.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnLauncherLangChange.Image = global::AAEmu.Launcher.Properties.Resources.flag_english;
-            this.btnLauncherLangChange.Location = new System.Drawing.Point(850, 2);
+            this.btnLauncherLangChange.Location = new System.Drawing.Point(758, 2);
             this.btnLauncherLangChange.Name = "btnLauncherLangChange";
             this.btnLauncherLangChange.Size = new System.Drawing.Size(40, 40);
             this.btnLauncherLangChange.TabIndex = 8;
@@ -1153,10 +1162,10 @@
             this.lDownloadLauncherUpdate.BackColor = System.Drawing.Color.Transparent;
             this.lDownloadLauncherUpdate.Cursor = System.Windows.Forms.Cursors.Hand;
             this.lDownloadLauncherUpdate.Font = new System.Drawing.Font("Georgia", 12F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lDownloadLauncherUpdate.ForeColor = System.Drawing.Color.Navy;
-            this.lDownloadLauncherUpdate.Location = new System.Drawing.Point(320, 8);
+            this.lDownloadLauncherUpdate.ForeColor = System.Drawing.Color.Yellow;
+            this.lDownloadLauncherUpdate.Location = new System.Drawing.Point(223, 477);
             this.lDownloadLauncherUpdate.Name = "lDownloadLauncherUpdate";
-            this.lDownloadLauncherUpdate.Size = new System.Drawing.Size(502, 21);
+            this.lDownloadLauncherUpdate.Size = new System.Drawing.Size(515, 21);
             this.lDownloadLauncherUpdate.TabIndex = 52;
             this.lDownloadLauncherUpdate.Text = "Launcher Version x.x.x available, click to download";
             this.lDownloadLauncherUpdate.TextAlign = System.Drawing.ContentAlignment.BottomRight;
@@ -1213,17 +1222,33 @@
             this.stAuthAuto.Text = "Auto";
             this.stAuthAuto.Click += new System.EventHandler(this.stAuthAuto_Click);
             // 
-            // toolStripMenuItem1
+            // btnClose
             // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(218, 6);
+            this.btnClose.BackColor = System.Drawing.Color.Transparent;
+            this.btnClose.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnClose.Image = global::AAEmu.Launcher.Properties.Resources.btn_exit;
+            this.btnClose.Location = new System.Drawing.Point(896, 2);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(40, 40);
+            this.btnClose.TabIndex = 53;
+            this.btnClose.TabStop = false;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.MouseEnter += new System.EventHandler(this.btnClose_MouseEnter);
+            this.btnClose.MouseLeave += new System.EventHandler(this.btnClose_MouseLeave);
             // 
-            // generateServerURILinkToolStripMenuItem
+            // btnMinimize
             // 
-            this.generateServerURILinkToolStripMenuItem.Name = "generateServerURILinkToolStripMenuItem";
-            this.generateServerURILinkToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
-            this.generateServerURILinkToolStripMenuItem.Text = "Generate Server URI Link";
-            this.generateServerURILinkToolStripMenuItem.Click += new System.EventHandler(this.generateServerURILinkToolStripMenuItem_Click);
+            this.btnMinimize.BackColor = System.Drawing.Color.Transparent;
+            this.btnMinimize.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnMinimize.Image = global::AAEmu.Launcher.Properties.Resources.btn_minimize;
+            this.btnMinimize.Location = new System.Drawing.Point(850, 2);
+            this.btnMinimize.Name = "btnMinimize";
+            this.btnMinimize.Size = new System.Drawing.Size(40, 40);
+            this.btnMinimize.TabIndex = 54;
+            this.btnMinimize.TabStop = false;
+            this.btnMinimize.Click += new System.EventHandler(this.btnMinimize_Click);
+            this.btnMinimize.MouseEnter += new System.EventHandler(this.btnMinimize_MouseEnter);
+            this.btnMinimize.MouseLeave += new System.EventHandler(this.btnMinimize_MouseLeave);
             // 
             // LauncherForm
             // 
@@ -1231,6 +1256,8 @@
             this.BackColor = System.Drawing.Color.DimGray;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(950, 510);
+            this.Controls.Add(this.btnMinimize);
+            this.Controls.Add(this.btnClose);
             this.Controls.Add(this.lDownloadLauncherUpdate);
             this.Controls.Add(this.lLoadedConfig);
             this.Controls.Add(this.btnSystem);
@@ -1277,6 +1304,8 @@
             this.panelSettings.PerformLayout();
             this.cmsDiscord.ResumeLayout(false);
             this.cmsAuthType.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.btnClose)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnMinimize)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1304,8 +1333,6 @@
         private System.Windows.Forms.PictureBox imgBigNews;
         private System.Windows.Forms.PictureBox btnSystem;
         private System.Windows.Forms.ContextMenuStrip cmsAAEmuButton;
-        private System.Windows.Forms.ToolStripMenuItem minimizeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
         private System.Windows.Forms.Label lSettingsBack;
         private System.Windows.Forms.Label lGamePath;
         private System.Windows.Forms.Label lHideSplash;
@@ -1339,7 +1366,7 @@
         private System.Windows.Forms.ToolStripMenuItem miLocaleKorean;
         private System.Windows.Forms.ToolStripMenuItem japaneseToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripMenuItem troubleshootToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem troubleshootGameToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteShaderCacheToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteGameConfigurationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteAllArcheAgeSettingsToolStripMenuItem;
@@ -1347,7 +1374,6 @@
         private System.Windows.Forms.Label lBigNewsImage;
         private System.Windows.Forms.Panel panelLoginAndPatch;
         private System.Windows.Forms.Panel panelSettings;
-        private System.Windows.Forms.ToolStripMenuItem forcePatchDownloadToolStripMenuItem;
         private System.Windows.Forms.PictureBox pgbBackTotal;
         private System.Windows.Forms.PictureBox pgbFrontTotal;
         private System.ComponentModel.BackgroundWorker bgwNewsFeed;
@@ -1364,7 +1390,6 @@
         private System.Windows.Forms.RadioButton rbDone;
         private System.Windows.Forms.RadioButton rbAddFiles;
         private System.Windows.Forms.RadioButton rbDownloadFiles;
-        private System.Windows.Forms.ToolStripMenuItem skipPatchToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.Panel pPatchSteps;
         private System.Windows.Forms.ToolStripMenuItem fixBin32StripMenuItem;
@@ -1379,6 +1404,11 @@
         private System.Windows.Forms.ContextMenuStrip cmsAuthType;
         private System.Windows.Forms.ToolStripMenuItem stAuthAuto;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.PictureBox btnClose;
+        private System.Windows.Forms.PictureBox btnMinimize;
+        private System.Windows.Forms.ToolStripMenuItem troubleshootLauncherToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem forcePatchDownloadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem skipPatchToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateServerURILinkToolStripMenuItem;
     }
 }

@@ -399,6 +399,18 @@ namespace AAEmu.Launcher
 
             [JsonProperty("downloadlauncherupdate")]
             public string DownloadLauncherUpdate { get; set; }
+
+            [JsonProperty("troubleshootgame")]
+            public string TroubleshootGame { get;set; }
+
+            [JsonProperty("troubleshootlauncher")]
+            public string TroubleshootLauncher { get; set; }
+
+            [JsonProperty("defaultlocationwarning")]
+            public string DefaultLocationWarning { get; set; }
+
+            [JsonProperty("urigen")]
+            public string URIGen { get; set; }
         }
 
         public LauncherFileSettings Setting = new LauncherFileSettings();
@@ -554,6 +566,11 @@ namespace AAEmu.Launcher
             L.FixBin32Files = "Overwrite all files in {0} with the original files from {1} ?";
 
             L.DownloadLauncherUpdate = "Launcher Version {0} available, click to download";
+
+            L.TroubleshootGame = "Troubleshoot Game";
+            L.TroubleshootLauncher = "Troubleshoot Launcher";
+            L.DefaultLocationWarning = "It is not recommended to use the virtual default location, please locate the real location of the game executable instead. Do you want to use the current file anyway ?";
+            L.URIGen = "Generate Server URI Link";
         }
 
         private void LoadLanguageFromFile(string languageID)
@@ -753,8 +770,8 @@ namespace AAEmu.Launcher
             btnWebsite.Text = L.Website;
             lUpdateLocale.Text = L.UpdateLocale;
             lAllowUpdates.Text = L.AllowUpdates;
-            minimizeToolStripMenuItem.Text = L.Minimize;
-            closeToolStripMenuItem.Text = L.CloseProgram;
+            //minimizeToolStripMenuItem.Text = L.Minimize;
+            //closeToolStripMenuItem.Text = L.CloseProgram;
 
             UpdatePlayButton(serverCheckStatus, false);
 
@@ -769,7 +786,6 @@ namespace AAEmu.Launcher
             rbAddFiles.Text = L.AddFiles;
             rbDone.Text = L.PatchDone;
 
-            troubleshootToolStripMenuItem.Text = L.TroubleShoot;
             debugModeToolStripMenuItem.Text = L.TSDebugMode;
             deleteShaderCacheToolStripMenuItem.Text = L.TSDeleteShaderCache;
             deleteGameConfigurationToolStripMenuItem.Text = L.TSDeleteGameSetting;
@@ -779,6 +795,10 @@ namespace AAEmu.Launcher
             fixBin32StripMenuItem.Text = L.TSFixBin32;
 
             lDownloadLauncherUpdate.Text = string.Format(L.DownloadLauncherUpdate, LauncherUpdateVersion);
+
+            troubleshootGameToolStripMenuItem.Text = L.TroubleshootGame;
+            troubleshootLauncherToolStripMenuItem.Text = L.TroubleshootLauncher;
+            generateServerURILinkToolStripMenuItem.Text = L.URIGen;
 
             btnLauncherLangChange.Refresh();
         }
@@ -1292,44 +1312,20 @@ namespace AAEmu.Launcher
                     }
 
 
-                    aaLauncher = CreateLauncherByName(Setting.ConfigName);
+                    aaLauncher = CreateLauncherByName(Setting.ClientLoginType);
                     if (aaLauncher == null)
                     {
-                        MessageBox.Show(L.UnknownLauncherProtocol, Setting.ClientLoginType);
+                        MessageBox.Show(string.Format(L.UnknownLauncherProtocol, Setting.ClientLoginType), "Launcher");
                         return;
                     }
-                    /*
-                    switch (Setting.ClientLoginType)
-                    {
-                        case stringTrino_1_2:
-                            // Trion style auth ticket with handles
-                            aaLauncher = new Trion_1_2_Launcher();
-                            break;
-                        case stringTrino_3_5:
-                            // Trion style auth ticket with handles and username
-                            aaLauncher = new Trion_3_5_Launcher();
-                            break;
-                        case stringTrino_6_0:
-                            // Trion style auth ticket with handles and pid
-                            aaLauncher = new Trion_6_0_Launcher();
-                            break;
-                        case stringMailRu_1_0:
-                            // Original style using uid and hashed password as token
-                            aaLauncher = new MailRu_1_0_Launcher();
-                            break;
-                        default:
-                            MessageBox.Show(L.UnknownLauncherProtocol, Setting.ClientLoginType);
-                            return;
-                    }
-                    */
 
                     aaLauncher.UserName = eLogin.Text;
                     aaLauncher.SetPassword(ePassword.Text);
                     aaLauncher.LoginServerAdress = serverIP;
                     aaLauncher.LoginServerPort = serverPort;
                     aaLauncher.GameExeFilePath = Setting.PathToGame;
-                    // if (Setting.UpdateLocale == "True")
-                    aaLauncher.Locale = Setting.Lang;
+                    if (Setting.UpdateLocale)
+                        aaLauncher.Locale = Setting.Lang;
                     aaLauncher.HShieldArgs = "+acpxmk";
 
                     if (Setting.HideSplashLogo)
@@ -1619,16 +1615,6 @@ namespace AAEmu.Launcher
             Invalidate(true);
         }
 
-        private void minimizeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            WindowState = FormWindowState.Minimized;
-        }
-
-        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
         private void btnSystem_Click(object sender, EventArgs e)
         {
             forcePatchDownloadToolStripMenuItem.Enabled = ((Setting.ServerGameUpdateURL != null) && (Setting.ServerGameUpdateURL != ""));
@@ -1700,8 +1686,7 @@ namespace AAEmu.Launcher
             {
                 if (IsInDefaultLocation(openFileDialog.FileName))
                 {
-                    var res = MessageBox.Show("It's not recommended to use the virtual default location, please locate the real loction of the game executable instead. Do you want to use the current file anyway ?",
-                        L.PathToGame,MessageBoxButtons.YesNoCancel,MessageBoxIcon.Warning);
+                    var res = MessageBox.Show(L.DefaultLocationWarning, L.PathToGame, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                     if (res == DialogResult.No)
                         continue;
                     if (res == DialogResult.Cancel)
@@ -2332,7 +2317,7 @@ namespace AAEmu.Launcher
                 debugModeToolStripMenuItem.Checked = true;
                 debugModeToolStripMenuItem.Visible = true;
             }
-            troubleshootToolStripMenuItem.Visible = true;
+            troubleshootGameToolStripMenuItem.Visible = true;
         }
 
         private void debugModeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3557,7 +3542,6 @@ namespace AAEmu.Launcher
         private void DirectXtoolStripMenuItem_Click(object sender, EventArgs e)
         {
             Process.Start(dx9downloadURL);
-
         }
 
         private void TryLoadCustomKey(AAPak aPak, string pakFileName)
@@ -3618,6 +3602,46 @@ namespace AAEmu.Launcher
                 genform.tPatchLocation.Text = Setting.ServerGameUpdateURL;
                 genform.ShowDialog();
             }
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void btnClose_MouseEnter(object sender, EventArgs e)
+        {
+            btnClose.Image = Properties.Resources.btn_exit_active;
+        }
+
+        private void btnClose_MouseLeave(object sender, EventArgs e)
+        {
+            btnClose.Image = Properties.Resources.btn_exit;
+        }
+
+        private void btnMinimize_Click(object sender, EventArgs e)
+        {
+            WindowState = FormWindowState.Minimized;
+        }
+
+        private void btnMinimize_MouseEnter(object sender, EventArgs e)
+        {
+            btnMinimize.Image = Properties.Resources.btn_minimize_active;
+        }
+
+        private void btnMinimize_MouseLeave(object sender, EventArgs e)
+        {
+            btnMinimize.Image = Properties.Resources.btn_minimize;
+        }
+
+        private void btnSystem_MouseEnter(object sender, EventArgs e)
+        {
+            btnSystem.Image = Properties.Resources.btn_aaemu_active;
+        }
+
+        private void btnSystem_MouseLeave(object sender, EventArgs e)
+        {
+            btnSystem.Image = Properties.Resources.btn_aaemu;
         }
     }
 }

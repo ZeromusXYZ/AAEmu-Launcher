@@ -221,6 +221,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="aaemu.ico" />
+    <None Include="Res\btn_aaemu_active.png" />
+    <None Include="Res\btn_aaemu.png" />
+    <None Include="Res\btn_minimize_active.png" />
+    <None Include="Res\btn_minimize.png" />
+    <None Include="Res\btn_exit_active.png" />
+    <None Include="Res\btn_exit.png" />
     <None Include="Res\btn_red.png" />
     <None Include="Res\flag_cn.png" />
     <None Include="Res\flag_de.png" />

@@ -79,5 +79,9 @@
   "tsforcenopatch": "Force Skip Patch",
   "tsfixbin32": "Fix bin32 and DB files",
   "fixbin32files": "Overwrite all files in {0} with the original files from {1} ?",
-  "downloadlauncherupdate": "Launcher Version {0} available, click to download"
+  "downloadlauncherupdate": "Launcher Version {0} available, click to download",
+  "troubleshootgame": "Troubleshoot Game",
+  "troubleshootlauncher": "Troubleshoot Launcher",
+  "defaultlocationwarning": "It is not recommended to use the virtual default location, please locate the real location of the game executable instead. Do you want to use the current file anyway ?",
+  "urigen": "Generate Server URI Link"
 }
