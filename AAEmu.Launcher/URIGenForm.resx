@@ -117,57 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="timerGeneral.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>190, 20</value>
-  </metadata>
-  <metadata name="cmsAAEmuButton.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>315, 17</value>
-  </metadata>
-  <metadata name="cmsGitHub.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>465, 17</value>
-  </metadata>
-  <metadata name="cmsLauncherLanguage.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <metadata name="cmsLocaleLanguage.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>577, 17</value>
-  </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="btnGithub.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAABGdBTUEAALGPC/xhBQAAArhJREFUWEft
-        2N2LTVEcxvGDC7lxITFeZihxOyLldWZK3lJEyAUibigS8S8gQ1xIbrwl726EKJQpBhdeQqIkxMjrZFwQ
-        g++js2q1+6299zlnHaXOU5+a2ef81lrtvfbaa59CLbWEMwgL0YqLeIIPRU9xCfpsEfTdf5ZmHMF7/M5J
-        g1ZNC6qWBhyDNYBSnMBwRM18vIHVYTk6sABRshFWJzFsQkXZAKvhmMoe5Fz8gt/YV+NYqbqMY5pCJUXL
-        wlv4jej/URiDLfgM//M0ndiGsRiJ5Hx+hyHIHetuPQ0/I7Afx7EZizGzSH/r0qmdg9Cg/OhOTrZ/Crky
-        Ccli2Y1Y2QmrjynIzGFYxTobsaJF2+rjKFIzAJ9gFV9HL1SanmiD1Yfm9UAEMw9W4U/EfEzpUv6A1Vfq
-        Aq47zSo6j9g5C6uvHQjmAqyilYid5bD60s4omEewiqqxC2mC1dddBJNcnJ3JiJ2JsPrSvjIY7TKsotmI
-        HS3oVl+pA3wIq2gtYmcNrL7uIJjQnXUGsXMSVl+pK8ZWWEVfMBSxMhjaQFh9bUcwc2AViTYFPRAjeqRZ
-        fYgeFsH0Q9rLkJ7TfVBuVHsAVtvyEf2RGm2PXMED7MFr79htLEUd8kaXdBlU69qxaBORGW0q9exVwWNo
-        vdIm9VrxmKNXST301yGU9dAmQ2fGr7V0Yxxyxd8OfccEaOV/WTzmm4FQpiH5/RDN8dzRtusFXPFN9MVq
-        3Mc36P3kHLJyD/5ALK9QypT5m6nQaXeNuBcbXXL95KGH/XgdyMgV+INJ0kvYdJQVzSHXkObREvSGS55l
-        5yr8ASXp1bairIAuqWvwGS5DZ0YvTVkJDVBzexWiZBasnz7akRVrgNqURN+A1GMv/LN5C1m5Afd9nbV9
-        GIaqpRG78ByHdCAjmgb6rl5bR+tALbX8PykU/gC68uomP7skigAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <metadata name="bgwNewsFeed.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>738, 17</value>
-  </metadata>
-  <metadata name="bgwServerStatusCheck.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>869, 17</value>
-  </metadata>
-  <metadata name="bgwPatcher.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1044, 17</value>
-  </metadata>
-  <metadata name="cmsDiscord.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 56</value>
-  </metadata>
-  <metadata name="cmsAuthType.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>132, 56</value>
-  </metadata>
-  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>103</value>
-  </metadata>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAEAAAAAAAEACABYPgUAFgAAACgAAAAlAgAASgQAAAEACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA

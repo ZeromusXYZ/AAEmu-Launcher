@@ -6,6 +6,7 @@ using AAEmu.Launcher.Basic;
 
 namespace AAEmu.Launcher.Trion12
 {
+    [AALauncher("trino_1_2","Trion 1.2","1.2","20140708")]
     public class Trion_1_2_Launcher: AAEmuLauncherBase
     {
 
@@ -15,7 +16,7 @@ namespace AAEmu.Launcher.Trion12
         public int HandleID2Event { get; protected set; }
         public byte[] encryptionKey ;
 
-        public Trion_1_2_Launcher()
+        public Trion_1_2_Launcher() : base()
         {
             UseCustomTicketData = false;
             CustomTicketData = "";
@@ -90,7 +91,7 @@ namespace AAEmu.Launcher.Trion12
             // Not sure if we actually need this signature part or not
             string stringForSignature = "dGVzdA==";
 
-            string ticketDataString = "";
+            string ticketDataString ;
             if (UseCustomTicketData)
             {
                 ticketDataString = CustomTicketData;

@@ -2,12 +2,13 @@
 
 	$autoUSER = "test" ; // Username to replace info with
 	$autoPASS = "test" ; // Password to replace info with, leave blank if you don't want to send password data over base64 encoding
-	$serverHost = "AAEmu" ; // Optional server name, the launcher uses this name if no custom "configName" is defined in the .aelcf file data
+	$serverHost = "10.0.1.55" ; // Optional server name, the launcher uses this name if no custom "configName" is defined in the .aelcf file data
 	// Load the base config file into memory
 	$launchFileString = file_get_contents('startgame.aelcf');
 	// Update the username and password fields (or other things you want here)
 	$launchFileString = str_replace("{{USER}}",$autoUSER,$launchFileString);
 	$launchFileString = str_replace("{{PASS}}",$autoPASS,$launchFileString);
+	$launchFileString = str_replace("{{HOST}}",$serverHost,$launchFileString);
 	$launchFileQueryString = "?v=c"	;
 	
 ?><!DOCTYPE html>

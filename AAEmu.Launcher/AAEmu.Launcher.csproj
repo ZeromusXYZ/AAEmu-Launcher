@@ -104,6 +104,12 @@
   <ItemGroup>
     <Compile Include="AAPak.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="InfoPopupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InfoPopupForm.Designer.cs">
+      <DependentUpon>InfoPopupForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="LauncherClass\Trion60Launcher.cs" />
     <Compile Include="LauncherClass\Trion35Launcher.cs" />
     <Compile Include="LauncherClass\Trion12Launcher.cs" />
@@ -129,8 +135,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LauncherClass\BaseLauncher.cs" />
     <Compile Include="SubStream.cs" />
+    <Compile Include="URIGenForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="URIGenForm.Designer.cs">
+      <DependentUpon>URIGenForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="DebugHelperForm.resx">
       <DependentUpon>DebugHelperForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InfoPopupForm.resx">
+      <DependentUpon>InfoPopupForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -140,6 +155,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="URIGenForm.resx">
+      <DependentUpon>URIGenForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="aaemu.info.aelcf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

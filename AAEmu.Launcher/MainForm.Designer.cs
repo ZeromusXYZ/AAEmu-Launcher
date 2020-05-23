@@ -123,6 +123,10 @@
             this.cmsDiscordS1 = new System.Windows.Forms.ToolStripSeparator();
             this.launcherDiscordMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aaEmuDiscordMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmsAuthType = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.stAuthAuto = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.generateServerURILinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelLoginAndPatch.SuspendLayout();
             this.pPatchSteps.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pgbFrontTotal)).BeginInit();
@@ -139,6 +143,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.btnLauncherLangChange)).BeginInit();
             this.panelSettings.SuspendLayout();
             this.cmsDiscord.SuspendLayout();
+            this.cmsAuthType.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelLoginAndPatch
@@ -438,9 +443,8 @@
             this.lNewsFeed.Name = "lNewsFeed";
             this.lNewsFeed.Size = new System.Drawing.Size(201, 263);
             this.lNewsFeed.TabIndex = 24;
-            this.lNewsFeed.Text = "Launcher News\r\n\r\n\r\nAdded support to\r\nlaunch game directly\r\nfrom a website\r\n\r\nPatc" +
-    "h support for servers\r\nthat implement it\r\n\r\nAllow to set in-game\r\nlanguage diffe" +
-    "rent\r\nfrom launcher";
+            this.lNewsFeed.Text = "Launcher News\r\n\r\n\r\nUpdated the links to\r\nAAEmu project\r\n\r\nChanged the URI format\r" +
+    "\nfor launching from website\r\n";
             this.lNewsFeed.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // btnSettings
@@ -576,12 +580,12 @@
             this.toolStripSeparator1,
             this.closeToolStripMenuItem});
             this.cmsAAEmuButton.Name = "cmsAAEmuButton";
-            this.cmsAAEmuButton.Size = new System.Drawing.Size(145, 98);
+            this.cmsAAEmuButton.Size = new System.Drawing.Size(181, 120);
             // 
             // minimizeToolStripMenuItem
             // 
             this.minimizeToolStripMenuItem.Name = "minimizeToolStripMenuItem";
-            this.minimizeToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.minimizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.minimizeToolStripMenuItem.Text = "Minimize";
             this.minimizeToolStripMenuItem.Click += new System.EventHandler(this.minimizeToolStripMenuItem_Click);
             // 
@@ -596,9 +600,11 @@
             this.toolStripSeparator3,
             this.fixBin32StripMenuItem,
             this.forcePatchDownloadToolStripMenuItem,
-            this.skipPatchToolStripMenuItem});
+            this.skipPatchToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.generateServerURILinkToolStripMenuItem});
             this.troubleshootToolStripMenuItem.Name = "troubleshootToolStripMenuItem";
-            this.troubleshootToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.troubleshootToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.troubleshootToolStripMenuItem.Text = "Troubleshoot";
             // 
             // deleteGameConfigurationToolStripMenuItem
@@ -664,7 +670,7 @@
             // debugModeToolStripMenuItem
             // 
             this.debugModeToolStripMenuItem.Name = "debugModeToolStripMenuItem";
-            this.debugModeToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.debugModeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.debugModeToolStripMenuItem.Text = "Debug Mode";
             this.debugModeToolStripMenuItem.Visible = false;
             this.debugModeToolStripMenuItem.Click += new System.EventHandler(this.debugModeToolStripMenuItem_Click);
@@ -672,12 +678,12 @@
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(141, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
@@ -1193,6 +1199,32 @@
             this.aaEmuDiscordMenuItem.Text = "AAEmu Discord";
             this.aaEmuDiscordMenuItem.Click += new System.EventHandler(this.AaEmuDiscordMenuItem_Click);
             // 
+            // cmsAuthType
+            // 
+            this.cmsAuthType.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.stAuthAuto});
+            this.cmsAuthType.Name = "cmsAuthType";
+            this.cmsAuthType.Size = new System.Drawing.Size(101, 26);
+            // 
+            // stAuthAuto
+            // 
+            this.stAuthAuto.Name = "stAuthAuto";
+            this.stAuthAuto.Size = new System.Drawing.Size(100, 22);
+            this.stAuthAuto.Text = "Auto";
+            this.stAuthAuto.Click += new System.EventHandler(this.stAuthAuto_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(218, 6);
+            // 
+            // generateServerURILinkToolStripMenuItem
+            // 
+            this.generateServerURILinkToolStripMenuItem.Name = "generateServerURILinkToolStripMenuItem";
+            this.generateServerURILinkToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.generateServerURILinkToolStripMenuItem.Text = "Generate Server URI Link";
+            this.generateServerURILinkToolStripMenuItem.Click += new System.EventHandler(this.generateServerURILinkToolStripMenuItem_Click);
+            // 
             // LauncherForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1244,6 +1276,7 @@
             this.panelSettings.ResumeLayout(false);
             this.panelSettings.PerformLayout();
             this.cmsDiscord.ResumeLayout(false);
+            this.cmsAuthType.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1343,6 +1376,10 @@
         private System.Windows.Forms.ToolStripMenuItem aaEmuDiscordMenuItem;
         private System.Windows.Forms.ToolStripMenuItem directXtoolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ContextMenuStrip cmsAuthType;
+        private System.Windows.Forms.ToolStripMenuItem stAuthAuto;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem generateServerURILinkToolStripMenuItem;
     }
 }
 
