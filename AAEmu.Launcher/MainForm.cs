@@ -16,7 +16,6 @@ using System.Net.Sockets;
 using System.Security.Policy;
 using System.Text;
 using System.Windows.Forms;
-// using XLPakTool;
 
 namespace AAEmu.Launcher
 {
@@ -580,12 +579,10 @@ namespace AAEmu.Launcher
             string lngFileName = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath),"lng",languageID + ".lng");
 
             StreamReader reader = null;
-            //Console.WriteLine(lngFileName);
             try
             {
                 reader = new StreamReader(lngFileName);
                 var ConfigFile = reader.ReadToEnd();
-                //Console.Write(ConfigFile.ToString());
 
                 L = JsonConvert.DeserializeObject<LanguageSettings>(ConfigFile);
                 res = true;
@@ -849,7 +846,6 @@ namespace AAEmu.Launcher
                     Setting.LauncherLang = settingsLangRU;
                     break;
             }
-            //Console.WriteLine("Updating Language: {0}",Setting.LauncherLang);
             ApplyLanguageToLauncher();
             btnLauncherLangChange.Refresh();
         }
@@ -1124,12 +1120,10 @@ namespace AAEmu.Launcher
             string configFileName = Path.Combine(Application.StartupPath,clientLookupDefaultFile);
 
             StreamReader reader = null;
-            // Console.WriteLine(configFileName);
             try
             {
                 reader = new StreamReader(configFileName);
                 var ConfigFile = reader.ReadToEnd();
-                // Console.Write(ConfigFile.ToString());
 
                 ClientLookup = JsonConvert.DeserializeObject<ClientLookupHelper>(ConfigFile);
                 res = true;
@@ -1219,8 +1213,6 @@ namespace AAEmu.Launcher
                 using (var reader = new StreamReader(aStream))
                     ConfigFileData = reader.ReadToEnd();
 
-                // Console.Write(ConfigFile.ToString());
-
                 Setting = JsonConvert.DeserializeObject<LauncherFileSettings>(ConfigFileData);
 
                 if (Setting == null)
@@ -1295,9 +1287,6 @@ namespace AAEmu.Launcher
                             serverPort = defaultAuthPort;
                         }
                     }
-
-                    // Mutex mutUser = new Mutex(false, "archeage_auth_ticket_event");
-                    // mutex name might be: archeage_auth_ticket_event
 
                     if (Setting.SaveLoginAndPassword)
                         SaveSettings();
@@ -1474,7 +1463,7 @@ namespace AAEmu.Launcher
                 }
                 catch
                 {
-                    //Console.Write("Unable to save client lookup data to :\n" + launcherOpenedConfigFile);
+                    // Unable to save client lookup data
                 }
             }
         }
@@ -1522,14 +1511,13 @@ namespace AAEmu.Launcher
                 {
                     launcherOpenedConfigFile = Path.Combine(Application.StartupPath,launcherDefaultConfigFile);
                 }
-                //Console.Write("Saving Settings to "+ launcherOpenedConfigFile +" :\n" + SettingJson);
                 try
                 {
                     File.WriteAllText(launcherOpenedConfigFile, SettingsJsonData);
                 }
                 catch
                 {
-                    //Console.Write("Unable to save settings to :\n" + launcherOpenedConfigFile);
+                    // Unable to save settings
                 }
             }
         }
@@ -1695,7 +1683,6 @@ namespace AAEmu.Launcher
                 //Get the path of specified file
                 Setting.PathToGame = openFileDialog.FileName;
                 lGamePath.Text = Setting.PathToGame;
-                // Console.WriteLine(openFileDialog.OpenFile());
                 GuessAndUpdateClientType();
                 break;
             }
@@ -1950,7 +1937,6 @@ namespace AAEmu.Launcher
         {
             if (ClientLookup.ServerNames.Count != ClientLookup.ClientLocations.Count)
             {
-                //Console.WriteLine("Error in client lookup file, array size mismatch ! Clearing settings");
                 ClientLookup.ServerNames.Clear();
                 ClientLookup.ClientLocations.Clear();
             }
@@ -2305,7 +2291,6 @@ namespace AAEmu.Launcher
         private void swapLanguageToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Setting.LauncherLang = ((ToolStripMenuItem)sender).Tag.ToString();
-            //Console.WriteLine("Updating Language: {0}", Setting.LauncherLang);
             ApplyLanguageToLauncher();
             btnLauncherLangChange.Refresh();
         }
@@ -2343,7 +2328,6 @@ namespace AAEmu.Launcher
         private void miLocaleLanguageChange_Click(object sender, EventArgs e)
         {
             Setting.Lang = ((ToolStripMenuItem)sender).Tag.ToString();
-            //Console.WriteLine("Updating Locale Language: {0}", Setting.Lang);
             UpdateLocaleLanguage();
             btnLocaleLang.Refresh();
         }
@@ -2445,7 +2429,7 @@ namespace AAEmu.Launcher
                 }
                 catch
                 {
-                    // Console.WriteLine("Error loading " + newsItem.itemAttributes.itemPicture + " into " + cacheFileName);
+                    // Error loading " + newsItem.itemAttributes.itemPicture + " into " + cacheFileName
                 }
 
             }
