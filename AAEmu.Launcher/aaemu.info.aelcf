@@ -1,9 +1,9 @@
 {
-  "configName": "AAEmu.info V1.2 Test Server",
+  "configName": "AAEmu.info V1.2 Public Test Server",
   "lang": "en_us",
   "launcherLang": "en_us",
   "pathToGame": "",
-  "serverIPAddress": "94.249.167.67",
+  "serverIPAddress": "23.95.226.188",
   "saveLoginAndPassword": "True",
   "skipIntro": "False",
   "hideSplashLogo": "False",
@@ -13,7 +13,7 @@
   "updateLocale": "True",
   "allowGameUpdates": "False",
   "serverGameUpdateURL": "",
-  "serverWebsiteURL": "https://aaemu.info/",
-  "serverNewsFeedURL": "https://aaemu.info/api/articles",
+  "serverWebsiteURL": "",
+  "serverNewsFeedURL": "",
   "userHistory": []
 }

@@ -1,15 +1,14 @@
 {
-  "configVersion": 1,
-  "configName": "",
+  "configName": "AAEmu 1.2 Public Test Server",
   "lang": "en_us",
-  "launcherlang": "en_us",
+  "launcherLang": "en_us",
   "pathToGame": "",
-  "serverIPAddress": "127.0.0.1",
-  "saveLoginAndPassword": true,
+  "serverIPAddress": "23.95.226.188",
+  "saveLoginAndPassword": false,
   "skipIntro": false,
   "hideSplashLogo": false,
-  "lastLoginUser": "test",
-  "lastLoginPass": "test",
+  "lastLoginUser": "",
+  "lastLoginPass": "",
   "loginType": "trino_1_2",
   "updateLocale": true,
   "allowGameUpdates": false,
@@ -18,5 +17,5 @@
   "serverNewsFeedURL": "",
   "serverDiscordURL": "",
   "serverDiscordName": "",
-  "userHistory": [ "test" ]
+  "userHistory": []
 }

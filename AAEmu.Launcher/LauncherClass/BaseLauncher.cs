@@ -6,9 +6,11 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Diagnostics;
+using AAPakEditor;
 
 namespace AAEmu.Launcher.Basic
 {
+    [AALauncher("","Base Launcher","0.0","00000000")]
     public partial class AAEmuLauncherBase
     {
         public string UserName { get; set; }
@@ -25,6 +27,8 @@ namespace AAEmu.Launcher.Basic
         public Process RunningProcess { get; protected set; }
         protected string _passwordHash { get; set; }
         protected string LaunchVerb { get; set; }
+
+        static public List<AALauncherContainer> AllLaunchers = new List<AALauncherContainer>();
 
         public AAEmuLauncherBase()
         {
@@ -120,6 +124,138 @@ namespace AAEmu.Launcher.Basic
             return true;
         }
 
+        static public void RegisterLaunchers()
+        {
+            var types = from t in AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes())
+                        where t.GetCustomAttributes(typeof(AALauncherAttribute), false).Count() > 0
+                        select t;
+
+            AllLaunchers.Clear();
+
+            // process each type to force initialise it
+            foreach (var type in types)
+            {
+                var attribs = type.GetCustomAttributes(typeof(AALauncherAttribute), false);
+                foreach (AALauncherAttribute a in attribs)
+                {
+                    var nl = new AALauncherContainer();
+                    nl.ConfigName = a.ConfigName;
+                    nl.DisplayName = a.DisplayName;
+                    nl.MinimumVersion = a.MinimumVersion;
+                    nl.MinimumWorldDate = a.MinimumWorldDate;
+                    nl.LauncherClass = type;
+                    AllLaunchers.Add(nl);
+                }
+            }
+            
+        }
+
+    }
+
+    internal class AALauncherAttribute : Attribute
+    {
+        // Keep a variable internally ...
+        protected string _configName;
+        protected string _displayName;
+        protected string _minimumVersion;
+        private DateTime _minimumWorldDate;
+
+        public string ConfigName { get => _configName; set => _configName = value; }
+        public string DisplayName { get => _displayName; set => _displayName = value; }
+        public string MinimumVersion { get => _minimumVersion; set => _minimumVersion = value; }
+        public DateTime MinimumWorldDate { get => _minimumWorldDate; set => _minimumWorldDate = value; }
+
+        // The constructor is called when the attribute is set.
+        public AALauncherAttribute(string configname, string displayname, string minimumversion, string minimumDateYYYYMMDD)
+        {
+            _configName = configname;
+            _displayName = displayname;
+            _minimumVersion = minimumversion;
+            DateTime dt ;
+            try
+            {
+                var y = int.Parse(minimumDateYYYYMMDD.Substring(0, 4));
+                var m = int.Parse(minimumDateYYYYMMDD.Substring(4, 2));
+                var d = int.Parse(minimumDateYYYYMMDD.Substring(6, 2));
+                dt = new DateTime(y, m, d);
+            }
+            catch
+            {
+                dt = DateTime.MinValue;
+            }
+            _minimumWorldDate = dt;
+        }
+    }
+
+    public class AALauncherContainer
+    {
+        public Type LauncherClass;
+        public string ConfigName;
+        public string DisplayName;
+        public string MinimumVersion;
+        public DateTime MinimumWorldDate;
+    }
+
+    public class AAAutoDetectClient
+    {
+        static public string GuessLauncher(string archeAgeExeFile)
+        {
+            // Check if main exe and game_pak exist
+            if (!File.Exists(archeAgeExeFile))
+                return string.Empty;
+            var pakFileName = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(archeAgeExeFile)), "game_pak");
+            if (!File.Exists(pakFileName))
+                return string.Empty;
+
+            var res = string.Empty;
+            try
+            {
+                // Check by .exe version
+                var versionInfo = FileVersionInfo.GetVersionInfo(archeAgeExeFile);
+                string version = string.Join(".",versionInfo.FileVersion.Replace(" ","").Split(',')); // Will typically return "1.0.0.0" in your case
+
+                if (string.Compare(version, "2.9") > 0)
+                {
+                    // For more recent versions, checking the .exe should be enough to be accurate
+                    var v = "";
+                    foreach (var l in AAEmuLauncherBase.AllLaunchers)
+                    {
+                        if ((string.Compare(version, l.MinimumVersion, true) > 0) && (string.Compare(version, v, true) > 0))
+                        {
+                            v = l.MinimumVersion;
+                            res = l.ConfigName;
+                        }
+                    }
+
+                }
+                else
+                {
+                    // For older versions, it's best to check inside the game_pak
+
+                    // Check by game_pak/game/worlds/main_world/world.xml 's create date
+                    var pak = new AAPak(pakFileName, true);
+                    AAPakFileInfo worldInfo = null;
+                    var dt = DateTime.MinValue;
+                    if (pak.GetFileByName("game/worlds/main_world/world.xml", ref worldInfo))
+                    {
+                        var worldTime = DateTime.FromFileTime(worldInfo.createTime);
+                        foreach (var l in AAEmuLauncherBase.AllLaunchers)
+                        {
+                            if ((worldTime > dt) && (worldTime > l.MinimumWorldDate))
+                            {
+                                dt = l.MinimumWorldDate;
+                                res = l.ConfigName;
+                            }
+                        }
+                    }
+                    pak.ClosePak();
+                }
+
+            }
+            catch { }
+
+            return res;
+        }
     }
 
     internal class Win32

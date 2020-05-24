@@ -244,4 +244,22 @@
   <data name="bg_patch" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Res\bg_patch.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="btn_exit" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\btn_exit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btn_exit_active" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\btn_exit_active.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btn_minimize" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\btn_minimize.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btn_minimize_active" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\btn_minimize_active.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btn_aaemu" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\btn_aaemu.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="btn_aaemu_active" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Res\btn_aaemu_active.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

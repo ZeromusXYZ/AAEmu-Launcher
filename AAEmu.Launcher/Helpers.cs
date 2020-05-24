@@ -149,44 +149,44 @@ namespace AAEmu.Launcher
     public struct AAEmuNewsFeedLinksItem
     {
         [JsonProperty("self")]
-        public string self { get; set; }
+        public string Self { get; set; }
     }
 
     public struct AAEmuNewsFeedDataItemAttributes
     {
 
         [JsonProperty("picture")]
-        public string itemPicture { get; set; }
+        public string ItemPicture { get; set; }
         [JsonProperty("title")]
-        public string itemTitle { get; set; }
+        public string ItemTitle { get; set; }
         [JsonProperty("body")]
-        public string itemBody { get; set; }
+        public string ItemBody { get; set; }
         [JsonProperty("new")]
-        public string itemIsNew { get; set; }
+        public string ItemIsNew { get; set; }
         [JsonProperty("links")]
-        public AAEmuNewsFeedLinksItem itemLinks { get; set; }
+        public AAEmuNewsFeedLinksItem ItemLinks { get; set; }
     }
 
     public struct AAEmuNewsFeedDataItem
     {
         [JsonProperty("type")]
-        public string itemType { get; set; }
+        public string ItemType { get; set; }
 
         [JsonProperty("id")]
-        public int itemID { get; set; }
+        public int ItemID { get; set; }
 
         [JsonProperty("attributes")]
-        public AAEmuNewsFeedDataItemAttributes itemAttributes { get; set; }
+        public AAEmuNewsFeedDataItemAttributes ItemAttributes { get; set; }
 
     }
 
     public partial class AAEmuNewsFeed
     {
         [JsonProperty("data")]
-        public List<AAEmuNewsFeedDataItem> data { get; set; }
+        public List<AAEmuNewsFeedDataItem> Data { get; set; }
 
         [JsonProperty("links")]
-        public AAEmuNewsFeedLinksItem links { get; set; }
+        public AAEmuNewsFeedLinksItem Links { get; set; }
     }
 
     public class PakFileInfo
@@ -287,9 +287,9 @@ namespace AAEmu.Launcher
             return (int)p;
         }
 
-        public static string DateTimeToPAtchDateTimeStr(DateTime aTime)
+        public static string DateTimeToPatchDateTimeStr(DateTime aTime)
         {
-            string res = "";
+            string res ;
             try
             {
                 res = aTime.ToString("yyyyMMdd-HHmmss");
@@ -303,31 +303,21 @@ namespace AAEmu.Launcher
 
         public static long PatchDateTimeStrToFILETIME(string encodedString)
         {
-            long res = 0;
-
-            int yyyy = 0;
-            int mm = 0;
-            int dd = 0;
-            int hh = 0;
-            int nn = 0;
-            int ss = 0;
-
             try
             {
-                if (!int.TryParse(encodedString.Substring(0, 4), out yyyy)) yyyy = 0;
-                if (!int.TryParse(encodedString.Substring(4, 2), out mm)) mm = 0;
-                if (!int.TryParse(encodedString.Substring(6, 2), out dd)) dd = 0;
-                if (!int.TryParse(encodedString.Substring(9, 2), out hh)) hh = 0;
-                if (!int.TryParse(encodedString.Substring(11, 2), out nn)) nn = 0;
-                if (!int.TryParse(encodedString.Substring(13, 2), out ss)) ss = 0;
+                if (!int.TryParse(encodedString.Substring(0, 4), out var yyyy)) yyyy = 0;
+                if (!int.TryParse(encodedString.Substring(4, 2), out var mm)) mm = 0;
+                if (!int.TryParse(encodedString.Substring(6, 2), out var dd)) dd = 0;
+                if (!int.TryParse(encodedString.Substring(9, 2), out var hh)) hh = 0;
+                if (!int.TryParse(encodedString.Substring(11, 2), out var nn)) nn = 0;
+                if (!int.TryParse(encodedString.Substring(13, 2), out var ss)) ss = 0;
 
-                res = (new DateTime(yyyy, mm, dd, hh, nn, ss)).ToFileTime();
+                return (new DateTime(yyyy, mm, dd, hh, nn, ss)).ToFileTime();
             }
             catch
             {
-                res = 0;
+                return 0;
             }
-            return res;
         }
 
     }
