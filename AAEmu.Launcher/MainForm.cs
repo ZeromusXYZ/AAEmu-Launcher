@@ -1112,6 +1112,8 @@ namespace AAEmu.Launcher
                 nextServerCheck = -1;
                 Application.UseWaitCursor = false;
             }
+
+            UpdatePanelLabels();
         }
 
         private bool LoadClientLookup()
@@ -1181,6 +1183,7 @@ namespace AAEmu.Launcher
 
         private void UpdatePanelLabels()
         {
+            lLoadedConfig.Text = Setting.ConfigName;
             lGamePath.Text = Setting.PathToGame;
             eServerIP.Text = Setting.ServerIpAddress;
 
