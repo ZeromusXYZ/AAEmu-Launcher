@@ -1303,7 +1303,7 @@ namespace AAEmu.Launcher
                     aaLauncher.LoginServerAdress = serverIP;
                     aaLauncher.LoginServerPort = serverPort;
                     aaLauncher.GameExeFilePath = Setting.PathToGame;
-                    if (Setting.UpdateLocale)
+                    // if (Setting.UpdateLocale)
                         aaLauncher.Locale = Setting.Lang;
                     aaLauncher.HShieldArgs = "+acpxmk";
 
