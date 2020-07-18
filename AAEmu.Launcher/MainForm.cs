@@ -747,6 +747,9 @@ namespace AAEmu.Launcher
                 case settingsLangFR:
                     btnLauncherLangChange.Image = Properties.Resources.flag_fr;
                     break;
+                case settingsLangZH_TW:
+                    btnLauncherLangChange.Image = Properties.Resources.flag_tw;
+                    break;
                 case settingsLangEN_US:
                 default:
                     Setting.LauncherLang = settingsLangEN_US;
@@ -821,6 +824,9 @@ namespace AAEmu.Launcher
                 case settingsLangJP:
                     btnLocaleLang.Image = Properties.Resources.mini_locale_jp;
                     break;
+                case settingsLangZH_TW:
+                    btnLocaleLang.Image = Properties.Resources.mini_locale_tw;
+                    break;
                 case settingsLangEN_US:
                 default:
                     Setting.Lang = settingsLangEN_US;
@@ -829,25 +835,6 @@ namespace AAEmu.Launcher
             }
 
             btnLocaleLang.Refresh();
-        }
-
-
-        private void PicButLangChange_Click(object sender, EventArgs e)
-        {
-            switch (Setting.LauncherLang)
-            {
-                case settingsLangRU:
-                    Setting.LauncherLang = settingsLangEN_US;
-                    break;
-                case settingsLangEN_US:
-                    Setting.LauncherLang = settingsLangDE;
-                    break;
-                case settingsLangDE:
-                    Setting.LauncherLang = settingsLangRU;
-                    break;
-            }
-            ApplyLanguageToLauncher();
-            btnLauncherLangChange.Refresh();
         }
 
         private void PicButGithub_MouseEnter(object sender, EventArgs e)

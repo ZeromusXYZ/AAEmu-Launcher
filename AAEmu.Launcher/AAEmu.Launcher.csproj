@@ -177,6 +177,9 @@
     <None Include="lng\en_us.lng">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="lng\zh_tw.lng">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Properties\app.manifest" />
     <None Include="settings.aelcf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -221,6 +224,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="aaemu.ico" />
+    <None Include="Res\mini_locale_tw.png" />
     <None Include="Res\btn_aaemu_active.png" />
     <None Include="Res\btn_aaemu.png" />
     <None Include="Res\btn_minimize_active.png" />
