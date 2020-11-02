@@ -15,7 +15,7 @@ namespace AAPakEditor
     /// <summary>
     /// File Details Block
     /// </summary>
-    public class AAPakFileInfo
+    public class AAPakFileInfo : IComparable
     {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 0x108)] public string name;
         public Int64 offset;
@@ -27,6 +27,11 @@ namespace AAPakEditor
         public Int64 createTime;
         public Int64 modifyTime;
         public UInt64 dummy2; // looks like padding to fill out the block, observed 0
+
+        public int CompareTo(object obj)
+        {
+            return name.CompareTo(((AAPakFileInfo)obj).name);
+        }
     }
 
     /// <summary>

@@ -3105,6 +3105,7 @@ namespace AAEmu.Launcher
                 aaPatcher.FileDownloadSizeDownloaded += pfi.size;
 
                 // always export files inside bin32
+                var exportErrorCount = 0;
                 if ((pfi.name.Length > bin32Dir.Length) && (pfi.name.Substring(0, bin32Dir.Length) == bin32Dir))
                 {
                     try
@@ -3125,12 +3126,15 @@ namespace AAEmu.Launcher
                     }
                     catch
                     {
-                        aaPatcher.Fase = PatchFase.Error;
-                        aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportFile, pfi.name);
                         exportStream.Dispose();
-                        return;
+                        exportErrorCount++;
                     }
 
+                    if (exportErrorCount > 0)
+                    {
+                        // aaPatcher.Fase = PatchFase.Error;
+                        aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportFile, pfi.name);
+                    }
                 }
 
                 // export compact.sqlite3 if it's not encrypted
