@@ -3108,31 +3108,58 @@ namespace AAEmu.Launcher
                 var exportErrorCount = 0;
                 if ((pfi.name.Length > bin32Dir.Length) && (pfi.name.Substring(0, bin32Dir.Length) == bin32Dir))
                 {
-                    try
+                    var fileOK = true;
+                    while (fileOK)
                     {
-                        var destName = aaPatcher.localGameFolder + pfi.name.Replace('/', Path.DirectorySeparatorChar);
-                        Directory.CreateDirectory(Path.GetDirectoryName(destName));
-                        FileStream fs = new FileStream(destName, FileMode.Create);
-                        exportStream.Position = 0;
+                        fileOK = false;
+                        try
+                        {
+                            var destName = aaPatcher.localGameFolder + pfi.name.Replace('/', Path.DirectorySeparatorChar);
+                            Directory.CreateDirectory(Path.GetDirectoryName(destName));
+                            FileStream fs = new FileStream(destName, FileMode.Create);
+                            exportStream.Position = 0;
 
-                        exportStream.CopyTo(fs);
+                            exportStream.CopyTo(fs);
 
-                        fs.Dispose();
+                            fs.Dispose();
 
-                        // Update file details
-                        File.SetCreationTime(destName, DateTime.FromFileTime(pfi.createTime));
-                        File.SetLastWriteTime(destName, DateTime.FromFileTime(pfi.modifyTime));
-                        aaPatcher.FileDownloadSizeDownloaded += pfi.size;
-                    }
-                    catch
-                    {
-                        exportStream.Dispose();
-                        exportErrorCount++;
+                            // Update file details
+                            File.SetCreationTime(destName, DateTime.FromFileTime(pfi.createTime));
+                            File.SetLastWriteTime(destName, DateTime.FromFileTime(pfi.modifyTime));
+                            aaPatcher.FileDownloadSizeDownloaded += pfi.size;
+                            fileOK = true;
+                        }
+                        catch
+                        {
+                            exportStream.Dispose();
+                        }
+
+                        if (!fileOK)
+                        {
+                            // Something went wrong while exporting
+                            var retryRes = MessageBox.Show(string.Format(L.ErrorPatchExportFile, pfi.name), L.AddFiles, MessageBoxButtons.AbortRetryIgnore);
+                            switch(retryRes)
+                            {
+                                case DialogResult.Retry:
+                                    fileOK = false;
+                                    break;
+                                case DialogResult.Abort:
+                                    exportErrorCount++;
+                                    aaPatcher.Fase = PatchFase.Error;
+                                    aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportFile, pfi.name);
+                                    break;
+                                case DialogResult.Ignore:
+                                    fileOK = true;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
                     }
 
                     if (exportErrorCount > 0)
                     {
-                        // aaPatcher.Fase = PatchFase.Error;
+                        aaPatcher.Fase = PatchFase.Error;
                         aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportFile, pfi.name);
                     }
                 }
@@ -3140,28 +3167,56 @@ namespace AAEmu.Launcher
                 // export compact.sqlite3 if it's not encrypted
                 if ((pfi.name == dbNameInPak) && (exportDBAsWell))
                 {
-                    try
+                    var fileOK = true;
+                    while (fileOK)
                     {
-                        var destName = aaPatcher.localGameFolder + pfi.name.Replace('/', Path.DirectorySeparatorChar);
-                        Directory.CreateDirectory(Path.GetDirectoryName(destName));
-                        FileStream fs = new FileStream(destName, FileMode.Create);
-                        exportStream.Position = 0;
+                        fileOK = false;
+                        try
+                        {
+                            var destName = aaPatcher.localGameFolder + pfi.name.Replace('/', Path.DirectorySeparatorChar);
+                            Directory.CreateDirectory(Path.GetDirectoryName(destName));
+                            FileStream fs = new FileStream(destName, FileMode.Create);
+                            exportStream.Position = 0;
 
-                        exportStream.CopyTo(fs);
+                            exportStream.CopyTo(fs);
 
-                        fs.Dispose();
+                            fs.Dispose();
 
-                        // Update file details
-                        File.SetCreationTime(destName, DateTime.FromFileTime(pfi.createTime));
-                        File.SetLastWriteTime(destName, DateTime.FromFileTime(pfi.modifyTime));
-                        aaPatcher.FileDownloadSizeDownloaded += pfi.size;
-                    }
-                    catch
-                    {
-                        aaPatcher.Fase = PatchFase.Error;
-                        aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportDB, pfi.name);
-                        exportStream.Dispose();
-                        return;
+                            // Update file details
+                            File.SetCreationTime(destName, DateTime.FromFileTime(pfi.createTime));
+                            File.SetLastWriteTime(destName, DateTime.FromFileTime(pfi.modifyTime));
+                            aaPatcher.FileDownloadSizeDownloaded += pfi.size;
+                            fileOK = true;
+                        }
+                        catch
+                        {
+                            //aaPatcher.Fase = PatchFase.Error;
+                            //aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportDB, pfi.name);
+                            exportStream.Dispose();
+                            return;
+                        }
+
+                        if (!fileOK)
+                        {
+                            // Something went wrong while exporting
+                            var retryRes = MessageBox.Show(string.Format(L.ErrorPatchExportFile, pfi.name), L.AddFiles, MessageBoxButtons.AbortRetryIgnore);
+                            switch (retryRes)
+                            {
+                                case DialogResult.Retry:
+                                    fileOK = false;
+                                    break;
+                                case DialogResult.Abort:
+                                    aaPatcher.Fase = PatchFase.Error;
+                                    aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportDB, pfi.name);
+                                    break;
+                                case DialogResult.Ignore:
+                                    fileOK = true;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
                     }
                 }
                 if (exportStream != null)
