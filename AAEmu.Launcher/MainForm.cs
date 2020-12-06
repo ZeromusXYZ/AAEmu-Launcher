@@ -750,6 +750,9 @@ namespace AAEmu.Launcher
                 case settingsLangZH_TW:
                     btnLauncherLangChange.Image = Properties.Resources.flag_traditional_chinese;
                     break;
+                case settingsLangZH_CN:
+                    btnLauncherLangChange.Image = Properties.Resources.flag_cn;
+                    break;
                 case settingsLangEN_US:
                 default:
                     Setting.LauncherLang = settingsLangEN_US;
@@ -826,6 +829,9 @@ namespace AAEmu.Launcher
                     break;
                 case settingsLangZH_TW:
                     btnLocaleLang.Image = Properties.Resources.mini_locale_traditional_chinese;
+                    break;
+                case settingsLangZH_CN:
+                    btnLocaleLang.Image = Properties.Resources.mini_locale_cn;
                     break;
                 case settingsLangEN_US:
                 default:
