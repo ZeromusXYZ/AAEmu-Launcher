@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\AAEmu.Launcher\AAPak.cs" Link="AAPak.cs" />
+    <Compile Include="..\AAEmu.Launcher\LauncherClass\BaseLauncher.cs" Link="LauncherClass\BaseLauncher.cs" />
+    <Compile Include="..\AAEmu.Launcher\LauncherClass\Trion12Launcher.cs" Link="LauncherClass\Trion12Launcher.cs" />
+    <Compile Include="..\AAEmu.Launcher\SubStream.cs" Link="SubStream.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="LauncherClass\" />
+  </ItemGroup>
+
+</Project>
