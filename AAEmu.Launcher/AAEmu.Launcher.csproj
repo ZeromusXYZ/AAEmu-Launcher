@@ -111,6 +111,7 @@
     <Compile Include="InfoPopupForm.Designer.cs">
       <DependentUpon>InfoPopupForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="LauncherClass\Trion70Launcher.cs" />
     <Compile Include="LauncherClass\Trion60Launcher.cs" />
     <Compile Include="LauncherClass\Trion35Launcher.cs" />
     <Compile Include="LauncherClass\Trion12Launcher.cs" />
