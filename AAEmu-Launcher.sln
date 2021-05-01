@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.156
@@ -6,6 +6,8 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AAEmu.Launcher", "AAEmu.Launcher\AAEmu.Launcher.csproj", "{87D932EE-7A63-488D-8D69-3F8440B5B9C8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AAEmu.Patch", "AAEmu.Patch\AAEmu.Patch.csproj", "{D4C199E9-67DF-41A3-B7CC-A9DCB424DC33}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AAEmu.LauncherExample", "AAEmu.LauncherExample\AAEmu.LauncherExample.csproj", "{F8F71866-F923-4384-B623-A2136F5CA033}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{D4C199E9-67DF-41A3-B7CC-A9DCB424DC33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4C199E9-67DF-41A3-B7CC-A9DCB424DC33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4C199E9-67DF-41A3-B7CC-A9DCB424DC33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8F71866-F923-4384-B623-A2136F5CA033}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8F71866-F923-4384-B623-A2136F5CA033}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8F71866-F923-4384-B623-A2136F5CA033}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8F71866-F923-4384-B623-A2136F5CA033}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

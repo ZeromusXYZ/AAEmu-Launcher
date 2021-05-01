@@ -44,63 +44,68 @@ namespace AAEmu.Launcher
         public partial class LauncherFileSettings
         {
             [JsonProperty("configVersion", NullValueHandling = NullValueHandling.Ignore)]
-            public int ConfigVersion { get; set; }
+            public int ConfigVersion { get; set; } = 0;
+
             [JsonProperty("configName", NullValueHandling = NullValueHandling.Ignore)]
-            public string ConfigName { get; set; }
+            public string ConfigName { get; set; } = string.Empty;
 
             [JsonProperty("lang", NullValueHandling = NullValueHandling.Ignore)]
-            public string Lang { get; set; }
+            public string Lang { get; set; } = settingsLangEN_US;
 
             [JsonProperty("launcherLang", NullValueHandling = NullValueHandling.Ignore)]
-            public string LauncherLang { get; set; }
+            public string LauncherLang { get; set; } = settingsLangEN_US;
 
             [JsonProperty("pathToGame", NullValueHandling = NullValueHandling.Ignore)]
-            public string PathToGame { get; set; }
+            public string PathToGame { get; set; } = string.Empty;
 
             [JsonProperty("serverIPAddress", NullValueHandling = NullValueHandling.Ignore)]
-            public string ServerIpAddress { get; set; }
+            public string ServerIpAddress { get; set; } = "127.0.0.1";
 
             [JsonProperty("saveLoginAndPassword", NullValueHandling = NullValueHandling.Ignore)]
-            public bool SaveLoginAndPassword { get; set; }
+            public bool SaveLoginAndPassword { get; set; } = false;
 
             [JsonProperty("skipIntro", NullValueHandling = NullValueHandling.Ignore)]
-            public bool SkipIntro { get; set; }
+            public bool SkipIntro { get; set; } = false;
 
             [JsonProperty("hideSplashLogo", NullValueHandling = NullValueHandling.Ignore)]
-            public bool HideSplashLogo { get; set; }
+            public bool HideSplashLogo { get; set; } = false;
 
             [JsonProperty("lastLoginUser", NullValueHandling = NullValueHandling.Ignore)]
-            public string LastLoginUser { get; set; }
+            public string LastLoginUser { get; set; } = string.Empty;
 
             [JsonProperty("lastLoginPass", NullValueHandling = NullValueHandling.Ignore)]
-            public string LastLoginPass { get; set; }
+            public string LastLoginPass { get; set; } = string.Empty;
 
             [JsonProperty("loginType", NullValueHandling = NullValueHandling.Ignore)]
-            public string ClientLoginType { get; set; }
+            public string ClientLoginType { get; set; } = stringTrino_1_2;
 
             [JsonProperty("updateLocale", NullValueHandling = NullValueHandling.Ignore)]
-            public bool UpdateLocale { get; set; }
+            public bool UpdateLocale { get; set; } = true;
 
             [JsonProperty("allowGameUpdates", NullValueHandling = NullValueHandling.Ignore)]
-            public bool AllowGameUpdates { get; set; }
+            public bool AllowGameUpdates { get; set; } = false;
 
             [JsonProperty("serverGameUpdateURL", NullValueHandling = NullValueHandling.Ignore)]
-            public string ServerGameUpdateURL { get; set; }
+            public string ServerGameUpdateURL { get; set; } = string.Empty;
 
             [JsonProperty("serverWebsiteURL", NullValueHandling = NullValueHandling.Ignore)]
-            public string ServerWebSiteURL { get; set; }
+            public string ServerWebSiteURL { get; set; } = string.Empty;
 
             [JsonProperty("serverNewsFeedURL", NullValueHandling = NullValueHandling.Ignore)]
-            public string ServerNewsFeedURL { get; set; }
+            public string ServerNewsFeedURL { get; set; } = string.Empty;
 
             [JsonProperty("serverDiscordURL", NullValueHandling = NullValueHandling.Ignore)]
-            public string ServerDiscordURL { get; set; }
+            public string ServerDiscordURL { get; set; } = string.Empty;
 
             [JsonProperty("serverDiscordName", NullValueHandling = NullValueHandling.Ignore)]
-            public string ServerDiscordName { get; set; }
+            public string ServerDiscordName { get; set; } = string.Empty;
 
             [JsonProperty("userHistory", NullValueHandling = NullValueHandling.Ignore)]
-            public List<string> UserHistory { get; set; }
+            public List<string> UserHistory { get; set; } = new List<string>();
+
+            [JsonProperty("autoLaunch", NullValueHandling = NullValueHandling.Ignore)]
+            public bool AutoLaunch { get; set; } = false;
+
 
             public LauncherFileSettings()
             {
@@ -136,10 +141,10 @@ namespace AAEmu.Launcher
         public partial class ClientLookupHelper
         {
             [JsonProperty("serverName")]
-            public List<string> ServerNames { get; set; }
+            public List<string> ServerNames { get; set; } = new List<string>();
 
             [JsonProperty("clientLocation")]
-            public List<string> ClientLocations { get; set; }
+            public List<string> ClientLocations { get; set; } = new List<string>();
         }
 
         // Some strings for our language settings
@@ -471,6 +476,10 @@ namespace AAEmu.Launcher
         private List<AAPakFileInfo> dlPakFileList = new List<AAPakFileInfo>();
         private LauncherOpenMode AppOpenMode = LauncherOpenMode.DefaultConfigFile;
 
+        // Auto Close
+        public int AutoCloseTimer { get; set; } = 0;
+        public bool DoAutoLaunch { get; set; } = false;
+
 
         public LauncherForm()
         {
@@ -747,6 +756,12 @@ namespace AAEmu.Launcher
                 case settingsLangFR:
                     btnLauncherLangChange.Image = Properties.Resources.flag_fr;
                     break;
+                case settingsLangZH_TW:
+                    btnLauncherLangChange.Image = Properties.Resources.flag_traditional_chinese;
+                    break;
+                case settingsLangZH_CN:
+                    btnLauncherLangChange.Image = Properties.Resources.flag_cn;
+                    break;
                 case settingsLangEN_US:
                 default:
                     Setting.LauncherLang = settingsLangEN_US;
@@ -821,6 +836,12 @@ namespace AAEmu.Launcher
                 case settingsLangJP:
                     btnLocaleLang.Image = Properties.Resources.mini_locale_jp;
                     break;
+                case settingsLangZH_TW:
+                    btnLocaleLang.Image = Properties.Resources.mini_locale_traditional_chinese;
+                    break;
+                case settingsLangZH_CN:
+                    btnLocaleLang.Image = Properties.Resources.mini_locale_cn;
+                    break;
                 case settingsLangEN_US:
                 default:
                     Setting.Lang = settingsLangEN_US;
@@ -829,25 +850,6 @@ namespace AAEmu.Launcher
             }
 
             btnLocaleLang.Refresh();
-        }
-
-
-        private void PicButLangChange_Click(object sender, EventArgs e)
-        {
-            switch (Setting.LauncherLang)
-            {
-                case settingsLangRU:
-                    Setting.LauncherLang = settingsLangEN_US;
-                    break;
-                case settingsLangEN_US:
-                    Setting.LauncherLang = settingsLangDE;
-                    break;
-                case settingsLangDE:
-                    Setting.LauncherLang = settingsLangRU;
-                    break;
-            }
-            ApplyLanguageToLauncher();
-            btnLauncherLangChange.Refresh();
         }
 
         private void PicButGithub_MouseEnter(object sender, EventArgs e)
@@ -909,6 +911,7 @@ namespace AAEmu.Launcher
 
         private void LauncherForm_Load(object sender, EventArgs e)
         {
+            // Grab my own version number from the assembly
             try
             {
                 var AppVer = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
@@ -925,19 +928,25 @@ namespace AAEmu.Launcher
             {
                 AppVersion = "0.0.0.0";
             }
-
             lAppVersion.Text = "V " + AppVersion;
 
+            // Default install working folder is C:\ArcheAge\Working
             DefaultGameWorkingDirectory = Path.Combine(Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System)), "ArcheAge", "Working");
             Application.UseWaitCursor = true;
+
+            // Register File Extensions to the Launcher
             RegisterFileExt();
+
             // Register All Launchers
             AAEmuLauncherBase.RegisterLaunchers();
             // Add them to the popup menu for launcher types
             foreach (var l in AAEmuLauncherBase.AllLaunchers)
                 if (l.ConfigName != string.Empty)
                     cmsAuthType.Items.Add(l.DisplayName, null, stAuthAuto_Click);
+
+            // Load application settings
             LauncherFileSettings.SetDefaultSettings(Setting);
+            // Load default language
             InitDefaultLanguage();
 
             // Helps to keep the editing window cleaner
@@ -968,6 +977,7 @@ namespace AAEmu.Launcher
                 }
             }
 
+            // Load the saved clients reference file
             LoadClientLookup();
 
             // Try URI Mode if selected
@@ -1112,6 +1122,7 @@ namespace AAEmu.Launcher
                 nextServerCheck = -1;
                 Application.UseWaitCursor = false;
             }
+            DoAutoLaunch = Setting.AutoLaunch;
 
             UpdatePanelLabels();
         }
@@ -1316,7 +1327,7 @@ namespace AAEmu.Launcher
                     aaLauncher.LoginServerAdress = serverIP;
                     aaLauncher.LoginServerPort = serverPort;
                     aaLauncher.GameExeFilePath = Setting.PathToGame;
-                    if (Setting.UpdateLocale)
+                    // if (Setting.UpdateLocale)
                         aaLauncher.Locale = Setting.Lang;
                     aaLauncher.HShieldArgs = "+acpxmk";
 
@@ -2159,7 +2170,7 @@ namespace AAEmu.Launcher
                 bigNewsTimer -= timerGeneral.Interval;
                 if (bigNewsTimer <= 0)
                 {
-                    bigNewsTimer += 1000 * 10 * 1; // 1 minute
+                    bigNewsTimer += 1000 * 60 * 1; // 1 minute
                     bigNewsIndex++;
                     if (bigNewsIndex >= newsFeed.Data.Count)
                     {
@@ -2175,6 +2186,16 @@ namespace AAEmu.Launcher
                 if (!bgwNewsFeed.IsBusy)
                 {
                     bgwNewsFeed.RunWorkerAsync();
+                }
+            }
+
+            if (AutoCloseTimer > 0)
+            {
+                AutoCloseTimer -= timerGeneral.Interval;
+                if (AutoCloseTimer <= 0)
+                {
+                    AutoCloseTimer = 0;
+                    Close();
                 }
             }
 
@@ -2244,6 +2265,12 @@ namespace AAEmu.Launcher
                 {
                     serverCheckStatus = serverCheck.Online;
                     nextServerCheck = (1000 * 60 * 2); // check every 2 minutes when connected
+                    if (DoAutoLaunch)
+                    {
+                        DoAutoLaunch = false;
+                        btnPlay_Click(null, null);
+                        AutoCloseTimer = (1000 * 10); // close after 10 seconds
+                    }
 
                 }
             }
@@ -3118,59 +3145,118 @@ namespace AAEmu.Launcher
                 aaPatcher.FileDownloadSizeDownloaded += pfi.size;
 
                 // always export files inside bin32
+                var exportErrorCount = 0;
                 if ((pfi.name.Length > bin32Dir.Length) && (pfi.name.Substring(0, bin32Dir.Length) == bin32Dir))
                 {
-                    try
+                    var fileOK = true;
+                    while (fileOK)
                     {
-                        var destName = aaPatcher.localGameFolder + pfi.name.Replace('/', Path.DirectorySeparatorChar);
-                        Directory.CreateDirectory(Path.GetDirectoryName(destName));
-                        FileStream fs = new FileStream(destName, FileMode.Create);
-                        exportStream.Position = 0;
+                        fileOK = false;
+                        try
+                        {
+                            var destName = aaPatcher.localGameFolder + pfi.name.Replace('/', Path.DirectorySeparatorChar);
+                            Directory.CreateDirectory(Path.GetDirectoryName(destName));
+                            FileStream fs = new FileStream(destName, FileMode.Create);
+                            exportStream.Position = 0;
 
-                        exportStream.CopyTo(fs);
+                            exportStream.CopyTo(fs);
 
-                        fs.Dispose();
+                            fs.Dispose();
 
-                        // Update file details
-                        File.SetCreationTime(destName, DateTime.FromFileTime(pfi.createTime));
-                        File.SetLastWriteTime(destName, DateTime.FromFileTime(pfi.modifyTime));
-                        aaPatcher.FileDownloadSizeDownloaded += pfi.size;
+                            // Update file details
+                            File.SetCreationTime(destName, DateTime.FromFileTime(pfi.createTime));
+                            File.SetLastWriteTime(destName, DateTime.FromFileTime(pfi.modifyTime));
+                            aaPatcher.FileDownloadSizeDownloaded += pfi.size;
+                            fileOK = true;
+                        }
+                        catch
+                        {
+                            exportStream.Dispose();
+                        }
+
+                        if (!fileOK)
+                        {
+                            // Something went wrong while exporting
+                            var retryRes = MessageBox.Show(string.Format(L.ErrorPatchExportFile, pfi.name), L.AddFiles, MessageBoxButtons.AbortRetryIgnore);
+                            switch(retryRes)
+                            {
+                                case DialogResult.Retry:
+                                    fileOK = false;
+                                    break;
+                                case DialogResult.Abort:
+                                    exportErrorCount++;
+                                    aaPatcher.Fase = PatchFase.Error;
+                                    aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportFile, pfi.name);
+                                    break;
+                                case DialogResult.Ignore:
+                                    fileOK = true;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
                     }
-                    catch
+
+                    if (exportErrorCount > 0)
                     {
                         aaPatcher.Fase = PatchFase.Error;
                         aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportFile, pfi.name);
-                        exportStream.Dispose();
-                        return;
                     }
-
                 }
 
                 // export compact.sqlite3 if it's not encrypted
                 if ((pfi.name == dbNameInPak) && (exportDBAsWell))
                 {
-                    try
+                    var fileOK = true;
+                    while (fileOK)
                     {
-                        var destName = aaPatcher.localGameFolder + pfi.name.Replace('/', Path.DirectorySeparatorChar);
-                        Directory.CreateDirectory(Path.GetDirectoryName(destName));
-                        FileStream fs = new FileStream(destName, FileMode.Create);
-                        exportStream.Position = 0;
+                        fileOK = false;
+                        try
+                        {
+                            var destName = aaPatcher.localGameFolder + pfi.name.Replace('/', Path.DirectorySeparatorChar);
+                            Directory.CreateDirectory(Path.GetDirectoryName(destName));
+                            FileStream fs = new FileStream(destName, FileMode.Create);
+                            exportStream.Position = 0;
 
-                        exportStream.CopyTo(fs);
+                            exportStream.CopyTo(fs);
 
-                        fs.Dispose();
+                            fs.Dispose();
 
-                        // Update file details
-                        File.SetCreationTime(destName, DateTime.FromFileTime(pfi.createTime));
-                        File.SetLastWriteTime(destName, DateTime.FromFileTime(pfi.modifyTime));
-                        aaPatcher.FileDownloadSizeDownloaded += pfi.size;
-                    }
-                    catch
-                    {
-                        aaPatcher.Fase = PatchFase.Error;
-                        aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportDB, pfi.name);
-                        exportStream.Dispose();
-                        return;
+                            // Update file details
+                            File.SetCreationTime(destName, DateTime.FromFileTime(pfi.createTime));
+                            File.SetLastWriteTime(destName, DateTime.FromFileTime(pfi.modifyTime));
+                            aaPatcher.FileDownloadSizeDownloaded += pfi.size;
+                            fileOK = true;
+                        }
+                        catch
+                        {
+                            //aaPatcher.Fase = PatchFase.Error;
+                            //aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportDB, pfi.name);
+                            exportStream.Dispose();
+                            return;
+                        }
+
+                        if (!fileOK)
+                        {
+                            // Something went wrong while exporting
+                            var retryRes = MessageBox.Show(string.Format(L.ErrorPatchExportFile, pfi.name), L.AddFiles, MessageBoxButtons.AbortRetryIgnore);
+                            switch (retryRes)
+                            {
+                                case DialogResult.Retry:
+                                    fileOK = false;
+                                    break;
+                                case DialogResult.Abort:
+                                    aaPatcher.Fase = PatchFase.Error;
+                                    aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportDB, pfi.name);
+                                    break;
+                                case DialogResult.Ignore:
+                                    fileOK = true;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
                     }
                 }
                 if (exportStream != null)

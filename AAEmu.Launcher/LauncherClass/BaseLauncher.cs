@@ -32,16 +32,16 @@ namespace AAEmu.Launcher.Basic
 
         public AAEmuLauncherBase()
         {
-            UserName = "";
-            _passwordHash = "";
+            UserName = string.Empty;
+            _passwordHash = string.Empty;
             GameExeFilePath = "C:\\ArcheAge\\Working\\Bin32\\ArcheAge.exe";
-            LaunchArguments = "";
-            ExtraArguments = "";
-            HShieldArgs = "";
+            LaunchArguments = string.Empty;
+            ExtraArguments = string.Empty;
+            HShieldArgs = string.Empty;
             LaunchVerb = "runas";
             LoginServerAdress = "127.0.0.1";
             LoginServerPort = 1237;
-            Locale = "";
+            Locale = string.Empty;
             RunningProcess = null;
         }
 
