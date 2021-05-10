@@ -102,6 +102,7 @@
             this.germanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.frenchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.traditionalChineseTaiwanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.simplifiedChineseToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsLocaleLanguage = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.miLocaleEnglish = new System.Windows.Forms.ToolStripMenuItem();
             this.miLocaleGerman = new System.Windows.Forms.ToolStripMenuItem();
@@ -111,6 +112,7 @@
             this.miLocaleKorean = new System.Windows.Forms.ToolStripMenuItem();
             this.japaneseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.traditionalChineseTaiwanToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.simplifiedChineseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnLocaleLang = new System.Windows.Forms.PictureBox();
             this.btnSystem = new System.Windows.Forms.PictureBox();
             this.btnDiscord = new System.Windows.Forms.PictureBox();
@@ -130,8 +132,9 @@
             this.stAuthAuto = new System.Windows.Forms.ToolStripMenuItem();
             this.btnClose = new System.Windows.Forms.PictureBox();
             this.btnMinimize = new System.Windows.Forms.PictureBox();
-            this.simplifiedChineseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.simplifiedChineseToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.ttLocale = new System.Windows.Forms.ToolTip(this.components);
+            this.s2ToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
+            this.unknownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelLoginAndPatch.SuspendLayout();
             this.pPatchSteps.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pgbFrontTotal)).BeginInit();
@@ -587,7 +590,7 @@
             this.generateServerURILinkToolStripMenuItem,
             this.debugModeToolStripMenuItem});
             this.cmsAAEmuButton.Name = "cmsAAEmuButton";
-            this.cmsAAEmuButton.Size = new System.Drawing.Size(223, 98);
+            this.cmsAAEmuButton.Size = new System.Drawing.Size(203, 98);
             // 
             // troubleshootGameToolStripMenuItem
             // 
@@ -601,20 +604,20 @@
             this.fixBin32StripMenuItem,
             this.toolStripMenuItem1});
             this.troubleshootGameToolStripMenuItem.Name = "troubleshootGameToolStripMenuItem";
-            this.troubleshootGameToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
+            this.troubleshootGameToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.troubleshootGameToolStripMenuItem.Text = "Troubleshoot Game";
             // 
             // deleteGameConfigurationToolStripMenuItem
             // 
             this.deleteGameConfigurationToolStripMenuItem.Name = "deleteGameConfigurationToolStripMenuItem";
-            this.deleteGameConfigurationToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.deleteGameConfigurationToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.deleteGameConfigurationToolStripMenuItem.Text = "Delete Game Settings";
             this.deleteGameConfigurationToolStripMenuItem.Click += new System.EventHandler(this.deleteGameConfigurationToolStripMenuItem_Click);
             // 
             // deleteShaderCacheToolStripMenuItem
             // 
             this.deleteShaderCacheToolStripMenuItem.Name = "deleteShaderCacheToolStripMenuItem";
-            this.deleteShaderCacheToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.deleteShaderCacheToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.deleteShaderCacheToolStripMenuItem.Text = "Delete Shader Cache";
             this.deleteShaderCacheToolStripMenuItem.Click += new System.EventHandler(this.deleteShaderCacheToolStripMenuItem_Click);
             // 
@@ -622,38 +625,38 @@
             // 
             this.deleteAllArcheAgeSettingsToolStripMenuItem.Enabled = false;
             this.deleteAllArcheAgeSettingsToolStripMenuItem.Name = "deleteAllArcheAgeSettingsToolStripMenuItem";
-            this.deleteAllArcheAgeSettingsToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.deleteAllArcheAgeSettingsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.deleteAllArcheAgeSettingsToolStripMenuItem.Text = "Delete all ArcheAge settings";
             this.deleteAllArcheAgeSettingsToolStripMenuItem.Visible = false;
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(236, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(218, 6);
             // 
             // directXtoolStripMenuItem
             // 
             this.directXtoolStripMenuItem.Name = "directXtoolStripMenuItem";
-            this.directXtoolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.directXtoolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.directXtoolStripMenuItem.Text = "DirectX 9";
             this.directXtoolStripMenuItem.Click += new System.EventHandler(this.DirectXtoolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(236, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(218, 6);
             // 
             // fixBin32StripMenuItem
             // 
             this.fixBin32StripMenuItem.Name = "fixBin32StripMenuItem";
-            this.fixBin32StripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.fixBin32StripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.fixBin32StripMenuItem.Text = "Fix bin32 and DB files";
             this.fixBin32StripMenuItem.Click += new System.EventHandler(this.fixBin32StripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(236, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(218, 6);
             // 
             // troubleshootLauncherToolStripMenuItem
             // 
@@ -661,39 +664,39 @@
             this.forcePatchDownloadToolStripMenuItem,
             this.skipPatchToolStripMenuItem});
             this.troubleshootLauncherToolStripMenuItem.Name = "troubleshootLauncherToolStripMenuItem";
-            this.troubleshootLauncherToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
+            this.troubleshootLauncherToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.troubleshootLauncherToolStripMenuItem.Text = "Troubleshoot Launcher";
             // 
             // forcePatchDownloadToolStripMenuItem
             // 
             this.forcePatchDownloadToolStripMenuItem.Name = "forcePatchDownloadToolStripMenuItem";
-            this.forcePatchDownloadToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.forcePatchDownloadToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.forcePatchDownloadToolStripMenuItem.Text = "Force Patch Download";
             this.forcePatchDownloadToolStripMenuItem.Click += new System.EventHandler(this.forcePatchDownloadToolStripMenuItem_Click);
             // 
             // skipPatchToolStripMenuItem
             // 
             this.skipPatchToolStripMenuItem.Name = "skipPatchToolStripMenuItem";
-            this.skipPatchToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.skipPatchToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.skipPatchToolStripMenuItem.Text = "Skip Patch";
             this.skipPatchToolStripMenuItem.Click += new System.EventHandler(this.skipPatchToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(219, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(199, 6);
             // 
             // generateServerURILinkToolStripMenuItem
             // 
             this.generateServerURILinkToolStripMenuItem.Name = "generateServerURILinkToolStripMenuItem";
-            this.generateServerURILinkToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
+            this.generateServerURILinkToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.generateServerURILinkToolStripMenuItem.Text = "Generate Server URI Link";
             this.generateServerURILinkToolStripMenuItem.Click += new System.EventHandler(this.generateServerURILinkToolStripMenuItem_Click);
             // 
             // debugModeToolStripMenuItem
             // 
             this.debugModeToolStripMenuItem.Name = "debugModeToolStripMenuItem";
-            this.debugModeToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
+            this.debugModeToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.debugModeToolStripMenuItem.Text = "Debug Mode";
             this.debugModeToolStripMenuItem.Visible = false;
             this.debugModeToolStripMenuItem.Click += new System.EventHandler(this.debugModeToolStripMenuItem_Click);
@@ -895,19 +898,19 @@
             this.aAEmuLauncherToolStripMenuItem,
             this.aAEmuServerToolStripMenuItem});
             this.cmsGitHub.Name = "cmsGitHub";
-            this.cmsGitHub.Size = new System.Drawing.Size(174, 48);
+            this.cmsGitHub.Size = new System.Drawing.Size(167, 48);
             // 
             // aAEmuLauncherToolStripMenuItem
             // 
             this.aAEmuLauncherToolStripMenuItem.Name = "aAEmuLauncherToolStripMenuItem";
-            this.aAEmuLauncherToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.aAEmuLauncherToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.aAEmuLauncherToolStripMenuItem.Text = "AAEmu Launcher";
             this.aAEmuLauncherToolStripMenuItem.Click += new System.EventHandler(this.aAEmuLauncherToolStripMenuItem_Click);
             // 
             // aAEmuServerToolStripMenuItem
             // 
             this.aAEmuServerToolStripMenuItem.Name = "aAEmuServerToolStripMenuItem";
-            this.aAEmuServerToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.aAEmuServerToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.aAEmuServerToolStripMenuItem.Text = "AAEmu Server";
             this.aAEmuServerToolStripMenuItem.Click += new System.EventHandler(this.aAEmuServerToolStripMenuItem_Click);
             // 
@@ -931,13 +934,13 @@
             this.traditionalChineseTaiwanToolStripMenuItem,
             this.simplifiedChineseToolStripMenuItem1});
             this.cmsLauncherLanguage.Name = "cmsLanguage";
-            this.cmsLauncherLanguage.Size = new System.Drawing.Size(181, 158);
+            this.cmsLauncherLanguage.Size = new System.Drawing.Size(124, 136);
             // 
             // englishToolStripMenuItem
             // 
             this.englishToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_english;
             this.englishToolStripMenuItem.Name = "englishToolStripMenuItem";
-            this.englishToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.englishToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.englishToolStripMenuItem.Tag = "en_us";
             this.englishToolStripMenuItem.Text = "English";
             this.englishToolStripMenuItem.Click += new System.EventHandler(this.swapLanguageToolStripMenuItem_Click);
@@ -946,7 +949,7 @@
             // 
             this.russianToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_ru;
             this.russianToolStripMenuItem.Name = "russianToolStripMenuItem";
-            this.russianToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.russianToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.russianToolStripMenuItem.Tag = "ru";
             this.russianToolStripMenuItem.Text = "Русский";
             this.russianToolStripMenuItem.Click += new System.EventHandler(this.swapLanguageToolStripMenuItem_Click);
@@ -955,7 +958,7 @@
             // 
             this.germanToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_de;
             this.germanToolStripMenuItem.Name = "germanToolStripMenuItem";
-            this.germanToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.germanToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.germanToolStripMenuItem.Tag = "de";
             this.germanToolStripMenuItem.Text = "Deutsch";
             this.germanToolStripMenuItem.Click += new System.EventHandler(this.swapLanguageToolStripMenuItem_Click);
@@ -964,7 +967,7 @@
             // 
             this.frenchToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_fr;
             this.frenchToolStripMenuItem.Name = "frenchToolStripMenuItem";
-            this.frenchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.frenchToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.frenchToolStripMenuItem.Tag = "fr";
             this.frenchToolStripMenuItem.Text = "Français";
             this.frenchToolStripMenuItem.Click += new System.EventHandler(this.swapLanguageToolStripMenuItem_Click);
@@ -973,10 +976,19 @@
             // 
             this.traditionalChineseTaiwanToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_traditional_chinese;
             this.traditionalChineseTaiwanToolStripMenuItem.Name = "traditionalChineseTaiwanToolStripMenuItem";
-            this.traditionalChineseTaiwanToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.traditionalChineseTaiwanToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.traditionalChineseTaiwanToolStripMenuItem.Tag = "zh_tw";
             this.traditionalChineseTaiwanToolStripMenuItem.Text = "繁體中文";
             this.traditionalChineseTaiwanToolStripMenuItem.Click += new System.EventHandler(this.swapLanguageToolStripMenuItem_Click);
+            // 
+            // simplifiedChineseToolStripMenuItem1
+            // 
+            this.simplifiedChineseToolStripMenuItem1.Image = global::AAEmu.Launcher.Properties.Resources.flag_cn;
+            this.simplifiedChineseToolStripMenuItem1.Name = "simplifiedChineseToolStripMenuItem1";
+            this.simplifiedChineseToolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
+            this.simplifiedChineseToolStripMenuItem1.Tag = "zh_cn";
+            this.simplifiedChineseToolStripMenuItem1.Text = "简体中文";
+            this.simplifiedChineseToolStripMenuItem1.Click += new System.EventHandler(this.swapLanguageToolStripMenuItem_Click);
             // 
             // cmsLocaleLanguage
             // 
@@ -989,15 +1001,17 @@
             this.miLocaleKorean,
             this.japaneseToolStripMenuItem,
             this.traditionalChineseTaiwanToolStripMenuItem1,
-            this.simplifiedChineseToolStripMenuItem});
+            this.simplifiedChineseToolStripMenuItem,
+            this.s2ToolStripMenuItem,
+            this.unknownToolStripMenuItem});
             this.cmsLocaleLanguage.Name = "cmsLanguage";
-            this.cmsLocaleLanguage.Size = new System.Drawing.Size(125, 186);
+            this.cmsLocaleLanguage.Size = new System.Drawing.Size(181, 236);
             // 
             // miLocaleEnglish
             // 
             this.miLocaleEnglish.Image = global::AAEmu.Launcher.Properties.Resources.flag_us;
             this.miLocaleEnglish.Name = "miLocaleEnglish";
-            this.miLocaleEnglish.Size = new System.Drawing.Size(124, 22);
+            this.miLocaleEnglish.Size = new System.Drawing.Size(180, 22);
             this.miLocaleEnglish.Tag = "en_us";
             this.miLocaleEnglish.Text = "English";
             this.miLocaleEnglish.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
@@ -1006,7 +1020,7 @@
             // 
             this.miLocaleGerman.Image = global::AAEmu.Launcher.Properties.Resources.flag_de;
             this.miLocaleGerman.Name = "miLocaleGerman";
-            this.miLocaleGerman.Size = new System.Drawing.Size(124, 22);
+            this.miLocaleGerman.Size = new System.Drawing.Size(180, 22);
             this.miLocaleGerman.Tag = "de";
             this.miLocaleGerman.Text = "Deutsch";
             this.miLocaleGerman.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
@@ -1015,7 +1029,7 @@
             // 
             this.miLocaleFrench.Image = global::AAEmu.Launcher.Properties.Resources.flag_fr;
             this.miLocaleFrench.Name = "miLocaleFrench";
-            this.miLocaleFrench.Size = new System.Drawing.Size(124, 22);
+            this.miLocaleFrench.Size = new System.Drawing.Size(180, 22);
             this.miLocaleFrench.Tag = "fr";
             this.miLocaleFrench.Text = "Français";
             this.miLocaleFrench.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
@@ -1023,13 +1037,13 @@
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(121, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
             // 
             // miLocaleRussian
             // 
             this.miLocaleRussian.Image = global::AAEmu.Launcher.Properties.Resources.flag_ru;
             this.miLocaleRussian.Name = "miLocaleRussian";
-            this.miLocaleRussian.Size = new System.Drawing.Size(124, 22);
+            this.miLocaleRussian.Size = new System.Drawing.Size(180, 22);
             this.miLocaleRussian.Tag = "ru";
             this.miLocaleRussian.Text = "Русский";
             this.miLocaleRussian.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
@@ -1038,7 +1052,7 @@
             // 
             this.miLocaleKorean.Image = global::AAEmu.Launcher.Properties.Resources.flag_ko;
             this.miLocaleKorean.Name = "miLocaleKorean";
-            this.miLocaleKorean.Size = new System.Drawing.Size(124, 22);
+            this.miLocaleKorean.Size = new System.Drawing.Size(180, 22);
             this.miLocaleKorean.Tag = "ko";
             this.miLocaleKorean.Text = "한국어";
             this.miLocaleKorean.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
@@ -1047,7 +1061,7 @@
             // 
             this.japaneseToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_jp;
             this.japaneseToolStripMenuItem.Name = "japaneseToolStripMenuItem";
-            this.japaneseToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.japaneseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.japaneseToolStripMenuItem.Tag = "ja";
             this.japaneseToolStripMenuItem.Text = "日本語";
             this.japaneseToolStripMenuItem.Visible = false;
@@ -1057,10 +1071,19 @@
             // 
             this.traditionalChineseTaiwanToolStripMenuItem1.Image = global::AAEmu.Launcher.Properties.Resources.flag_traditional_chinese;
             this.traditionalChineseTaiwanToolStripMenuItem1.Name = "traditionalChineseTaiwanToolStripMenuItem1";
-            this.traditionalChineseTaiwanToolStripMenuItem1.Size = new System.Drawing.Size(124, 22);
+            this.traditionalChineseTaiwanToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.traditionalChineseTaiwanToolStripMenuItem1.Tag = "zh_tw";
             this.traditionalChineseTaiwanToolStripMenuItem1.Text = "繁體中文";
             this.traditionalChineseTaiwanToolStripMenuItem1.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
+            // 
+            // simplifiedChineseToolStripMenuItem
+            // 
+            this.simplifiedChineseToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_cn;
+            this.simplifiedChineseToolStripMenuItem.Name = "simplifiedChineseToolStripMenuItem";
+            this.simplifiedChineseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.simplifiedChineseToolStripMenuItem.Tag = "zh_cn";
+            this.simplifiedChineseToolStripMenuItem.Text = "简体中文";
+            this.simplifiedChineseToolStripMenuItem.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
             // 
             // btnLocaleLang
             // 
@@ -1206,31 +1229,31 @@
             this.launcherDiscordMenuItem,
             this.aaEmuDiscordMenuItem});
             this.cmsDiscord.Name = "cmsAAEmuButton";
-            this.cmsDiscord.Size = new System.Drawing.Size(178, 76);
+            this.cmsDiscord.Size = new System.Drawing.Size(167, 76);
             // 
             // customServerDiscordMenuItem
             // 
             this.customServerDiscordMenuItem.Name = "customServerDiscordMenuItem";
-            this.customServerDiscordMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.customServerDiscordMenuItem.Size = new System.Drawing.Size(166, 22);
             this.customServerDiscordMenuItem.Text = "Server Discord";
             this.customServerDiscordMenuItem.Click += new System.EventHandler(this.CustomServerDiscordMenuItem_Click);
             // 
             // cmsDiscordS1
             // 
             this.cmsDiscordS1.Name = "cmsDiscordS1";
-            this.cmsDiscordS1.Size = new System.Drawing.Size(174, 6);
+            this.cmsDiscordS1.Size = new System.Drawing.Size(163, 6);
             // 
             // launcherDiscordMenuItem
             // 
             this.launcherDiscordMenuItem.Name = "launcherDiscordMenuItem";
-            this.launcherDiscordMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.launcherDiscordMenuItem.Size = new System.Drawing.Size(166, 22);
             this.launcherDiscordMenuItem.Text = "Launcher Discord";
             this.launcherDiscordMenuItem.Click += new System.EventHandler(this.LauncherDiscordMenuItem_Click);
             // 
             // aaEmuDiscordMenuItem
             // 
             this.aaEmuDiscordMenuItem.Name = "aaEmuDiscordMenuItem";
-            this.aaEmuDiscordMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.aaEmuDiscordMenuItem.Size = new System.Drawing.Size(166, 22);
             this.aaEmuDiscordMenuItem.Text = "AAEmu Discord";
             this.aaEmuDiscordMenuItem.Click += new System.EventHandler(this.AaEmuDiscordMenuItem_Click);
             // 
@@ -1239,12 +1262,12 @@
             this.cmsAuthType.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.stAuthAuto});
             this.cmsAuthType.Name = "cmsAuthType";
-            this.cmsAuthType.Size = new System.Drawing.Size(104, 26);
+            this.cmsAuthType.Size = new System.Drawing.Size(101, 26);
             // 
             // stAuthAuto
             // 
             this.stAuthAuto.Name = "stAuthAuto";
-            this.stAuthAuto.Size = new System.Drawing.Size(103, 22);
+            this.stAuthAuto.Size = new System.Drawing.Size(100, 22);
             this.stAuthAuto.Text = "Auto";
             this.stAuthAuto.Click += new System.EventHandler(this.stAuthAuto_Click);
             // 
@@ -1276,23 +1299,24 @@
             this.btnMinimize.MouseEnter += new System.EventHandler(this.btnMinimize_MouseEnter);
             this.btnMinimize.MouseLeave += new System.EventHandler(this.btnMinimize_MouseLeave);
             // 
-            // simplifiedChineseToolStripMenuItem
+            // ttLocale
             // 
-            this.simplifiedChineseToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_cn;
-            this.simplifiedChineseToolStripMenuItem.Name = "simplifiedChineseToolStripMenuItem";
-            this.simplifiedChineseToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.simplifiedChineseToolStripMenuItem.Tag = "zh_cn";
-            this.simplifiedChineseToolStripMenuItem.Text = "简体中文";
-            this.simplifiedChineseToolStripMenuItem.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
+            this.ttLocale.ShowAlways = true;
+            this.ttLocale.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.ttLocale.ToolTipTitle = "Game Locale Setting";
             // 
-            // simplifiedChineseToolStripMenuItem1
+            // s2ToolStripMenuItem
             // 
-            this.simplifiedChineseToolStripMenuItem1.Image = global::AAEmu.Launcher.Properties.Resources.flag_cn;
-            this.simplifiedChineseToolStripMenuItem1.Name = "simplifiedChineseToolStripMenuItem1";
-            this.simplifiedChineseToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
-            this.simplifiedChineseToolStripMenuItem1.Tag = "zh_cn";
-            this.simplifiedChineseToolStripMenuItem1.Text = "简体中文";
-            this.simplifiedChineseToolStripMenuItem1.Click += new System.EventHandler(this.swapLanguageToolStripMenuItem_Click);
+            this.s2ToolStripMenuItem.Name = "s2ToolStripMenuItem";
+            this.s2ToolStripMenuItem.Size = new System.Drawing.Size(177, 6);
+            // 
+            // unknownToolStripMenuItem
+            // 
+            this.unknownToolStripMenuItem.Name = "unknownToolStripMenuItem";
+            this.unknownToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.unknownToolStripMenuItem.Tag = "???";
+            this.unknownToolStripMenuItem.Text = "???";
+            this.unknownToolStripMenuItem.Click += new System.EventHandler(this.unknownToolStripMenuItem_Click);
             // 
             // LauncherForm
             // 
@@ -1458,6 +1482,9 @@
         private System.Windows.Forms.ToolStripMenuItem traditionalChineseTaiwanToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem simplifiedChineseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem simplifiedChineseToolStripMenuItem1;
+        private System.Windows.Forms.ToolTip ttLocale;
+        private System.Windows.Forms.ToolStripSeparator s2ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem unknownToolStripMenuItem;
     }
 }
 

@@ -558,6 +558,16 @@ namespace AAEmu.Launcher.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap mini_locale_unknown {
+            get {
+                object obj = ResourceManager.GetObject("mini_locale_unknown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap pgbar_back {
             get {
                 object obj = ResourceManager.GetObject("pgbar_back", resourceCulture);
