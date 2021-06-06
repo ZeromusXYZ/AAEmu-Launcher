@@ -229,6 +229,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="aaemu.ico" />
+    <None Include="Res\mini_locale_unknown.png" />
     <None Include="Res\flag_traditional_chinese.png" />
     <None Include="Res\mini_locale_traditional_chinese.png" />
     <None Include="Res\mini_locale_tw.png" />
