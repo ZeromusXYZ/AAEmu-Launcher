@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>AAEmu.Launcher</RootNamespace>
     <AssemblyName>AAEmu.Launcher</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -34,6 +34,7 @@
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -111,6 +112,7 @@
     <Compile Include="InfoPopupForm.Designer.cs">
       <DependentUpon>InfoPopupForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="LauncherClass\Kakao80Launcher.cs" />
     <Compile Include="LauncherClass\Trion70Launcher.cs" />
     <Compile Include="LauncherClass\Trion60Launcher.cs" />
     <Compile Include="LauncherClass\Trion35Launcher.cs" />
