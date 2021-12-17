@@ -1,4 +1,5 @@
 ﻿using AAEmu.Launcher.Basic;
+using System;
 
 namespace AAEmu.Launcher.Kakao80
 {
@@ -10,6 +11,10 @@ namespace AAEmu.Launcher.Kakao80
 
         public override bool InitializeForLaunch()
         {
+
+            if (string.IsNullOrWhiteSpace(TimeOffsetValue))
+                TimeOffsetValue = (DateTime.UtcNow - DateTime.Now).TotalMinutes.ToString();
+
             if (string.IsNullOrWhiteSpace(AuthToken))
             {
                 // Generate a random value
@@ -23,7 +28,7 @@ namespace AAEmu.Launcher.Kakao80
                 LaunchArguments += " -lang " + Locale;
 
             if (TimeOffsetValue != string.Empty)
-                LaunchArguments += " -time_offset " + TimeOffsetValue + " ";
+                LaunchArguments += " -time_offset " + TimeOffsetValue ;
 
             return true;
         }
