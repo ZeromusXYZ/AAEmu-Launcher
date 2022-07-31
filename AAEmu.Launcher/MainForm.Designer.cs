@@ -107,12 +107,13 @@
             this.miLocaleEnglish = new System.Windows.Forms.ToolStripMenuItem();
             this.miLocaleGerman = new System.Windows.Forms.ToolStripMenuItem();
             this.miLocaleFrench = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.miLocaleS1 = new System.Windows.Forms.ToolStripSeparator();
             this.miLocaleRussian = new System.Windows.Forms.ToolStripMenuItem();
             this.miLocaleKorean = new System.Windows.Forms.ToolStripMenuItem();
-            this.japaneseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.traditionalChineseTaiwanToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.simplifiedChineseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.miLocaleJapanese = new System.Windows.Forms.ToolStripMenuItem();
+            this.miLocaleTraditionalChineseTaiwan = new System.Windows.Forms.ToolStripMenuItem();
+            this.miLocaleSimplifiedChinese = new System.Windows.Forms.ToolStripMenuItem();
+            this.miLocaleUnknown = new System.Windows.Forms.ToolStripMenuItem();
             this.btnLocaleLang = new System.Windows.Forms.PictureBox();
             this.btnSystem = new System.Windows.Forms.PictureBox();
             this.btnDiscord = new System.Windows.Forms.PictureBox();
@@ -133,8 +134,9 @@
             this.btnClose = new System.Windows.Forms.PictureBox();
             this.btnMinimize = new System.Windows.Forms.PictureBox();
             this.ttLocale = new System.Windows.Forms.ToolTip(this.components);
-            this.s2ToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
-            this.unknownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.miLocaleS2 = new System.Windows.Forms.ToolStripSeparator();
+            this.miLocaleS3 = new System.Windows.Forms.ToolStripSeparator();
+            this.miLocaleEnglishSignapore = new System.Windows.Forms.ToolStripMenuItem();
             this.panelLoginAndPatch.SuspendLayout();
             this.pPatchSteps.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pgbFrontTotal)).BeginInit();
@@ -996,16 +998,18 @@
             this.miLocaleEnglish,
             this.miLocaleGerman,
             this.miLocaleFrench,
-            this.toolStripSeparator2,
+            this.miLocaleS1,
             this.miLocaleRussian,
             this.miLocaleKorean,
-            this.japaneseToolStripMenuItem,
-            this.traditionalChineseTaiwanToolStripMenuItem1,
-            this.simplifiedChineseToolStripMenuItem,
-            this.s2ToolStripMenuItem,
-            this.unknownToolStripMenuItem});
+            this.miLocaleJapanese,
+            this.miLocaleTraditionalChineseTaiwan,
+            this.miLocaleSimplifiedChinese,
+            this.miLocaleS2,
+            this.miLocaleEnglishSignapore,
+            this.miLocaleS3,
+            this.miLocaleUnknown});
             this.cmsLocaleLanguage.Name = "cmsLanguage";
-            this.cmsLocaleLanguage.Size = new System.Drawing.Size(181, 236);
+            this.cmsLocaleLanguage.Size = new System.Drawing.Size(181, 264);
             // 
             // miLocaleEnglish
             // 
@@ -1034,10 +1038,10 @@
             this.miLocaleFrench.Text = "Français";
             this.miLocaleFrench.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
             // 
-            // toolStripSeparator2
+            // miLocaleS1
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.miLocaleS1.Name = "miLocaleS1";
+            this.miLocaleS1.Size = new System.Drawing.Size(177, 6);
             // 
             // miLocaleRussian
             // 
@@ -1057,33 +1061,41 @@
             this.miLocaleKorean.Text = "한국어";
             this.miLocaleKorean.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
             // 
-            // japaneseToolStripMenuItem
+            // miLocaleJapanese
             // 
-            this.japaneseToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_jp;
-            this.japaneseToolStripMenuItem.Name = "japaneseToolStripMenuItem";
-            this.japaneseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.japaneseToolStripMenuItem.Tag = "ja";
-            this.japaneseToolStripMenuItem.Text = "日本語";
-            this.japaneseToolStripMenuItem.Visible = false;
-            this.japaneseToolStripMenuItem.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
+            this.miLocaleJapanese.Image = global::AAEmu.Launcher.Properties.Resources.flag_jp;
+            this.miLocaleJapanese.Name = "miLocaleJapanese";
+            this.miLocaleJapanese.Size = new System.Drawing.Size(180, 22);
+            this.miLocaleJapanese.Tag = "ja";
+            this.miLocaleJapanese.Text = "日本語";
+            this.miLocaleJapanese.Visible = false;
+            this.miLocaleJapanese.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
             // 
-            // traditionalChineseTaiwanToolStripMenuItem1
+            // miLocaleTraditionalChineseTaiwan
             // 
-            this.traditionalChineseTaiwanToolStripMenuItem1.Image = global::AAEmu.Launcher.Properties.Resources.flag_traditional_chinese;
-            this.traditionalChineseTaiwanToolStripMenuItem1.Name = "traditionalChineseTaiwanToolStripMenuItem1";
-            this.traditionalChineseTaiwanToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
-            this.traditionalChineseTaiwanToolStripMenuItem1.Tag = "zh_tw";
-            this.traditionalChineseTaiwanToolStripMenuItem1.Text = "繁體中文";
-            this.traditionalChineseTaiwanToolStripMenuItem1.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
+            this.miLocaleTraditionalChineseTaiwan.Image = global::AAEmu.Launcher.Properties.Resources.flag_traditional_chinese;
+            this.miLocaleTraditionalChineseTaiwan.Name = "miLocaleTraditionalChineseTaiwan";
+            this.miLocaleTraditionalChineseTaiwan.Size = new System.Drawing.Size(180, 22);
+            this.miLocaleTraditionalChineseTaiwan.Tag = "zh_tw";
+            this.miLocaleTraditionalChineseTaiwan.Text = "繁體中文";
+            this.miLocaleTraditionalChineseTaiwan.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
             // 
-            // simplifiedChineseToolStripMenuItem
+            // miLocaleSimplifiedChinese
             // 
-            this.simplifiedChineseToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_cn;
-            this.simplifiedChineseToolStripMenuItem.Name = "simplifiedChineseToolStripMenuItem";
-            this.simplifiedChineseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.simplifiedChineseToolStripMenuItem.Tag = "zh_cn";
-            this.simplifiedChineseToolStripMenuItem.Text = "简体中文";
-            this.simplifiedChineseToolStripMenuItem.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
+            this.miLocaleSimplifiedChinese.Image = global::AAEmu.Launcher.Properties.Resources.flag_cn;
+            this.miLocaleSimplifiedChinese.Name = "miLocaleSimplifiedChinese";
+            this.miLocaleSimplifiedChinese.Size = new System.Drawing.Size(180, 22);
+            this.miLocaleSimplifiedChinese.Tag = "zh_cn";
+            this.miLocaleSimplifiedChinese.Text = "简体中文";
+            this.miLocaleSimplifiedChinese.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
+            // 
+            // miLocaleUnknown
+            // 
+            this.miLocaleUnknown.Name = "miLocaleUnknown";
+            this.miLocaleUnknown.Size = new System.Drawing.Size(180, 22);
+            this.miLocaleUnknown.Tag = "???";
+            this.miLocaleUnknown.Text = "???";
+            this.miLocaleUnknown.Click += new System.EventHandler(this.unknownToolStripMenuItem_Click);
             // 
             // btnLocaleLang
             // 
@@ -1305,18 +1317,23 @@
             this.ttLocale.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.ttLocale.ToolTipTitle = "Game Locale Setting";
             // 
-            // s2ToolStripMenuItem
+            // miLocaleS2
             // 
-            this.s2ToolStripMenuItem.Name = "s2ToolStripMenuItem";
-            this.s2ToolStripMenuItem.Size = new System.Drawing.Size(177, 6);
+            this.miLocaleS2.Name = "miLocaleS2";
+            this.miLocaleS2.Size = new System.Drawing.Size(177, 6);
             // 
-            // unknownToolStripMenuItem
+            // miLocaleS3
             // 
-            this.unknownToolStripMenuItem.Name = "unknownToolStripMenuItem";
-            this.unknownToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.unknownToolStripMenuItem.Tag = "???";
-            this.unknownToolStripMenuItem.Text = "???";
-            this.unknownToolStripMenuItem.Click += new System.EventHandler(this.unknownToolStripMenuItem_Click);
+            this.miLocaleS3.Name = "miLocaleS3";
+            this.miLocaleS3.Size = new System.Drawing.Size(177, 6);
+            // 
+            // miLocaleEnglishSignapore
+            // 
+            this.miLocaleEnglishSignapore.Image = global::AAEmu.Launcher.Properties.Resources.flag_xx;
+            this.miLocaleEnglishSignapore.Name = "miLocaleEnglishSignapore";
+            this.miLocaleEnglishSignapore.Size = new System.Drawing.Size(180, 22);
+            this.miLocaleEnglishSignapore.Tag = "en_sg";
+            this.miLocaleEnglishSignapore.Text = "English (SG)";
             // 
             // LauncherForm
             // 
@@ -1432,8 +1449,8 @@
         private System.Windows.Forms.ToolStripMenuItem miLocaleGerman;
         private System.Windows.Forms.ToolStripMenuItem miLocaleFrench;
         private System.Windows.Forms.ToolStripMenuItem miLocaleKorean;
-        private System.Windows.Forms.ToolStripMenuItem japaneseToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem miLocaleJapanese;
+        private System.Windows.Forms.ToolStripSeparator miLocaleS1;
         private System.Windows.Forms.ToolStripMenuItem troubleshootGameToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteShaderCacheToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteGameConfigurationToolStripMenuItem;
@@ -1479,12 +1496,14 @@
         private System.Windows.Forms.ToolStripMenuItem skipPatchToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateServerURILinkToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem traditionalChineseTaiwanToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem traditionalChineseTaiwanToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem simplifiedChineseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem miLocaleTraditionalChineseTaiwan;
+        private System.Windows.Forms.ToolStripMenuItem miLocaleSimplifiedChinese;
         private System.Windows.Forms.ToolStripMenuItem simplifiedChineseToolStripMenuItem1;
         private System.Windows.Forms.ToolTip ttLocale;
-        private System.Windows.Forms.ToolStripSeparator s2ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem unknownToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem miLocaleUnknown;
+        private System.Windows.Forms.ToolStripSeparator miLocaleS2;
+        private System.Windows.Forms.ToolStripMenuItem miLocaleEnglishSignapore;
+        private System.Windows.Forms.ToolStripSeparator miLocaleS3;
     }
 }
 

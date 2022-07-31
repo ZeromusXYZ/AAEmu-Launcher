@@ -149,6 +149,7 @@ namespace AAEmu.Launcher
 
         // Some strings for our language settings
         private const string settingsLangEN_US = "en_us"; // English US
+        private const string settingsLangEN_SG = "en_sg"; // English US
         private const string settingsLangRU = "ru"; // Russian
         private const string settingsLangDE = "de"; // German
         // unused for launcher
@@ -844,6 +845,10 @@ namespace AAEmu.Launcher
                     break;
                 case settingsLangEN_US:
                     Setting.Lang = settingsLangEN_US;
+                    btnLocaleLang.Image = Properties.Resources.mini_locale_en_us;
+                    break;
+                case settingsLangEN_SG:
+                    Setting.Lang = settingsLangEN_SG;
                     btnLocaleLang.Image = Properties.Resources.mini_locale_en_us;
                     break;
                 default:
