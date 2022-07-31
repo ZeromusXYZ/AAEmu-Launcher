@@ -592,7 +592,7 @@
             this.generateServerURILinkToolStripMenuItem,
             this.debugModeToolStripMenuItem});
             this.cmsAAEmuButton.Name = "cmsAAEmuButton";
-            this.cmsAAEmuButton.Size = new System.Drawing.Size(203, 98);
+            this.cmsAAEmuButton.Size = new System.Drawing.Size(203, 120);
             // 
             // troubleshootGameToolStripMenuItem
             // 
@@ -650,6 +650,7 @@
             // 
             // fixBin32StripMenuItem
             // 
+            this.fixBin32StripMenuItem.Enabled = false;
             this.fixBin32StripMenuItem.Name = "fixBin32StripMenuItem";
             this.fixBin32StripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.fixBin32StripMenuItem.Text = "Fix bin32 and DB files";
@@ -1015,7 +1016,7 @@
             // 
             this.miLocaleEnglish.Image = global::AAEmu.Launcher.Properties.Resources.flag_us;
             this.miLocaleEnglish.Name = "miLocaleEnglish";
-            this.miLocaleEnglish.Size = new System.Drawing.Size(180, 22);
+            this.miLocaleEnglish.Size = new System.Drawing.Size(137, 22);
             this.miLocaleEnglish.Tag = "en_us";
             this.miLocaleEnglish.Text = "English";
             this.miLocaleEnglish.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
@@ -1024,7 +1025,7 @@
             // 
             this.miLocaleGerman.Image = global::AAEmu.Launcher.Properties.Resources.flag_de;
             this.miLocaleGerman.Name = "miLocaleGerman";
-            this.miLocaleGerman.Size = new System.Drawing.Size(180, 22);
+            this.miLocaleGerman.Size = new System.Drawing.Size(137, 22);
             this.miLocaleGerman.Tag = "de";
             this.miLocaleGerman.Text = "Deutsch";
             this.miLocaleGerman.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
@@ -1033,7 +1034,7 @@
             // 
             this.miLocaleFrench.Image = global::AAEmu.Launcher.Properties.Resources.flag_fr;
             this.miLocaleFrench.Name = "miLocaleFrench";
-            this.miLocaleFrench.Size = new System.Drawing.Size(180, 22);
+            this.miLocaleFrench.Size = new System.Drawing.Size(137, 22);
             this.miLocaleFrench.Tag = "fr";
             this.miLocaleFrench.Text = "Français";
             this.miLocaleFrench.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
@@ -1041,13 +1042,13 @@
             // miLocaleS1
             // 
             this.miLocaleS1.Name = "miLocaleS1";
-            this.miLocaleS1.Size = new System.Drawing.Size(177, 6);
+            this.miLocaleS1.Size = new System.Drawing.Size(134, 6);
             // 
             // miLocaleRussian
             // 
             this.miLocaleRussian.Image = global::AAEmu.Launcher.Properties.Resources.flag_ru;
             this.miLocaleRussian.Name = "miLocaleRussian";
-            this.miLocaleRussian.Size = new System.Drawing.Size(180, 22);
+            this.miLocaleRussian.Size = new System.Drawing.Size(137, 22);
             this.miLocaleRussian.Tag = "ru";
             this.miLocaleRussian.Text = "Русский";
             this.miLocaleRussian.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
@@ -1056,7 +1057,7 @@
             // 
             this.miLocaleKorean.Image = global::AAEmu.Launcher.Properties.Resources.flag_ko;
             this.miLocaleKorean.Name = "miLocaleKorean";
-            this.miLocaleKorean.Size = new System.Drawing.Size(180, 22);
+            this.miLocaleKorean.Size = new System.Drawing.Size(137, 22);
             this.miLocaleKorean.Tag = "ko";
             this.miLocaleKorean.Text = "한국어";
             this.miLocaleKorean.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
@@ -1065,7 +1066,7 @@
             // 
             this.miLocaleJapanese.Image = global::AAEmu.Launcher.Properties.Resources.flag_jp;
             this.miLocaleJapanese.Name = "miLocaleJapanese";
-            this.miLocaleJapanese.Size = new System.Drawing.Size(180, 22);
+            this.miLocaleJapanese.Size = new System.Drawing.Size(137, 22);
             this.miLocaleJapanese.Tag = "ja";
             this.miLocaleJapanese.Text = "日本語";
             this.miLocaleJapanese.Visible = false;
@@ -1075,7 +1076,7 @@
             // 
             this.miLocaleTraditionalChineseTaiwan.Image = global::AAEmu.Launcher.Properties.Resources.flag_traditional_chinese;
             this.miLocaleTraditionalChineseTaiwan.Name = "miLocaleTraditionalChineseTaiwan";
-            this.miLocaleTraditionalChineseTaiwan.Size = new System.Drawing.Size(180, 22);
+            this.miLocaleTraditionalChineseTaiwan.Size = new System.Drawing.Size(137, 22);
             this.miLocaleTraditionalChineseTaiwan.Tag = "zh_tw";
             this.miLocaleTraditionalChineseTaiwan.Text = "繁體中文";
             this.miLocaleTraditionalChineseTaiwan.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
@@ -1084,7 +1085,7 @@
             // 
             this.miLocaleSimplifiedChinese.Image = global::AAEmu.Launcher.Properties.Resources.flag_cn;
             this.miLocaleSimplifiedChinese.Name = "miLocaleSimplifiedChinese";
-            this.miLocaleSimplifiedChinese.Size = new System.Drawing.Size(180, 22);
+            this.miLocaleSimplifiedChinese.Size = new System.Drawing.Size(137, 22);
             this.miLocaleSimplifiedChinese.Tag = "zh_cn";
             this.miLocaleSimplifiedChinese.Text = "简体中文";
             this.miLocaleSimplifiedChinese.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
@@ -1092,13 +1093,13 @@
             // miLocaleS2
             // 
             this.miLocaleS2.Name = "miLocaleS2";
-            this.miLocaleS2.Size = new System.Drawing.Size(177, 6);
+            this.miLocaleS2.Size = new System.Drawing.Size(134, 6);
             // 
             // miLocaleEnglishSignapore
             // 
             this.miLocaleEnglishSignapore.Image = global::AAEmu.Launcher.Properties.Resources.flag_xx;
             this.miLocaleEnglishSignapore.Name = "miLocaleEnglishSignapore";
-            this.miLocaleEnglishSignapore.Size = new System.Drawing.Size(180, 22);
+            this.miLocaleEnglishSignapore.Size = new System.Drawing.Size(137, 22);
             this.miLocaleEnglishSignapore.Tag = "en_sg";
             this.miLocaleEnglishSignapore.Text = "English (SG)";
             this.miLocaleEnglishSignapore.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
@@ -1106,12 +1107,12 @@
             // miLocaleS3
             // 
             this.miLocaleS3.Name = "miLocaleS3";
-            this.miLocaleS3.Size = new System.Drawing.Size(177, 6);
+            this.miLocaleS3.Size = new System.Drawing.Size(134, 6);
             // 
             // miLocaleUnknown
             // 
             this.miLocaleUnknown.Name = "miLocaleUnknown";
-            this.miLocaleUnknown.Size = new System.Drawing.Size(180, 22);
+            this.miLocaleUnknown.Size = new System.Drawing.Size(137, 22);
             this.miLocaleUnknown.Tag = "???";
             this.miLocaleUnknown.Text = "???";
             this.miLocaleUnknown.Click += new System.EventHandler(this.unknownToolStripMenuItem_Click);
@@ -1208,9 +1209,9 @@
             this.panelSettings.Controls.Add(this.cbHideSplash);
             this.panelSettings.Controls.Add(this.cbUpdateLocale);
             this.panelSettings.Controls.Add(this.lHideSplash);
-            this.panelSettings.Location = new System.Drawing.Point(17, 7);
+            this.panelSettings.Location = new System.Drawing.Point(17, 239);
             this.panelSettings.Name = "panelSettings";
-            this.panelSettings.Size = new System.Drawing.Size(919, 458);
+            this.panelSettings.Size = new System.Drawing.Size(376, 226);
             this.panelSettings.TabIndex = 51;
             this.panelSettings.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseDown);
             this.panelSettings.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);

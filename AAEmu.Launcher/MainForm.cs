@@ -1292,6 +1292,74 @@ namespace AAEmu.Launcher
             return res;
         }
 
+        private string GuessDocumentsFolder(string archeAgeExe)
+        {
+            var res = "ArcheAge";
+            // Note: AAFree and ArcheRage can actually not be detected in this way because the exe is encrypted (note all lowercase here to compare)
+            var allowedFolders = new List<string>() { "archeage", "aaemu", "aagenesis", "archeworld", "aafree", "archerage" };
+            var notAllowed = new List<string>() { ".exe", ".log", ".dll", ".pdb" };
+            var maxFolderSize = res.Length;
+            foreach (var folder in allowedFolders)
+            {
+                if (folder.Length > maxFolderSize)
+                    maxFolderSize = folder.Length;
+            }
+            maxFolderSize += 4; // to check against appended .exe text
+
+            try
+            {
+                if (File.Exists(archeAgeExe))
+                {
+                    using (var fs = new FileStream(archeAgeExe, FileMode.Open, FileAccess.Read))
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            fs.CopyTo(ms);
+                            ms.Seek(0, SeekOrigin.Begin);
+                            var buffer = new byte[maxFolderSize];
+                            foreach (var folder in allowedFolders)
+                            {
+                                for (var pos = 0; pos < ms.Length - maxFolderSize; pos++)
+                                {
+                                    ms.Seek(pos, SeekOrigin.Begin);
+                                    var streamBytes = ms.Read(buffer, 0, maxFolderSize);
+
+                                    var streamString = Encoding.ASCII.GetString(buffer, 0, streamBytes);
+                                    var checkString = streamString.ToLower();
+                                    if (checkString.StartsWith(folder))
+                                    {
+                                        var isOk = true;
+                                        foreach (var notString in notAllowed)
+                                        {
+                                            if (checkString.StartsWith(folder + notString))
+                                            {
+                                                isOk = false;
+                                                break;
+                                            }
+                                        }
+
+                                        if (isOk)
+                                        {
+                                            res = streamString.Substring(0, folder.Length);
+                                            return res;
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // Do Nothing
+            }
+
+            MessageBox.Show($"Could not guess documents folder for {archeAgeExe}, configuration file might not be updated correctly!","Detect Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            return res;
+        }
+
         private void StartGame()
         {
             if (Setting.PathToGame != "")
@@ -1330,7 +1398,7 @@ namespace AAEmu.Launcher
                         return;
                     }
 
-                    UpdateGameSystemConfigFile("ArcheAge", Setting.UpdateLocale, Setting.Lang, Setting.SkipIntro);
+                    UpdateGameSystemConfigFile(GuessDocumentsFolder(Setting.PathToGame), Setting.UpdateLocale, Setting.Lang, Setting.SkipIntro);
 
                     aaLauncher.UserName = eLogin.Text;
                     aaLauncher.SetPassword(ePassword.Text);
@@ -1780,7 +1848,10 @@ namespace AAEmu.Launcher
         private void ClearArcheAgeCache(bool clearShaders)
         {
             // C:\ArcheAge\Documents => UserHomeFolder\ArcheAge
-            string aaDocumentsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + Path.DirectorySeparatorChar + "ArcheAge" + Path.DirectorySeparatorChar;
+
+            var folder = File.Exists(Setting.PathToGame) ? GuessDocumentsFolder(Setting.PathToGame) : "ArcheAge";
+
+            string aaDocumentsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), folder);
 
             if (MessageBox.Show(L.DeleteShaderCache, L.DeleteShaderCacheTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
                 return;
@@ -1890,6 +1961,9 @@ namespace AAEmu.Launcher
 
             try
             {
+                // Create the folder if needed
+                if (!Directory.Exists(Path.GetDirectoryName(configFileName)))
+                    Directory.CreateDirectory(Path.GetDirectoryName(configFileName));
                 File.WriteAllLines(configFileName, newLines);
             }
             catch (Exception x)
@@ -3478,7 +3552,9 @@ namespace AAEmu.Launcher
                 return;
 
             // C:\ArcheAge\Documents => UserHomeFolder\ArcheAge
-            string systemConfigFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ArcheAge", archeAgeSystemConfigFileName);
+            var folder = File.Exists(Setting.PathToGame) ? GuessDocumentsFolder(Setting.PathToGame) : "ArcheAge";
+
+            string systemConfigFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), folder, archeAgeSystemConfigFileName);
             File.Delete(systemConfigFile);
         }
 
