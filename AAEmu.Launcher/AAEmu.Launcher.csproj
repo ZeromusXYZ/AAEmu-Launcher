@@ -152,6 +152,9 @@
     <None Include="aaemu.info.aelcf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="documents.folders">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="FodyWeavers.xsd">
       <SubType>Designer</SubType>
     </None>

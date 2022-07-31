@@ -1296,8 +1296,14 @@ namespace AAEmu.Launcher
         {
             var res = "ArcheAge";
             // Note: AAFree and ArcheRage can actually not be detected in this way because the exe is encrypted (note all lowercase here to compare)
-            var allowedFolders = new List<string>() { "archeage", "aaemu", "aagenesis", "archeworld", "aafree", "archerage" };
-            var notAllowed = new List<string>() { ".exe", ".log", ".dll", ".pdb" };
+            var allowedFolders = new List<string>() { "archeage", "archeworld", "aaemu" };
+            var documentConfigFile =
+                Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "documents.folders");
+
+            if (File.Exists(documentConfigFile))
+                allowedFolders = File.ReadAllLines(documentConfigFile).ToList();
+
+            var notAllowed = new List<string>() { ".", "-", "_" }; // should catch most things that reference a file instead of a directory
             var maxFolderSize = res.Length;
             foreach (var folder in allowedFolders)
             {
