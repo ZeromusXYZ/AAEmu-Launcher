@@ -34,6 +34,13 @@ namespace AAEmu.Launcher.Trion12
         public override bool InitializeForLaunch()
         {
             var res = base.InitializeForLaunch();
+            var customTicketName = "customticket.xml";
+
+            if (File.Exists(customTicketName))
+            {
+                CustomTicketData = File.ReadAllText(customTicketName);
+                UseCustomTicketData = !string.IsNullOrWhiteSpace(CustomTicketData);
+            }
 
             string languageArgs = "";
             if (Locale != "")
@@ -106,6 +113,11 @@ namespace AAEmu.Launcher.Trion12
                 ticketDataString += "</authTicket>";
             }
 
+            // TFIR is the header for this ?
+            var ticket = "TFIR" + stringForSignature + '\n' + ticketDataString;
+            var ticketBytes = Encoding.UTF8.GetBytes(ticket);
+            var ticketEncrypted = AAEmu.Launcher.Basic.RC4.Encrypt(encryptionKey, ticketBytes);
+
             // File.WriteAllText("this_ticket.txt", ticketDataString);
 
             //------ IntPtr CreateFileMappingHandle(string ticketString,string signatureString)
@@ -122,7 +134,8 @@ namespace AAEmu.Launcher.Trion12
             Marshal.StructureToPtr(sa, sa_pointer, false);
 
             uint maxMapSize = 4096; // TODO: 0x20000 or 0x1000
-            maxMapSize = (uint)ticketDataString.Length + 0xc;
+            maxMapSize = (uint)ticketEncrypted.Length + 0xC;
+            //maxMapSize = (uint)ticketDataString.Length + 0xc;
 
             var credentialFileMapHandle = Win32.CreateFileMappingW(
                 Win32.INVALID_HANDLE_VALUE,
@@ -152,11 +165,6 @@ namespace AAEmu.Launcher.Trion12
             }
 
             //--- EncryptFileMapData(fileMapViewHandle, ticketString, signatureString);
-
-            // TFIR is the header for this ?
-            var ticket = "TFIR" + stringForSignature + '\n' + ticketDataString;
-            var ticketBytes = Encoding.UTF8.GetBytes(ticket);
-            var ticketEncrypted = AAEmu.Launcher.Basic.RC4.Encrypt(encryptionKey, ticketBytes);
 
             // Use a temporary memorystream for ease
             MemoryStream ms = new MemoryStream();
