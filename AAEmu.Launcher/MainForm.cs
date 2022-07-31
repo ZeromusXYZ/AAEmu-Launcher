@@ -424,6 +424,7 @@ namespace AAEmu.Launcher
         public ClientLookupHelper ClientLookup = new ClientLookupHelper();
 
         static public string archeAgeEXE = "archeage.exe";
+        static public string archeWorldEXE = "archeworld.exe";
         static public string archeAgeSystemConfigFileName = "system.cfg";
         static public ushort defaultAuthPort = 1237;
         static public string launcherDefaultConfigFile = "settings.aelcf"; // .aelcf = ArcheAge Emu Launcher Configuration File
@@ -1314,8 +1315,6 @@ namespace AAEmu.Launcher
                     if (Setting.SaveLoginAndPassword)
                         SaveSettings();
 
-                    UpdateGameSystemConfigFile(Setting.UpdateLocale, Setting.Lang, Setting.SkipIntro);
-
                     // Clean up previous instance
                     if (aaLauncher != null)
                     {
@@ -1330,6 +1329,8 @@ namespace AAEmu.Launcher
                         MessageBox.Show(string.Format(L.UnknownLauncherProtocol, Setting.ClientLoginType), "Launcher");
                         return;
                     }
+
+                    UpdateGameSystemConfigFile("ArcheAge", Setting.UpdateLocale, Setting.Lang, Setting.SkipIntro);
 
                     aaLauncher.UserName = eLogin.Text;
                     aaLauncher.SetPassword(ePassword.Text);
@@ -1689,7 +1690,7 @@ namespace AAEmu.Launcher
             {
                 openFileDialog.InitialDirectory = Path.Combine(DefaultGameWorkingDirectory,"bin32");
             }
-            openFileDialog.Filter = "ArcheAge Game|" + archeAgeEXE + "|Executeable|*.exe|All files (*.*)|*.*";
+            openFileDialog.Filter = "ArcheAge|arche*.exe|ArcheAge Game|" + archeAgeEXE + "|ArcheWorld Game|" + archeWorldEXE + "| Executeable |*.exe|All files (*.*)|*.*";
             openFileDialog.FilterIndex = 1;
             openFileDialog.RestoreDirectory = true;
 
@@ -1795,10 +1796,10 @@ namespace AAEmu.Launcher
             }
         }
 
-        private void UpdateGameSystemConfigFile(bool enableUpdateLocale, string locale, bool enableSkipIntro)
+        private void UpdateGameSystemConfigFile(string documentsFolderName, bool enableUpdateLocale, string locale, bool enableSkipIntro)
         {
             // C:\ArcheAge\Documents => UserHomeFolder\ArcheAge
-            string configFileName = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + Path.DirectorySeparatorChar + "ArcheAge" + Path.DirectorySeparatorChar + archeAgeSystemConfigFileName;
+            string configFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), documentsFolderName, archeAgeSystemConfigFileName);
             const string localeField = "locale = ";
             const string movieField = "login_first_movie = ";
             const string optionSoundField = "option_sound = ";
@@ -1921,7 +1922,7 @@ namespace AAEmu.Launcher
             }
         }
 
-        private string TryAutoFindInDir(string dirName, string fileName, int depth)
+        private string TryAutoFindInDir(string dirName, string[] fileNames, int depth)
         {
             pb1.PerformStep();
             pb1.Refresh();
@@ -1933,23 +1934,27 @@ namespace AAEmu.Launcher
             }
 
             DirectoryInfo di = new DirectoryInfo(dirName);
-            FileInfo[] files = di.GetFiles(fileName);
-            foreach (FileInfo fi in files)
+            foreach (var fileName in fileNames)
             {
-                if (fi.Name.ToLower() == fileName.ToLower() && (File.Exists(dirName + fi.Name)))
+                FileInfo[] files = di.GetFiles(fileName);
+                foreach (FileInfo fi in files)
                 {
-                    return dirName + fi.Name;
+                    if (fi.Name.ToLower() == fileName.ToLower() && (File.Exists(dirName + fi.Name)))
+                    {
+                        return dirName + fi.Name;
+                    }
                 }
-            }
 
-            DirectoryInfo[] dirs = di.GetDirectories();
-            pb1.Maximum = pb1.Maximum + dirs.Length;
-            foreach (DirectoryInfo downDir in dirs)
-            {
-                string dirRes = TryAutoFindInDir(dirName + downDir.Name + Path.DirectorySeparatorChar, fileName, depth + 1);
-                if (dirRes != "")
+                DirectoryInfo[] dirs = di.GetDirectories();
+                pb1.Maximum = pb1.Maximum + dirs.Length;
+                foreach (DirectoryInfo downDir in dirs)
                 {
-                    return dirRes;
+                    string dirRes = TryAutoFindInDir(dirName + downDir.Name + Path.DirectorySeparatorChar, fileNames,
+                        depth + 1);
+                    if (dirRes != "")
+                    {
+                        return dirRes;
+                    }
                 }
             }
 
@@ -2014,7 +2019,8 @@ namespace AAEmu.Launcher
             // Let's put a big old try/catch around this to prevent any file system shananigans
             try
             {
-                exeFile = TryAutoFindInDir(configPath, archeAgeEXE, 0);
+                var fileNames = new string[] { archeAgeEXE, archeWorldEXE };
+                exeFile = TryAutoFindInDir(configPath, fileNames, 0);
                 if ((exeFile != "") && (File.Exists(exeFile)))
                 {
                     Setting.PathToGame = exeFile;
@@ -3472,7 +3478,7 @@ namespace AAEmu.Launcher
                 return;
 
             // C:\ArcheAge\Documents => UserHomeFolder\ArcheAge
-            string systemConfigFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + Path.DirectorySeparatorChar + "ArcheAge" + Path.DirectorySeparatorChar + archeAgeSystemConfigFileName;
+            string systemConfigFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ArcheAge", archeAgeSystemConfigFileName);
             File.Delete(systemConfigFile);
         }
 

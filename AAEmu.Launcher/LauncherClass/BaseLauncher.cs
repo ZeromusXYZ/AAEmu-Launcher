@@ -34,7 +34,7 @@ namespace AAEmu.Launcher.Basic
         {
             UserName = string.Empty;
             _passwordHash = string.Empty;
-            GameExeFilePath = "C:\\ArcheAge\\Working\\Bin32\\ArcheAge.exe";
+            GameExeFilePath = @"C:\ArcheAge\Working\Bin32\ArcheAge.exe";
             LaunchArguments = string.Empty;
             ExtraArguments = string.Empty;
             HShieldArgs = string.Empty;

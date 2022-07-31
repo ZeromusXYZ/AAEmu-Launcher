@@ -113,6 +113,9 @@
             this.miLocaleJapanese = new System.Windows.Forms.ToolStripMenuItem();
             this.miLocaleTraditionalChineseTaiwan = new System.Windows.Forms.ToolStripMenuItem();
             this.miLocaleSimplifiedChinese = new System.Windows.Forms.ToolStripMenuItem();
+            this.miLocaleS2 = new System.Windows.Forms.ToolStripSeparator();
+            this.miLocaleEnglishSignapore = new System.Windows.Forms.ToolStripMenuItem();
+            this.miLocaleS3 = new System.Windows.Forms.ToolStripSeparator();
             this.miLocaleUnknown = new System.Windows.Forms.ToolStripMenuItem();
             this.btnLocaleLang = new System.Windows.Forms.PictureBox();
             this.btnSystem = new System.Windows.Forms.PictureBox();
@@ -134,9 +137,6 @@
             this.btnClose = new System.Windows.Forms.PictureBox();
             this.btnMinimize = new System.Windows.Forms.PictureBox();
             this.ttLocale = new System.Windows.Forms.ToolTip(this.components);
-            this.miLocaleS2 = new System.Windows.Forms.ToolStripSeparator();
-            this.miLocaleS3 = new System.Windows.Forms.ToolStripSeparator();
-            this.miLocaleEnglishSignapore = new System.Windows.Forms.ToolStripMenuItem();
             this.panelLoginAndPatch.SuspendLayout();
             this.pPatchSteps.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pgbFrontTotal)).BeginInit();
@@ -1089,6 +1089,25 @@
             this.miLocaleSimplifiedChinese.Text = "简体中文";
             this.miLocaleSimplifiedChinese.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
             // 
+            // miLocaleS2
+            // 
+            this.miLocaleS2.Name = "miLocaleS2";
+            this.miLocaleS2.Size = new System.Drawing.Size(177, 6);
+            // 
+            // miLocaleEnglishSignapore
+            // 
+            this.miLocaleEnglishSignapore.Image = global::AAEmu.Launcher.Properties.Resources.flag_xx;
+            this.miLocaleEnglishSignapore.Name = "miLocaleEnglishSignapore";
+            this.miLocaleEnglishSignapore.Size = new System.Drawing.Size(180, 22);
+            this.miLocaleEnglishSignapore.Tag = "en_sg";
+            this.miLocaleEnglishSignapore.Text = "English (SG)";
+            this.miLocaleEnglishSignapore.Click += new System.EventHandler(this.miLocaleLanguageChange_Click);
+            // 
+            // miLocaleS3
+            // 
+            this.miLocaleS3.Name = "miLocaleS3";
+            this.miLocaleS3.Size = new System.Drawing.Size(177, 6);
+            // 
             // miLocaleUnknown
             // 
             this.miLocaleUnknown.Name = "miLocaleUnknown";
@@ -1316,24 +1335,6 @@
             this.ttLocale.ShowAlways = true;
             this.ttLocale.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.ttLocale.ToolTipTitle = "Game Locale Setting";
-            // 
-            // miLocaleS2
-            // 
-            this.miLocaleS2.Name = "miLocaleS2";
-            this.miLocaleS2.Size = new System.Drawing.Size(177, 6);
-            // 
-            // miLocaleS3
-            // 
-            this.miLocaleS3.Name = "miLocaleS3";
-            this.miLocaleS3.Size = new System.Drawing.Size(177, 6);
-            // 
-            // miLocaleEnglishSignapore
-            // 
-            this.miLocaleEnglishSignapore.Image = global::AAEmu.Launcher.Properties.Resources.flag_xx;
-            this.miLocaleEnglishSignapore.Name = "miLocaleEnglishSignapore";
-            this.miLocaleEnglishSignapore.Size = new System.Drawing.Size(180, 22);
-            this.miLocaleEnglishSignapore.Tag = "en_sg";
-            this.miLocaleEnglishSignapore.Text = "English (SG)";
             // 
             // LauncherForm
             // 
