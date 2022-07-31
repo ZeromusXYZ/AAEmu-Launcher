@@ -224,6 +224,7 @@ namespace AAEmu.Launcher.Basic
                 var versionInfo = FileVersionInfo.GetVersionInfo(archeAgeExeFile);
                 string version = string.Join(".",versionInfo.FileVersion.Replace(" ","").Split(',')); // Will typically return "1.0.0.0" in your case
 
+                // Try detecting with version first
                 if (isArcheWorld || (string.Compare(version, "2.9") > 0))
                 {
                     // For more recent versions, checking the .exe should be enough to be accurate
@@ -242,7 +243,8 @@ namespace AAEmu.Launcher.Basic
                     }
 
                 }
-                else
+                
+                if (res == string.Empty)
                 {
                     // For older versions, it's best to check inside the game_pak
 
@@ -255,13 +257,13 @@ namespace AAEmu.Launcher.Basic
                         var worldTime = DateTime.FromFileTime(worldInfo.createTime);
                         foreach (var aaLauncherContainer in AAEmuLauncherBase.AllLaunchers)
                         {
-                            if (!isArcheWorld && !string.IsNullOrWhiteSpace(aaLauncherContainer.MinimumVersion) && (worldTime > newestDateTimeFound) && (worldTime > aaLauncherContainer.MinimumWorldDate))
+                            if (!isArcheWorld && !string.IsNullOrWhiteSpace(aaLauncherContainer.MinimumVersion) && (worldTime > newestDateTimeFound) && (newestDateTimeFound < aaLauncherContainer.MinimumWorldDate) && (worldTime > aaLauncherContainer.MinimumWorldDate))
                             {
                                 newestDateTimeFound = aaLauncherContainer.MinimumWorldDate;
                                 res = aaLauncherContainer.ConfigName;
                             }
 
-                            if (isArcheWorld && !string.IsNullOrWhiteSpace(aaLauncherContainer.MinimumVersionForWorld) && (worldTime > newestDateTimeFound) && (worldTime > aaLauncherContainer.MinimumWorldDate))
+                            if (isArcheWorld && !string.IsNullOrWhiteSpace(aaLauncherContainer.MinimumVersionForWorld) && (worldTime > newestDateTimeFound) && (newestDateTimeFound < aaLauncherContainer.MinimumWorldDate) && (worldTime > aaLauncherContainer.MinimumWorldDate))
                             {
                                 newestDateTimeFound = aaLauncherContainer.MinimumWorldDate;
                                 res = aaLauncherContainer.ConfigName;
