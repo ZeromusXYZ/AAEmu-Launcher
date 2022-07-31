@@ -10,7 +10,7 @@ using AAPakEditor;
 
 namespace AAEmu.Launcher.Basic
 {
-    [AALauncher("","Base Launcher","0.0","00000000")]
+    [AALauncher("","Base Launcher","0.0","", "00000000")]
     public partial class AAEmuLauncherBase
     {
         public string UserName { get; set; }
@@ -28,6 +28,8 @@ namespace AAEmu.Launcher.Basic
         protected string _passwordHash { get; set; }
         protected string LaunchVerb { get; set; }
 
+        protected bool SupportsArcheWorld { get; set; }
+
         static public List<AALauncherContainer> AllLaunchers = new List<AALauncherContainer>();
 
         public AAEmuLauncherBase()
@@ -43,6 +45,7 @@ namespace AAEmu.Launcher.Basic
             LoginServerPort = 1237;
             Locale = string.Empty;
             RunningProcess = null;
+            SupportsArcheWorld = false;
         }
 
         /// <summary>
@@ -142,6 +145,7 @@ namespace AAEmu.Launcher.Basic
                     nl.ConfigName = a.ConfigName;
                     nl.DisplayName = a.DisplayName;
                     nl.MinimumVersion = a.MinimumVersion;
+                    nl.MinimumVersionForWorld = a.MinimumVersionForWorld;
                     nl.MinimumWorldDate = a.MinimumWorldDate;
                     nl.LauncherClass = type;
                     AllLaunchers.Add(nl);
@@ -158,19 +162,22 @@ namespace AAEmu.Launcher.Basic
         protected string _configName;
         protected string _displayName;
         protected string _minimumVersion;
+        protected string _minimumVersionForWorld;
         private DateTime _minimumWorldDate;
 
         public string ConfigName { get => _configName; set => _configName = value; }
         public string DisplayName { get => _displayName; set => _displayName = value; }
         public string MinimumVersion { get => _minimumVersion; set => _minimumVersion = value; }
+        public string MinimumVersionForWorld { get => _minimumVersionForWorld; set => _minimumVersionForWorld = value; }
         public DateTime MinimumWorldDate { get => _minimumWorldDate; set => _minimumWorldDate = value; }
 
         // The constructor is called when the attribute is set.
-        public AALauncherAttribute(string configname, string displayname, string minimumversion, string minimumDateYYYYMMDD)
+        public AALauncherAttribute(string configName, string displayName, string minimumArcheAgeVersion, string minimumArcheWorldVersion, string minimumDateYYYYMMDD)
         {
-            _configName = configname;
-            _displayName = displayname;
-            _minimumVersion = minimumversion;
+            _configName = configName;
+            _displayName = displayName;
+            _minimumVersion = minimumArcheAgeVersion;
+            _minimumVersionForWorld = minimumArcheWorldVersion;
             DateTime dt ;
             try
             {
@@ -193,6 +200,7 @@ namespace AAEmu.Launcher.Basic
         public string ConfigName;
         public string DisplayName;
         public string MinimumVersion;
+        public string MinimumVersionForWorld;
         public DateTime MinimumWorldDate;
     }
 
@@ -203,6 +211,8 @@ namespace AAEmu.Launcher.Basic
             // Check if main exe and game_pak exist
             if (!File.Exists(archeAgeExeFile))
                 return string.Empty;
+
+            var isArcheWorld = (archeAgeExeFile.ToLower().Contains("archeworld")) ;
             var pakFileName = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(archeAgeExeFile)), "game_pak");
             if (!File.Exists(pakFileName))
                 return string.Empty;
@@ -214,16 +224,20 @@ namespace AAEmu.Launcher.Basic
                 var versionInfo = FileVersionInfo.GetVersionInfo(archeAgeExeFile);
                 string version = string.Join(".",versionInfo.FileVersion.Replace(" ","").Split(',')); // Will typically return "1.0.0.0" in your case
 
-                if (string.Compare(version, "2.9") > 0)
+                if (isArcheWorld || (string.Compare(version, "2.9") > 0))
                 {
                     // For more recent versions, checking the .exe should be enough to be accurate
-                    var v = "";
-                    foreach (var l in AAEmuLauncherBase.AllLaunchers)
+                    var newestValidVersion = "";
+                    foreach (var aaLauncherContainer in AAEmuLauncherBase.AllLaunchers)
                     {
-                        if ((string.Compare(version, l.MinimumVersion, true) > 0) && (string.Compare(version, v, true) > 0))
+                        var compareVersion = isArcheWorld
+                            ? aaLauncherContainer.MinimumVersionForWorld
+                            : aaLauncherContainer.MinimumVersion;
+
+                        if (!string.IsNullOrWhiteSpace(compareVersion) && (string.Compare(version, compareVersion, true) > 0) && (string.Compare(version, newestValidVersion, true) > 0))
                         {
-                            v = l.MinimumVersion;
-                            res = l.ConfigName;
+                            newestValidVersion = aaLauncherContainer.MinimumVersion;
+                            res = aaLauncherContainer.ConfigName;
                         }
                     }
 
@@ -235,16 +249,22 @@ namespace AAEmu.Launcher.Basic
                     // Check by game_pak/game/worlds/main_world/world.xml 's create date
                     var pak = new AAPak(pakFileName, true);
                     AAPakFileInfo worldInfo = null;
-                    var dt = DateTime.MinValue;
+                    var newestDateTimeFound = DateTime.MinValue;
                     if (pak.GetFileByName("game/worlds/main_world/world.xml", ref worldInfo))
                     {
                         var worldTime = DateTime.FromFileTime(worldInfo.createTime);
-                        foreach (var l in AAEmuLauncherBase.AllLaunchers)
+                        foreach (var aaLauncherContainer in AAEmuLauncherBase.AllLaunchers)
                         {
-                            if ((worldTime > dt) && (worldTime > l.MinimumWorldDate))
+                            if (!isArcheWorld && !string.IsNullOrWhiteSpace(aaLauncherContainer.MinimumVersion) && (worldTime > newestDateTimeFound) && (worldTime > aaLauncherContainer.MinimumWorldDate))
                             {
-                                dt = l.MinimumWorldDate;
-                                res = l.ConfigName;
+                                newestDateTimeFound = aaLauncherContainer.MinimumWorldDate;
+                                res = aaLauncherContainer.ConfigName;
+                            }
+
+                            if (isArcheWorld && !string.IsNullOrWhiteSpace(aaLauncherContainer.MinimumVersionForWorld) && (worldTime > newestDateTimeFound) && (worldTime > aaLauncherContainer.MinimumWorldDate))
+                            {
+                                newestDateTimeFound = aaLauncherContainer.MinimumWorldDate;
+                                res = aaLauncherContainer.ConfigName;
                             }
                         }
                     }

@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace AAEmu.Launcher.Trion70
 {
-    [AALauncher("trino_7_0", "Trion 7.0", "7.0", "20210318")]
+    [AALauncher("trino_7_0", "Trion 7.0", "7.0", "", "20210318")]
     public class Trion_7_0_Launcher : AAEmu.Launcher.Trion60.Trion_6_0_Launcher
     {
         // Example args (from Trion 7.5)

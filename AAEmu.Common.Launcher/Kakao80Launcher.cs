@@ -3,7 +3,7 @@ using System;
 
 namespace AAEmu.Launcher.Kakao80
 {
-    [AALauncher("kakao_8_0", "Kakao 8.0","8.0","20211202")]
+    [AALauncher("kakao_8_0", "Kakao 8.0","8.0", "0.1", "20211202")]
     public class Kakao_8_0_Launcher: AAEmuLauncherBase
     {
         public string AuthToken { get; set; } = System.Guid.Empty.ToString();

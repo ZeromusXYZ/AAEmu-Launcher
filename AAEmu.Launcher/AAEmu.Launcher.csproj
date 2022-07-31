@@ -99,7 +99,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AAPak.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="InfoPopupForm.cs">
       <SubType>Form</SubType>
@@ -107,12 +106,6 @@
     <Compile Include="InfoPopupForm.Designer.cs">
       <DependentUpon>InfoPopupForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="LauncherClass\Kakao80Launcher.cs" />
-    <Compile Include="LauncherClass\Trion70Launcher.cs" />
-    <Compile Include="LauncherClass\Trion60Launcher.cs" />
-    <Compile Include="LauncherClass\Trion35Launcher.cs" />
-    <Compile Include="LauncherClass\Trion12Launcher.cs" />
-    <Compile Include="LauncherClass\MailRu10Launcher.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -132,8 +125,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="LauncherClass\BaseLauncher.cs" />
-    <Compile Include="SubStream.cs" />
     <Compile Include="URIGenForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -290,6 +281,12 @@
       <Progid>aaemu.launcher.config</Progid>
       <DefaultIcon>aaemu.ico</DefaultIcon>
     </FileAssociation>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AAEmu.Common.Launcher\AAEmu.Common.Launcher.csproj">
+      <Project>{08ca28d6-44cd-4476-968e-000fe33ac396}</Project>
+      <Name>AAEmu.Common.Launcher</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

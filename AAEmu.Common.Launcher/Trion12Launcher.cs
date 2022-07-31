@@ -6,7 +6,7 @@ using AAEmu.Launcher.Basic;
 
 namespace AAEmu.Launcher.Trion12
 {
-    [AALauncher("trino_1_2","Trion 1.2","1.2","20140708")]
+    [AALauncher("trino_1_2","Trion 1.2","1.2", "", "20140708")]
     public class Trion_1_2_Launcher: AAEmuLauncherBase
     {
 

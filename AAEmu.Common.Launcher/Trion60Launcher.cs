@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace AAEmu.Launcher.Trion60
 {
-    [AALauncher("trino_6_0", "Trion 6.0","6.0","20190919")]
+    [AALauncher("trino_6_0", "Trion 6.0","6.0", "", "20190919")]
     public class Trion_6_0_Launcher: AAEmu.Launcher.Trion12.Trion_1_2_Launcher
     {
         // Example args (from Trion 6.0.7.0 PTS) launched at 17:07 CET (15:07 UTC)

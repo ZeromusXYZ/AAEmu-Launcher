@@ -1009,7 +1009,7 @@
             this.miLocaleS3,
             this.miLocaleUnknown});
             this.cmsLocaleLanguage.Name = "cmsLanguage";
-            this.cmsLocaleLanguage.Size = new System.Drawing.Size(181, 264);
+            this.cmsLocaleLanguage.Size = new System.Drawing.Size(138, 242);
             // 
             // miLocaleEnglish
             // 
@@ -1208,9 +1208,9 @@
             this.panelSettings.Controls.Add(this.cbHideSplash);
             this.panelSettings.Controls.Add(this.cbUpdateLocale);
             this.panelSettings.Controls.Add(this.lHideSplash);
-            this.panelSettings.Location = new System.Drawing.Point(17, 247);
+            this.panelSettings.Location = new System.Drawing.Point(17, 7);
             this.panelSettings.Name = "panelSettings";
-            this.panelSettings.Size = new System.Drawing.Size(376, 218);
+            this.panelSettings.Size = new System.Drawing.Size(919, 458);
             this.panelSettings.TabIndex = 51;
             this.panelSettings.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseDown);
             this.panelSettings.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
