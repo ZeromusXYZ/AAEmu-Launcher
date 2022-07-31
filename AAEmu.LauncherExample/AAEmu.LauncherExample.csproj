@@ -7,14 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\AAEmu.Launcher\AAPak.cs" Link="AAPak.cs" />
-    <Compile Include="..\AAEmu.Launcher\LauncherClass\BaseLauncher.cs" Link="LauncherClass\BaseLauncher.cs" />
-    <Compile Include="..\AAEmu.Launcher\LauncherClass\Trion12Launcher.cs" Link="LauncherClass\Trion12Launcher.cs" />
-    <Compile Include="..\AAEmu.Launcher\SubStream.cs" Link="SubStream.cs" />
+    <Compile Remove="LauncherClass\**" />
+    <EmbeddedResource Remove="LauncherClass\**" />
+    <None Remove="LauncherClass\**" />
+    <Page Remove="LauncherClass\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="LauncherClass\" />
+    <ProjectReference Include="..\AAEmu.Common.Launcher\AAEmu.Common.Launcher.csproj" />
   </ItemGroup>
 
 </Project>
