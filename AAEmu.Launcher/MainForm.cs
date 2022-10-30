@@ -3,7 +3,7 @@ using AAEmu.Launcher.MailRu10;
 using AAEmu.Launcher.Trion12;
 using AAEmu.Launcher.Trion35;
 using AAEmu.Launcher.Trion60;
-using AAPakEditor;
+using AAPacker;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -1362,7 +1362,10 @@ namespace AAEmu.Launcher
                 // Do Nothing
             }
 
-            MessageBox.Show($"Could not guess documents folder for {archeAgeExe}, configuration file might not be updated correctly!","Detect Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            // If no data could be found inside the .exe, then, use then assume the exe's filename as a folder
+            res = Path.GetFileNameWithoutExtension(archeAgeExe);
+
+            // MessageBox.Show($"Could not guess documents folder for {archeAgeExe}, configuration file might not be updated correctly!","Detect Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             return res;
         }
 
@@ -2724,36 +2727,36 @@ namespace AAEmu.Launcher
                     AAPakFileInfo xlfi = new AAPakFileInfo();
                     string[] items = line.Split(';');
                     // Path
-                    xlfi.name = items[0];
+                    xlfi.Name = items[0];
                     // Size
                     long l = 0;
                     if (long.TryParse(items[1], out l))
-                        xlfi.size = l;
+                        xlfi.Size = l;
                     else
-                        xlfi.size = 0;
+                        xlfi.Size = 0;
                     // If directory info
 
                     // Skip directories
-                    if (xlfi.size < 0)
+                    if (xlfi.Size < 0)
                         continue;
 
                     if (items.Length > 2)
                     {
-                        xlfi.md5 = StringToByteArray(items[2]);
+                        xlfi.Md5 = StringToByteArray(items[2]);
                     }
                     else
                     {
-                        xlfi.md5 = new byte[16] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+                        xlfi.Md5 = new byte[16] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
                     }
                     if (items.Length > 4)
                     {
-                        xlfi.createTime = AAPatchProgress.PatchDateTimeStrToFILETIME(items[3]);
-                        xlfi.modifyTime = AAPatchProgress.PatchDateTimeStrToFILETIME(items[4]);
+                        xlfi.CreateTime = AAPatchProgress.PatchDateTimeStrToFILETIME(items[3]);
+                        xlfi.ModifyTime = AAPatchProgress.PatchDateTimeStrToFILETIME(items[4]);
                     }
                     else
                     {
-                        xlfi.createTime = 0;
-                        xlfi.modifyTime = 0;
+                        xlfi.CreateTime = 0;
+                        xlfi.ModifyTime = 0;
                     }
                     res.Add(xlfi);
                 }
@@ -2772,7 +2775,7 @@ namespace AAEmu.Launcher
                     i = 0;
                 }
                 AAPakFileInfo pfi = list[i];
-                if (pfi.name.ToLower() == filename)
+                if (pfi.Name.ToLower() == filename)
                 {
                     startIndex = i;
                     return pfi;
@@ -2781,7 +2784,7 @@ namespace AAEmu.Launcher
             return null;
         }
 
-        private AAPakFileInfo FindPatchFileInSortedList(string filename, ref List<AAPakFileInfo> list)
+        private AAPakFileInfo FindPatchFileInSortedList(string filename, List<AAPakFileInfo> list)
         {
             filename = filename.ToLower();
             int searchMin = 0;
@@ -2796,7 +2799,7 @@ namespace AAEmu.Launcher
                 // searchPos = searchMin + (searchSize / 2);
                 searchPos = ((searchMin + searchMax) / 2);
 
-                var res = list[searchPos].name.CompareTo(filename);
+                var res = list[searchPos].Name.CompareTo(filename);
                 if (res < 0)
                 {
                     // Looking for a smaller value
@@ -2926,7 +2929,7 @@ namespace AAEmu.Launcher
                 pak = new AAPak("");
                 TryLoadCustomKey(pak, aaPatcher.localGame_Pak);
                 pak.OpenPak(aaPatcher.localGame_Pak, false);
-                if (!pak.isOpen)
+                if (!pak.IsOpen)
                 {
                     // Failed to open pak
                     aaPatcher.Fase = PatchFase.Error;
@@ -2938,20 +2941,20 @@ namespace AAEmu.Launcher
                 // aaPatcher.FileDownloadSizeTotal = new System.IO.FileInfo(aaPatcher.localGame_Pak).Length;
                 aaPatcher.FileDownloadSizeTotal = 0;
                 var totalFilesCount = 0;
-                foreach (AAPakFileInfo pfi in pak.files)
+                foreach (AAPakFileInfo pfi in pak.Files)
                 {
-                    aaPatcher.FileDownloadSizeTotal += pfi.size;
+                    aaPatcher.FileDownloadSizeTotal += pfi.Size;
                     totalFilesCount++;
                 }
 
                 var filesCount = 0;
-                foreach (AAPakFileInfo pfi in pak.files)
+                foreach (AAPakFileInfo pfi in pak.Files)
                 {
                     //if (BitConverter.ToString(pfi.md5).Replace("-", "") == AAPakFileHeader.nullHashString)
-                    if (Array.Equals(pfi.md5, AAPakFileHeader.nullHash))
+                    if (Array.Equals(pfi.Md5, AAPakFileHeader.NullHash))
                     {
                         aaPatcher.Fase = PatchFase.ReHashLocalFiles;
-                        pak.UpdateMD5(pfi);
+                        pak.UpdateMd5(pfi);
                     }
                     filesCount++;
                     if ((filesCount % 50) == 0)
@@ -3001,7 +3004,7 @@ namespace AAEmu.Launcher
             bgwPatcher.ReportProgress(0, aaPatcher);
 
             // First sort both to speed things up
-            pak.files.Sort();
+            pak.Files.Sort();
             remotePakFileList.Sort();
 
             long totSize = 0;
@@ -3010,25 +3013,25 @@ namespace AAEmu.Launcher
                 AAPakFileInfo r = remotePakFileList[i];
 
                 // Don't download empty files or entries marked as directories (-1)
-                if (r.size <= 0) continue;
+                if (r.Size <= 0) continue;
 
-                AAPakFileInfo l = FindPatchFileInSortedList(r.name, ref pak.files);
+                var l = FindPatchFileInSortedList(r.Name, pak.Files);
                 if (l == null)
                 {
                     // We don't have a local copy of this file
                     // Add it to the list
                     dlPakFileList.Add(r);
-                    totSize += r.size;
+                    totSize += r.Size;
                 }
                 else
                 {
 
-                    if ((l.size != r.size) || (l.md5.SequenceEqual(r.md5) == false))
+                    if ((l.Size != r.Size) || (l.Md5.SequenceEqual(r.Md5) == false))
                     {
                         // Local Filesize or Hash is different from remote
                         // Redownload it
                         dlPakFileList.Add(r);
-                        totSize += r.size;
+                        totSize += r.Size;
                     }
                 }
 
@@ -3076,7 +3079,7 @@ namespace AAEmu.Launcher
             }
 
             PatchDownloadPak.OpenPak(aaPatcher.localPatchDirectory + localPatchPakFileName, false);
-            if (!PatchDownloadPak.isOpen)
+            if (!PatchDownloadPak.IsOpen)
             {
                 // TODO: Add better support in case of fails
                 //aaPatcher.Fase = PatchFase.Error;
@@ -3093,7 +3096,7 @@ namespace AAEmu.Launcher
                     PatchDownloadPak = null;
                 }
 
-                if ((PatchDownloadPak == null) || (!PatchDownloadPak.isOpen))
+                if ((PatchDownloadPak == null) || (!PatchDownloadPak.IsOpen))
                 {
                     aaPatcher.Fase = PatchFase.Error;
                     aaPatcher.ErrorMsg = L.FatalErrorFailedToOpenFileForWrite;
@@ -3108,14 +3111,14 @@ namespace AAEmu.Launcher
             totSize = 0; // calculate this again on the final list
             for (int i = dlPakFileList.Count - 1; i >= 0; i--)
             {
-                if (PatchDownloadPak.FileExists(dlPakFileList[i].name))
+                if (PatchDownloadPak.FileExists(dlPakFileList[i].Name))
                 {
                     dlPakFileList.Remove(dlPakFileList[i]);
                 }
                 else
                 {
-                    totSize += dlPakFileList[i].size;
-                    sl.Add(dlPakFileList[i].name);
+                    totSize += dlPakFileList[i].Size;
+                    sl.Add(dlPakFileList[i].Name);
                 }
             }
             aaPatcher.FileDownloadSizeTotal = totSize;
@@ -3137,21 +3140,21 @@ namespace AAEmu.Launcher
             for (int i = dlPakFileList.Count - 1; i >= 0; i--)
             {
                 AAPakFileInfo pfi = dlPakFileList[i];
-                var fileDLurl = Setting.ServerGameUpdateURL + pfi.name;
+                var fileDLurl = Setting.ServerGameUpdateURL + pfi.Name;
 
                 try
                 {
                     Stream fileDL = WebHelper.SimpleGetURIAsMemoryStream(fileDLurl);
-                    if (fileDL.Length != pfi.size)
+                    if (fileDL.Length != pfi.Size)
                     {
                         aaPatcher.Fase = PatchFase.Error;
-                        aaPatcher.ErrorMsg = string.Format(L.DownloadSizeMismatch, fileDLurl, pfi.size.ToString(), fileDL.Length.ToString());
+                        aaPatcher.ErrorMsg = string.Format(L.DownloadSizeMismatch, fileDLurl, pfi.Size.ToString(), fileDL.Length.ToString());
                         fileDL.Dispose();
                         return;
                     }
                     fileDL.Position = 0;
                     var fileHash = WebHelper.GetMD5FromStream(fileDL);
-                    var expectHash = BitConverter.ToString(pfi.md5).Replace("-", "").ToLower();
+                    var expectHash = BitConverter.ToString(pfi.Md5).Replace("-", "").ToLower();
                     if (fileHash != expectHash)
                     {
                         aaPatcher.Fase = PatchFase.Error;
@@ -3159,13 +3162,13 @@ namespace AAEmu.Launcher
                         fileDL.Dispose();
                         return;
                     }
-                    var addpfi = PatchDownloadPak.nullAAPakFileInfo;
+                    var addpfi = PatchDownloadPak.NullAAPakFileInfo;
                     fileDL.Position = 0;
-                    var addRes = PatchDownloadPak.AddFileFromStream(pfi.name, fileDL, DateTime.FromFileTime(pfi.createTime), DateTime.FromFileTime(pfi.modifyTime), false, out addpfi);
+                    var addRes = PatchDownloadPak.AddFileFromStream(pfi.Name, fileDL, DateTime.FromFileTime(pfi.CreateTime), DateTime.FromFileTime(pfi.ModifyTime), false, out addpfi);
                     if (!addRes)
                     {
                         aaPatcher.Fase = PatchFase.Error;
-                        aaPatcher.ErrorMsg = string.Format(L.FailedToSaveCache, pfi.name);
+                        aaPatcher.ErrorMsg = string.Format(L.FailedToSaveCache, pfi.Name);
                         fileDL.Dispose();
                         return;
                     }
@@ -3178,7 +3181,7 @@ namespace AAEmu.Launcher
                     return;
                 }
 
-                aaPatcher.FileDownloadSizeDownloaded += pfi.size;
+                aaPatcher.FileDownloadSizeDownloaded += pfi.Size;
 
                 var dlprogress = (aaPatcher.FileDownloadSizeDownloaded * 100) / aaPatcher.FileDownloadSizeTotal;
                 bgwPatcher.ReportProgress((int)dlprogress, aaPatcher);
@@ -3203,18 +3206,18 @@ namespace AAEmu.Launcher
             // Recalculate the total size to apply (including data to copy outside of the game_pak)
             //--------------------------------------------------------------------------------------
             aaPatcher.FileDownloadSizeTotal = 0;
-            foreach (AAPakFileInfo pfi in PatchDownloadPak.files)
+            foreach (AAPakFileInfo pfi in PatchDownloadPak.Files)
             {
-                aaPatcher.FileDownloadSizeTotal += pfi.size;
+                aaPatcher.FileDownloadSizeTotal += pfi.Size;
                 // Count files inside bin32 twice
-                if ((pfi.name.Length > bin32Dir.Length) && (pfi.name.Substring(0, bin32Dir.Length) == bin32Dir))
+                if ((pfi.Name.Length > bin32Dir.Length) && (pfi.Name.Substring(0, bin32Dir.Length) == bin32Dir))
                 {
-                    aaPatcher.FileDownloadSizeTotal += pfi.size;
+                    aaPatcher.FileDownloadSizeTotal += pfi.Size;
                 }
                 // count compact.sqlite3 twice if it's not encrypted
-                if ((pfi.name == dbNameInPak) && (exportDBAsWell))
+                if ((pfi.Name == dbNameInPak) && (exportDBAsWell))
                 {
-                    aaPatcher.FileDownloadSizeTotal += pfi.size;
+                    aaPatcher.FileDownloadSizeTotal += pfi.Size;
                 }
             }
 
@@ -3224,24 +3227,24 @@ namespace AAEmu.Launcher
             //---------------------------------------------
             // Apply downloaded files, export where needed
             //---------------------------------------------
-            foreach (AAPakFileInfo pfi in PatchDownloadPak.files)
+            foreach (AAPakFileInfo pfi in PatchDownloadPak.Files)
             {
                 Stream exportStream = PatchDownloadPak.ExportFileAsStream(pfi);
                 exportStream.Position = 0;
-                var respfi = pak.nullAAPakFileInfo;
-                var addRes = pak.AddFileFromStream(pfi.name, exportStream, DateTime.FromFileTime(pfi.createTime), DateTime.FromFileTime(pfi.modifyTime), false, out respfi);
+                var respfi = pak.NullAAPakFileInfo;
+                var addRes = pak.AddFileFromStream(pfi.Name, exportStream, DateTime.FromFileTime(pfi.CreateTime), DateTime.FromFileTime(pfi.ModifyTime), false, out respfi);
                 if (!addRes)
                 {
                     aaPatcher.Fase = PatchFase.Error;
-                    aaPatcher.ErrorMsg = string.Format(L.ErrorPatchApplyFile, pfi.name);
+                    aaPatcher.ErrorMsg = string.Format(L.ErrorPatchApplyFile, pfi.Name);
                     exportStream.Dispose();
                     return;
                 }
-                aaPatcher.FileDownloadSizeDownloaded += pfi.size;
+                aaPatcher.FileDownloadSizeDownloaded += pfi.Size;
 
                 // always export files inside bin32
                 var exportErrorCount = 0;
-                if ((pfi.name.Length > bin32Dir.Length) && (pfi.name.Substring(0, bin32Dir.Length) == bin32Dir))
+                if ((pfi.Name.Length > bin32Dir.Length) && (pfi.Name.Substring(0, bin32Dir.Length) == bin32Dir))
                 {
                     var fileOK = true;
                     while (fileOK)
@@ -3249,7 +3252,7 @@ namespace AAEmu.Launcher
                         fileOK = false;
                         try
                         {
-                            var destName = aaPatcher.localGameFolder + pfi.name.Replace('/', Path.DirectorySeparatorChar);
+                            var destName = aaPatcher.localGameFolder + pfi.Name.Replace('/', Path.DirectorySeparatorChar);
                             Directory.CreateDirectory(Path.GetDirectoryName(destName));
                             FileStream fs = new FileStream(destName, FileMode.Create);
                             exportStream.Position = 0;
@@ -3259,9 +3262,9 @@ namespace AAEmu.Launcher
                             fs.Dispose();
 
                             // Update file details
-                            File.SetCreationTime(destName, DateTime.FromFileTime(pfi.createTime));
-                            File.SetLastWriteTime(destName, DateTime.FromFileTime(pfi.modifyTime));
-                            aaPatcher.FileDownloadSizeDownloaded += pfi.size;
+                            File.SetCreationTime(destName, DateTime.FromFileTime(pfi.CreateTime));
+                            File.SetLastWriteTime(destName, DateTime.FromFileTime(pfi.ModifyTime));
+                            aaPatcher.FileDownloadSizeDownloaded += pfi.Size;
                             fileOK = true;
                         }
                         catch
@@ -3272,7 +3275,7 @@ namespace AAEmu.Launcher
                         if (!fileOK)
                         {
                             // Something went wrong while exporting
-                            var retryRes = MessageBox.Show(string.Format(L.ErrorPatchExportFile, pfi.name), L.AddFiles, MessageBoxButtons.AbortRetryIgnore);
+                            var retryRes = MessageBox.Show(string.Format(L.ErrorPatchExportFile, pfi.Name), L.AddFiles, MessageBoxButtons.AbortRetryIgnore);
                             switch(retryRes)
                             {
                                 case DialogResult.Retry:
@@ -3281,7 +3284,7 @@ namespace AAEmu.Launcher
                                 case DialogResult.Abort:
                                     exportErrorCount++;
                                     aaPatcher.Fase = PatchFase.Error;
-                                    aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportFile, pfi.name);
+                                    aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportFile, pfi.Name);
                                     break;
                                 case DialogResult.Ignore:
                                     fileOK = true;
@@ -3295,12 +3298,12 @@ namespace AAEmu.Launcher
                     if (exportErrorCount > 0)
                     {
                         aaPatcher.Fase = PatchFase.Error;
-                        aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportFile, pfi.name);
+                        aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportFile, pfi.Name);
                     }
                 }
 
                 // export compact.sqlite3 if it's not encrypted
-                if ((pfi.name == dbNameInPak) && (exportDBAsWell))
+                if ((pfi.Name == dbNameInPak) && (exportDBAsWell))
                 {
                     var fileOK = true;
                     while (fileOK)
@@ -3308,7 +3311,7 @@ namespace AAEmu.Launcher
                         fileOK = false;
                         try
                         {
-                            var destName = aaPatcher.localGameFolder + pfi.name.Replace('/', Path.DirectorySeparatorChar);
+                            var destName = aaPatcher.localGameFolder + pfi.Name.Replace('/', Path.DirectorySeparatorChar);
                             Directory.CreateDirectory(Path.GetDirectoryName(destName));
                             FileStream fs = new FileStream(destName, FileMode.Create);
                             exportStream.Position = 0;
@@ -3318,9 +3321,9 @@ namespace AAEmu.Launcher
                             fs.Dispose();
 
                             // Update file details
-                            File.SetCreationTime(destName, DateTime.FromFileTime(pfi.createTime));
-                            File.SetLastWriteTime(destName, DateTime.FromFileTime(pfi.modifyTime));
-                            aaPatcher.FileDownloadSizeDownloaded += pfi.size;
+                            File.SetCreationTime(destName, DateTime.FromFileTime(pfi.CreateTime));
+                            File.SetLastWriteTime(destName, DateTime.FromFileTime(pfi.ModifyTime));
+                            aaPatcher.FileDownloadSizeDownloaded += pfi.Size;
                             fileOK = true;
                         }
                         catch
@@ -3334,7 +3337,7 @@ namespace AAEmu.Launcher
                         if (!fileOK)
                         {
                             // Something went wrong while exporting
-                            var retryRes = MessageBox.Show(string.Format(L.ErrorPatchExportFile, pfi.name), L.AddFiles, MessageBoxButtons.AbortRetryIgnore);
+                            var retryRes = MessageBox.Show(string.Format(L.ErrorPatchExportFile, pfi.Name), L.AddFiles, MessageBoxButtons.AbortRetryIgnore);
                             switch (retryRes)
                             {
                                 case DialogResult.Retry:
@@ -3342,7 +3345,7 @@ namespace AAEmu.Launcher
                                     break;
                                 case DialogResult.Abort:
                                     aaPatcher.Fase = PatchFase.Error;
-                                    aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportDB, pfi.name);
+                                    aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportDB, pfi.Name);
                                     break;
                                 case DialogResult.Ignore:
                                     fileOK = true;
@@ -3596,7 +3599,7 @@ namespace AAEmu.Launcher
                 pak.OpenPak(aaPatcher.localGame_Pak, false);
             }
 
-            if (!pak.isOpen)
+            if (!pak.IsOpen)
             {
                 Cursor.Current = Cursors.Default;
                 Application.UseWaitCursor = false;
@@ -3610,16 +3613,16 @@ namespace AAEmu.Launcher
             //---------------------------------------------
             // Apply downloaded files, export where needed
             //---------------------------------------------
-            foreach (AAPakFileInfo pfi in pak.files)
+            foreach (AAPakFileInfo pfi in pak.Files)
             {
 
                 // always export files inside bin32
-                if ((pfi.name.Length > bin32Dir.Length) && (pfi.name.Substring(0, bin32Dir.Length) == bin32Dir))
+                if ((pfi.Name.Length > bin32Dir.Length) && (pfi.Name.Substring(0, bin32Dir.Length) == bin32Dir))
                 {
                     try
                     {
                         Stream exportStream = pak.ExportFileAsStream(pfi);
-                        var destName = aaPatcher.localGameFolder + pfi.name.Replace('/', Path.DirectorySeparatorChar);
+                        var destName = aaPatcher.localGameFolder + pfi.Name.Replace('/', Path.DirectorySeparatorChar);
                         Directory.CreateDirectory(Path.GetDirectoryName(destName));
                         FileStream fs = new FileStream(destName, FileMode.Create);
                         exportStream.Position = 0;
@@ -3629,28 +3632,28 @@ namespace AAEmu.Launcher
                         fs.Dispose();
 
                         // Update file details
-                        File.SetCreationTime(destName, DateTime.FromFileTime(pfi.createTime));
-                        File.SetLastWriteTime(destName, DateTime.FromFileTime(pfi.modifyTime));
-                        aaPatcher.FileDownloadSizeDownloaded += pfi.size;
+                        File.SetCreationTime(destName, DateTime.FromFileTime(pfi.CreateTime));
+                        File.SetLastWriteTime(destName, DateTime.FromFileTime(pfi.ModifyTime));
+                        aaPatcher.FileDownloadSizeDownloaded += pfi.Size;
                     }
                     catch
                     {
                         aaPatcher.Fase = PatchFase.Error;
-                        aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportFile, pfi.name);
+                        aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportFile, pfi.Name);
                         return;
                     }
 
                 }
 
                 // export compact.sqlite3 if it's not encrypted
-                if (pfi.name == dbNameInPak)
+                if (pfi.Name == dbNameInPak)
                 {
                     try
                     {
                         Stream exportStream = pak.ExportFileAsStream(pfi);
                         if (IsValidSQLiteFile(exportStream))
                         {
-                            var destName = aaPatcher.localGameFolder + pfi.name.Replace('/', Path.DirectorySeparatorChar);
+                            var destName = aaPatcher.localGameFolder + pfi.Name.Replace('/', Path.DirectorySeparatorChar);
                             Directory.CreateDirectory(Path.GetDirectoryName(destName));
                             FileStream fs = new FileStream(destName, FileMode.Create);
                             exportStream.Position = 0;
@@ -3660,15 +3663,15 @@ namespace AAEmu.Launcher
                             fs.Dispose();
 
                             // Update file details
-                            File.SetCreationTime(destName, DateTime.FromFileTime(pfi.createTime));
-                            File.SetLastWriteTime(destName, DateTime.FromFileTime(pfi.modifyTime));
-                            aaPatcher.FileDownloadSizeDownloaded += pfi.size;
+                            File.SetCreationTime(destName, DateTime.FromFileTime(pfi.CreateTime));
+                            File.SetLastWriteTime(destName, DateTime.FromFileTime(pfi.ModifyTime));
+                            aaPatcher.FileDownloadSizeDownloaded += pfi.Size;
                         }
                     }
                     catch
                     {
                         aaPatcher.Fase = PatchFase.Error;
-                        aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportDB, pfi.name);
+                        aaPatcher.ErrorMsg = string.Format(L.ErrorPatchExportDB, pfi.Name);
                         return;
                     }
                 }
@@ -3720,7 +3723,7 @@ namespace AAEmu.Launcher
             string fn;
 
             // PAK-Header Key
-            fn = Path.GetDirectoryName(pakFileName).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar + "game_pak.key";
+            fn = Path.ChangeExtension(pakFileName, ".key");
             if (File.Exists(fn))
             {
                 FileStream fs = new FileStream(fn, FileMode.Open, FileAccess.Read);
@@ -3731,7 +3734,7 @@ namespace AAEmu.Launcher
                 }
                 fs.Read(customKey, 0, 16);
                 fs.Dispose();
-                aPak._header.SetCustomKey(customKey);
+                aPak.SetCustomKey(customKey);
             }
         }
 

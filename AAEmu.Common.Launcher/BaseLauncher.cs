@@ -6,7 +6,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Diagnostics;
-using AAPakEditor;
+using AAPacker;
 
 namespace AAEmu.Launcher.Basic
 {
@@ -250,11 +250,10 @@ namespace AAEmu.Launcher.Basic
 
                     // Check by game_pak/game/worlds/main_world/world.xml 's create date
                     var pak = new AAPak(pakFileName, true);
-                    AAPakFileInfo worldInfo = null;
                     var newestDateTimeFound = DateTime.MinValue;
-                    if (pak.GetFileByName("game/worlds/main_world/world.xml", ref worldInfo))
+                    if (pak.GetFileByName("game/worlds/main_world/world.xml", out var worldInfo))
                     {
-                        var worldTime = DateTime.FromFileTime(worldInfo.createTime);
+                        var worldTime = DateTime.FromFileTime(worldInfo.CreateTime);
                         foreach (var aaLauncherContainer in AAEmuLauncherBase.AllLaunchers)
                         {
                             if (!isArcheWorld && !string.IsNullOrWhiteSpace(aaLauncherContainer.MinimumVersion) && (worldTime > newestDateTimeFound) && (newestDateTimeFound < aaLauncherContainer.MinimumWorldDate) && (worldTime > aaLauncherContainer.MinimumWorldDate))
