@@ -159,6 +159,7 @@ namespace AAEmu.Launcher
         private const string settingsLangJP = "ja"; // Japanese
         private const string settingsLangZH_CN = "zh_cn"; // Chinese simplified
         private const string settingsLangZH_TW = "zh_tw"; // Chinese traditional // Not sure how I'd do this with flags if ever
+        private const string settingsLangSE_SV = "se_sv"; // Swedish
 
         public partial class LanguageSettings
         {
@@ -763,6 +764,9 @@ namespace AAEmu.Launcher
                     break;
                 case settingsLangZH_CN:
                     btnLauncherLangChange.Image = Properties.Resources.flag_cn;
+                    break;
+                case settingsLangSE_SV:
+                    btnLauncherLangChange.Image = Properties.Resources.flag_se_sv;
                     break;
                 case settingsLangEN_US:
                 default:

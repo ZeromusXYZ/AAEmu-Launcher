@@ -388,6 +388,16 @@ namespace AAEmu.Launcher.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap flag_se_sv {
+            get {
+                object obj = ResourceManager.GetObject("flag_se_sv", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap flag_traditional_chinese {
             get {
                 object obj = ResourceManager.GetObject("flag_traditional_chinese", resourceCulture);
