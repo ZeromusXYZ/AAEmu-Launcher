@@ -76,7 +76,7 @@
 	"tsdeletegamesetting": "Ta bort spelinställningar",
 	"tsdeleteall": "Ta bort alla ArcheAge-inställningar",
 	"tsforcepatch": "Tvinga nedladdning av patch",
-	"tsforcenopatch": "Force Skip Patch",
+	"tsforcenopatch": "Tvinga Skippa Patch",
 	"tsfixbin32": "Fixa bin32 och DB Filer",
 	"fixbin32files": "Skriv över alla filer i {0} med originalfilerna från {1} ?",
 	"downloadlauncherupdate": "Startversion {0} tillgänglig, klicka för att ladda ner",
