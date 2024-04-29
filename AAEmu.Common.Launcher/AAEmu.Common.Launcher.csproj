@@ -98,6 +98,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AAAutoDetectClient.cs" />
     <Compile Include="BaseLauncher.cs" />
     <Compile Include="XLGamesWorld10Launcher.cs" />
     <Compile Include="Kakao80Launcher.cs" />
