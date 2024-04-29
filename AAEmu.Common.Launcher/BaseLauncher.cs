@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Diagnostics;
 using AAPacker;
+using System.Reflection.PortableExecutable;
 
 namespace AAEmu.Launcher.Basic
 {
@@ -206,7 +207,7 @@ namespace AAEmu.Launcher.Basic
 
     public class AAAutoDetectClient
     {
-        static public string GuessLauncher(string archeAgeExeFile)
+        public static string GuessLauncher(string archeAgeExeFile)
         {
             // Check if main exe and game_pak exist
             if (!File.Exists(archeAgeExeFile))
@@ -276,6 +277,74 @@ namespace AAEmu.Launcher.Basic
             catch { }
 
             return res;
+        }
+
+        /// <summary>
+        /// Tries to detect the revision number of a ArcheAge.exe file
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns>Revision number, or 0 if there were errors</returns>
+        public static ulong DetectRevision(string fileName)
+        {
+            if (!File.Exists(fileName))
+                return 0;
+
+            try
+            {
+                using (FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                    return DetectRevision(stream);
+            }
+            catch
+            {
+                //
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// Tries to detect the revision number of a stream of ArcheAge.exe file
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns>Revision number, or 0 if there were errors</returns>
+        public static ulong DetectRevision(Stream stream)
+        {
+            try
+            {
+                using (PEReader peReader = new PEReader(stream))
+                {
+
+                    foreach (var h in peReader.PEHeaders.SectionHeaders)
+                    {
+                        // Normally it's in the .xlgames section
+                        if (h.Name != ".xlgames")
+                            continue;
+
+                        // The block is normally 512 bytes
+                        if (h.SizeOfRawData != 512)
+                            continue;
+
+                        // Try to grab Revision
+                        try
+                        {
+                            stream.Seek(h.PointerToRawData, SeekOrigin.Begin);
+                            byte[] buffer = new byte[8];
+                            stream.Read(buffer, 0, 8);
+
+                            var tryRevision = BitConverter.ToUInt64(buffer, 0);
+                            return tryRevision;
+                        }
+                        catch
+                        {
+                            return 0;
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // Probably invalid executable
+            }
+            return 0;
         }
     }
 
