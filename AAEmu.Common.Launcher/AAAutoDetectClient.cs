@@ -1,4 +1,6 @@
-﻿using System;
+﻿// DetectRevision function Credits: https://github.com/Ingramz/
+
+using System;
 using System.IO;
 using System.Diagnostics;
 using AAPacker;
@@ -104,6 +106,7 @@ namespace AAEmu.Launcher.Basic
 
         /// <summary>
         /// Tries to detect the revision number of a stream of ArcheAge.exe file
+        /// Credits: https://github.com/Ingramz/archeage/tree/master/archeage.exe-revision-finder
         /// </summary>
         /// <param name="stream"></param>
         /// <returns>Revision number, or 0 if there were errors</returns>
