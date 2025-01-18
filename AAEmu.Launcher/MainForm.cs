@@ -3008,8 +3008,8 @@ namespace AAEmu.Launcher
             bgwPatcher.ReportProgress(0, aaPatcher);
 
             // First sort both to speed things up
-            pak.Files.Sort();
             remotePakFileList.Sort();
+            pak.Files.Sort();
 
             long totSize = 0;
             for (int i = 0; i < remotePakFileList.Count; i++)
@@ -3178,8 +3178,9 @@ namespace AAEmu.Launcher
                     }
                     fileDL.Dispose();
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Console.WriteLine($"Error downloading {fileDLurl} with error {ex.Message}");
                     aaPatcher.Fase = PatchFase.Error;
                     aaPatcher.ErrorMsg = string.Format(L.DownloadFileError, fileDLurl);
                     return;
@@ -3250,10 +3251,9 @@ namespace AAEmu.Launcher
                 var exportErrorCount = 0;
                 if ((pfi.Name.Length > bin32Dir.Length) && (pfi.Name.Substring(0, bin32Dir.Length) == bin32Dir))
                 {
-                    var fileOK = true;
-                    while (fileOK)
+                    var fileOK = false;
+                    while (!fileOK)
                     {
-                        fileOK = false;
                         try
                         {
                             var destName = aaPatcher.localGameFolder + pfi.Name.Replace('/', Path.DirectorySeparatorChar);
@@ -3309,10 +3309,9 @@ namespace AAEmu.Launcher
                 // export compact.sqlite3 if it's not encrypted
                 if ((pfi.Name == dbNameInPak) && (exportDBAsWell))
                 {
-                    var fileOK = true;
-                    while (fileOK)
+                    var fileOK = false;
+                    while (!fileOK)
                     {
-                        fileOK = false;
                         try
                         {
                             var destName = aaPatcher.localGameFolder + pfi.Name.Replace('/', Path.DirectorySeparatorChar);

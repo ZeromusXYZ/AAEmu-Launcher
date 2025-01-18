@@ -1,0 +1,20 @@
+{
+    "data": [
+        {
+            "attributes": {
+                "body": "Currently testing hanging skills fix",
+                "links": {
+                    "self": ""
+                },
+                "new": "",
+                "picture": "http://10.0.1.55:5555/aaemu-news/lilith.png",
+                "title": "Lilith News"
+            },
+            "id": 1,
+            "type": ""
+        }
+    ],
+    "links": {
+        "self": ""
+    }
+}

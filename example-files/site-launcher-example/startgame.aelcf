@@ -1,1 +1,19 @@
-{"configName":"AAEmu Client 1.2 @ Lilith","lang":"en_us","pathToGame":"","serverIPAddress":"{{HOST}}","saveLoginAndPassword":"False","skipIntro":"False","hideSplashLogo":"False","lastLoginUser":"{{USER}}","lastLoginPass":"{{PASS}}","loginType":"trino_1_2","updateLocale":"True","allowGameUpdates":"True","serverGameUpdateURL":"http://{{HOST}}/aaemu-patch/","serverWebsiteURL":"","serverNewsFeedURL":"","userHistory":[]}
+{
+	"allowGameUpdates": "True",
+	"configName": "AAEmu Client 1.2 @ Lilith",
+	"hideSplashLogo": "False",
+	"lang": "en_us",
+	"lastLoginPass": "{{PASS}}",
+	"lastLoginUser": "{{USER}}",
+	"loginType": "trino_1_2",
+	"pathToGame": "",
+	"saveLoginAndPassword": "False",
+	"serverGameUpdateURL": "http://{{HOST}}/aaemu-patch/",
+	"serverIPAddress": "{{HOST}}",
+	"serverNewsFeedURL": "",
+	"serverWebsiteURL": "",
+	"skipIntro": "False",
+	"updateLocale": "True",
+	"userHistory": [
+	]
+}

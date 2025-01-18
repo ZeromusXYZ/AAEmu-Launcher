@@ -1,0 +1,25 @@
+{
+  "configVersion": 1,
+  "configName": "AAEmu Localhost",
+  "lang": "en_us",
+  "launcherLang": "en_us",
+  "pathToGame": "D:\\Games\\ArcheAge\\AA 1.2 - Trion - r208022 - 2014-10-14 - NoHS\\Games\\ArcheAge\\Beta\\bin32\\archeage.exe",
+  "serverIPAddress": "127.0.0.1",
+  "saveLoginAndPassword": true,
+  "skipIntro": true,
+  "hideSplashLogo": false,
+  "lastLoginUser": "ZeromusXYZ",
+  "lastLoginPass": "test",
+  "loginType": "trino_1_2",
+  "updateLocale": true,
+  "allowGameUpdates": false,
+  "serverGameUpdateURL": "",
+  "serverWebsiteURL": "",
+  "serverNewsFeedURL": "",
+  "serverDiscordURL": "",
+  "serverDiscordName": "",
+  "userHistory": [
+    "ZeromusXYZ"
+  ],
+  "autoLaunch": true
+}
