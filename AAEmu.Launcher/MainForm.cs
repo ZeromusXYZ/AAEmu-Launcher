@@ -2552,7 +2552,7 @@ namespace AAEmu.Launcher
             {
                 try
                 {
-                    imageData = WebHelper.SimpleGetURIAsMemoryStream(newsItem.ItemAttributes.ItemPicture);
+                    imageData = WebHelper.SimpleGetURIAsMemoryStream(newsItem.ItemAttributes.ItemPicture, out _);
                     FileStream fs = new FileStream(cacheFileName, FileMode.Create);
                     imageData.WriteTo(fs);
                     fs.Flush();
@@ -2803,7 +2803,7 @@ namespace AAEmu.Launcher
                 // searchPos = searchMin + (searchSize / 2);
                 searchPos = ((searchMin + searchMax) / 2);
 
-                var res = list[searchPos].Name.CompareTo(filename);
+                var res = list[searchPos].Name.ToLower().CompareTo(filename);
                 if (res < 0)
                 {
                     // Looking for a smaller value
@@ -2870,7 +2870,7 @@ namespace AAEmu.Launcher
             if (!aaPatcher.SetRemoteVersionByString(aaPatcher.remoteVersionString))
             {
                 aaPatcher.Fase = PatchFase.Error;
-                aaPatcher.ErrorMsg = L.DownloadError + "\r\n" + Setting.ServerGameUpdateURL + remotePatchFolderURI + patchVersionFileName;
+                aaPatcher.ErrorMsg = L.DownloadError + "\r\n" + Setting.ServerGameUpdateURL + remotePatchFolderURI + patchVersionFileName ;
                 return;
             }
 
@@ -2985,7 +2985,7 @@ namespace AAEmu.Launcher
             aaPatcher.Fase = PatchFase.DownloadPatchFilesInfo;
             bgwPatcher.ReportProgress(2, aaPatcher);
 
-            MemoryStream ms = WebHelper.SimpleGetURIAsMemoryStream(Setting.ServerGameUpdateURL + remotePatchFolderURI + patchListFileName);
+            MemoryStream ms = WebHelper.SimpleGetURIAsMemoryStream(Setting.ServerGameUpdateURL + remotePatchFolderURI + patchListFileName, out _);
 
             // check if downloaded patch files list has the correct hash
             var remotePatchFilesHash = WebHelper.GetMD5FromStream(ms);
@@ -3011,31 +3011,37 @@ namespace AAEmu.Launcher
             remotePakFileList.Sort();
             pak.Files.Sort();
 
+            // Create lower-case copy of the files list for easy compare
+            var lowerCasePakFileNames = new Dictionary<string, AAPakFileInfo>();
+            foreach (var aaPakFileInfo in pak.Files)
+            {
+                lowerCasePakFileNames.Add(aaPakFileInfo.Name.ToLower(), aaPakFileInfo);
+            }
+
             long totSize = 0;
             for (int i = 0; i < remotePakFileList.Count; i++)
             {
-                AAPakFileInfo r = remotePakFileList[i];
+                var remoteFileInfo = remotePakFileList[i];
 
                 // Don't download empty files or entries marked as directories (-1)
-                if (r.Size <= 0) continue;
+                if (remoteFileInfo.Size <= 0) continue;
 
-                var l = FindPatchFileInSortedList(r.Name, pak.Files);
-                if (l == null)
+                // var l = FindPatchFileInSortedList(r.Name, pak.Files);
+                if (!lowerCasePakFileNames.TryGetValue(remoteFileInfo.Name.ToLower(), out var l))
                 {
                     // We don't have a local copy of this file
                     // Add it to the list
-                    dlPakFileList.Add(r);
-                    totSize += r.Size;
+                    dlPakFileList.Add(remoteFileInfo);
+                    totSize += remoteFileInfo.Size;
                 }
                 else
                 {
-
-                    if ((l.Size != r.Size) || (l.Md5.SequenceEqual(r.Md5) == false))
+                    if ((l.Size != remoteFileInfo.Size) || (l.Md5.SequenceEqual(remoteFileInfo.Md5) == false))
                     {
-                        // Local Filesize or Hash is different from remote
-                        // Redownload it
-                        dlPakFileList.Add(r);
-                        totSize += r.Size;
+                        // Local file-size or Hash is different from remote
+                        // Re-download it
+                        dlPakFileList.Add(remoteFileInfo);
+                        totSize += remoteFileInfo.Size;
                     }
                 }
 
@@ -3148,7 +3154,16 @@ namespace AAEmu.Launcher
 
                 try
                 {
-                    Stream fileDL = WebHelper.SimpleGetURIAsMemoryStream(fileDLurl);
+                    Stream fileDL = WebHelper.SimpleGetURIAsMemoryStream(fileDLurl, out var returnException);
+
+                    if (returnException != null)
+                    {
+                        aaPatcher.Fase = PatchFase.Error;
+                        aaPatcher.ErrorMsg = string.Format(L.DownloadFileError, fileDLurl + "\n\r" + returnException.Message, pfi.Size.ToString());
+                        fileDL.Dispose();
+                        return;
+                    }
+
                     if (fileDL.Length != pfi.Size)
                     {
                         aaPatcher.Fase = PatchFase.Error;
@@ -3182,7 +3197,7 @@ namespace AAEmu.Launcher
                 {
                     Console.WriteLine($"Error downloading {fileDLurl} with error {ex.Message}");
                     aaPatcher.Fase = PatchFase.Error;
-                    aaPatcher.ErrorMsg = string.Format(L.DownloadFileError, fileDLurl);
+                    aaPatcher.ErrorMsg = string.Format(L.DownloadFileError, fileDLurl + "\n\r" + ex.Message);
                     return;
                 }
 

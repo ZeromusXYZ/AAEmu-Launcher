@@ -109,9 +109,10 @@ namespace AAEmu.Launcher
             }
         }
 
-        public static MemoryStream SimpleGetURIAsMemoryStream(string uri, int timeOut = -1)
+        public static MemoryStream SimpleGetURIAsMemoryStream(string uri, out Exception returnException, int timeOut = -1)
         {
             MemoryStream ms = new MemoryStream();
+            returnException = null;
 
             try
             {
@@ -128,9 +129,10 @@ namespace AAEmu.Launcher
                     return ms;
                 }
             }
-            catch
+            catch (Exception e)
             {
                 ms.SetLength(0);
+                returnException = e;
                 return ms;
             }
         }
