@@ -3159,7 +3159,7 @@ namespace AAEmu.Launcher
                     if (returnException != null)
                     {
                         aaPatcher.Fase = PatchFase.Error;
-                        aaPatcher.ErrorMsg = string.Format(L.DownloadFileError, fileDLurl + "\n\r" + returnException.Message, pfi.Size.ToString());
+                        aaPatcher.ErrorMsg = string.Format(L.DownloadFileError, fileDLurl + "\n\r" + returnException.Message);
                         fileDL.Dispose();
                         return;
                     }
