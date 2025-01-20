@@ -2929,6 +2929,9 @@ namespace AAEmu.Launcher
                 aaPatcher.Fase = PatchFase.CheckLocalFiles;
                 bgwPatcher.ReportProgress(2, aaPatcher);
 
+                if (pak != null && pak.IsOpen)
+                    pak.ClosePak();
+
                 //pak = new AAPak(aaPatcher.localGame_Pak, false, false);
                 pak = new AAPak("");
                 TryLoadCustomKey(pak, aaPatcher.localGame_Pak);
@@ -2955,7 +2958,8 @@ namespace AAEmu.Launcher
                 foreach (AAPakFileInfo pfi in pak.Files)
                 {
                     //if (BitConverter.ToString(pfi.md5).Replace("-", "") == AAPakFileHeader.nullHashString)
-                    if (Array.Equals(pfi.Md5, AAPakFileHeader.NullHash))
+                    
+                    if (AAPakFileHeader.NullHash.SequenceEqual(pfi.Md5))
                     {
                         aaPatcher.Fase = PatchFase.ReHashLocalFiles;
                         pak.UpdateMd5(pfi);
