@@ -3148,7 +3148,8 @@ namespace AAEmu.Launcher
             for (var i = dlPakFileList.Count - 1; i >= 0; i--)
             {
                 var pfi = dlPakFileList[i];
-                var fileDlUrl = Setting.ServerGameUpdateURL + Uri.EscapeDataString(pfi.Name);
+                var fileDlUrl = Setting.ServerGameUpdateURL + pfi.Name;
+                fileDlUrl = fileDlUrl.Replace(" ", "%20").Replace("#", "%23");
 
                 try
                 {
