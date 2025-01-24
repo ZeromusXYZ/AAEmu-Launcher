@@ -111,7 +111,7 @@ namespace AAEmu.Launcher
                 SetDefaultSettings(this);
             }
 
-            static public void SetDefaultSettings(LauncherFileSettings setting)
+            public static void SetDefaultSettings(LauncherFileSettings setting)
             {
                 if (setting == null)
                     setting = new LauncherFileSettings();
@@ -423,23 +423,23 @@ namespace AAEmu.Launcher
         public static LanguageSettings L = new LanguageSettings();
         public ClientLookupHelper ClientLookup = new ClientLookupHelper();
 
-        static public string archeAgeEXE = "archeage.exe";
-        static public string archeWorldEXE = "archeworld.exe";
-        static public string archeAgeSystemConfigFileName = "system.cfg";
-        static public ushort defaultAuthPort = 1237;
-        static public string launcherDefaultConfigFile = "settings.aelcf"; // .aelcf = ArcheAge Emu Launcher Configuration File
-        static public string clientLookupDefaultFile = "clientslist.json";
-        static public string remotePatchFolderURI = ".patch/";
-        static public string patchListFileName = "patchfiles.csv";
-        static public string patchVersionFileName = "patchfiles.ver";
-        static public string localPatchPakFileName = "download.patch";
-        static public string launcherProtocolSchema = "aelcf";
-        static public string urlAAEmuGitHub = "https://github.com/AAEmu/AAEmu";
-        static public string urlLauncherGitHub = "https://github.com/ZeromusXYZ/AAEmu-Launcher";
-        static public string urlAAEmuDiscordInvite = "https://discord.gg/vn8E8E6";
-        static public string urlLauncherDiscordInvite = "https://discord.gg/GhVfDtK";
-        static public string urlWebsite = "https://github.com/AAEmu/AAEmu"; // "https://aaemu.info/";
-        static public string dx9downloadURL = "https://www.microsoft.com/en-us/download/confirmation.aspx?id=35";
+        public static string archeAgeEXE = "archeage.exe";
+        public static string archeWorldEXE = "archeworld.exe";
+        public static string archeAgeSystemConfigFileName = "system.cfg";
+        public static ushort defaultAuthPort = 1237;
+        public static string launcherDefaultConfigFile = "settings.aelcf"; // .aelcf = ArcheAge Emu Launcher Configuration File
+        public static string clientLookupDefaultFile = "clientslist.json";
+        public static string remotePatchFolderURI = ".patch/";
+        public static string patchListFileName = "patchfiles.csv";
+        public static string patchVersionFileName = "patchfiles.ver";
+        public static string localPatchPakFileName = "download.patch";
+        public static string launcherProtocolSchema = "aelcf";
+        public static string urlAAEmuGitHub = "https://github.com/AAEmu/AAEmu";
+        public static string urlLauncherGitHub = "https://github.com/ZeromusXYZ/AAEmu-Launcher";
+        public static string urlAAEmuDiscordInvite = "https://discord.gg/vn8E8E6";
+        public static string urlLauncherDiscordInvite = "https://discord.gg/GhVfDtK";
+        public static string urlWebsite = "https://github.com/AAEmu/AAEmu"; // "https://aaemu.info/";
+        public static string dx9downloadURL = "https://www.microsoft.com/en-us/download/confirmation.aspx?id=35";
         string localPatchFolderName = ".patch" + Path.DirectorySeparatorChar;
         string URIConfigFileData = "";
         string URIConfigFileDataHost = "";
@@ -475,12 +475,14 @@ namespace AAEmu.Launcher
         private AAPatchProgress aaPatcher = new AAPatchProgress();
         private AAPak pak = null;
         private AAPak PatchDownloadPak = null;
-        private List<AAPakFileInfo> dlPakFileList = new List<AAPakFileInfo>();
+        // (PakFileInfo, Reason to Add)
+        private List<(AAPakFileInfo, string)> dlPakFileList = new List<(AAPakFileInfo, string)>();
         private LauncherOpenMode AppOpenMode = LauncherOpenMode.DefaultConfigFile;
 
         // Auto Close
         public int AutoCloseTimer { get; set; } = 0;
         public bool DoAutoLaunch { get; set; } = false;
+        private bool CancelPatching { get; set; } = false;
 
 
         public LauncherForm()
@@ -1529,26 +1531,32 @@ namespace AAEmu.Launcher
 
         private void LauncherForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            CancelPatching = true;
             SaveSettings();
             try
             {
-                if (PatchDownloadPak != null)
-                    PatchDownloadPak.ClosePak();
+                PatchDownloadPak?.ClosePak();
             }
-            catch { }
+            catch
+            {
+                //
+            }
+
             try
             {
-                if (pak != null)
-                    pak.ClosePak();
+                pak?.ClosePak();
             }
-            catch { }
+            catch
+            {
+                //
+            }
         }
 
         private void SaveClientLookups()
         {
-            string configFileName = Path.Combine(Application.StartupPath,clientLookupDefaultFile);
+            var configFileName = Path.Combine(Application.StartupPath,clientLookupDefaultFile);
 
-            if ((Setting.ConfigName != null) && (Setting.ConfigName != ""))
+            if (!string.IsNullOrEmpty(Setting.ConfigName))
             {
                 string findExe = TryAutoFindFromLookup();
                 if ((findExe == "") && File.Exists(Setting.PathToGame))
@@ -1560,10 +1568,10 @@ namespace AAEmu.Launcher
                 {
                     return;
                 }
-                var ClientLookupJson = JsonConvert.SerializeObject(ClientLookup, Formatting.Indented);
+                var clientLookupJson = JsonConvert.SerializeObject(ClientLookup, Formatting.Indented);
                 try
                 {
-                    File.WriteAllText(configFileName, ClientLookupJson);
+                    File.WriteAllText(configFileName, clientLookupJson);
                 }
                 catch
                 {
@@ -2840,6 +2848,36 @@ namespace AAEmu.Launcher
             return res;
         }
 
+
+        private string MakefileDownloadUrl(string filePath)
+        {
+            var dlFilePath = Setting.ServerGameUpdateURL;
+            // Realistically we only really need to handle a few special escapes for file paths
+            foreach (var c in filePath.ToCharArray())
+            {
+                if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c == '.') || (c == '-') || (c == '_'))
+                {
+                    dlFilePath += c;
+                }
+                /*
+                else if (c == ' ')
+                {
+                    dlFilePath += '+';
+                }
+                */
+                else if ((c == '/') || (c == '\\'))
+                {
+                    dlFilePath += '/';
+                }
+                else
+                {
+                    dlFilePath += "%" + Convert.ToByte(c).ToString("X2");
+                }
+            }
+            // filePath = filePath.Replace(" ", "+").Replace("#", "%23");
+            return dlFilePath;
+        }
+        
         private void bgwPatcher_DoWork(object sender, DoWorkEventArgs e)
         {
             //------
@@ -2863,6 +2901,8 @@ namespace AAEmu.Launcher
 
             aaPatcher.Fase = PatchFase.DownloadVerFile;
             bgwPatcher.ReportProgress(0, aaPatcher);
+            if (CancelPatching)
+                return;
 
             // Download patch version file
             aaPatcher.remoteVersionString = WebHelper.SimpleGetURIAsString(Setting.ServerGameUpdateURL + remotePatchFolderURI + patchVersionFileName);
@@ -2882,6 +2922,8 @@ namespace AAEmu.Launcher
 
             aaPatcher.Fase = PatchFase.CompareVersion;
             System.Threading.Thread.Sleep(250);
+            if (CancelPatching)
+                return;
 
             //----------------------------------
             // Read Local version file (if any)
@@ -2903,6 +2945,8 @@ namespace AAEmu.Launcher
             }
 
             System.Threading.Thread.Sleep(250);
+            if (CancelPatching)
+                return;
 
             if (aaPatcher.localVersion == aaPatcher.remoteVersionString)
             {
@@ -2915,6 +2959,8 @@ namespace AAEmu.Launcher
             aaPatcher.Fase = PatchFase.CheckLocalFiles;
             bgwPatcher.ReportProgress(1, aaPatcher);
             System.Threading.Thread.Sleep(250);
+            if (CancelPatching)
+                return;
 
             dlPakFileList.Clear();
 
@@ -2960,6 +3006,8 @@ namespace AAEmu.Launcher
                     {
                         aaPatcher.Fase = PatchFase.ReHashLocalFiles;
                         pak.UpdateMd5(pfi);
+                        if (CancelPatching)
+                            return;
                     }
                     filesCount++;
                     if ((filesCount % 50) == 0)
@@ -2967,6 +3015,8 @@ namespace AAEmu.Launcher
                         bgwPatcher.ReportProgress((filesCount * 100 / totalFilesCount), aaPatcher);
                     }
                 }
+                if (CancelPatching)
+                    return;
 
                 if (aaPatcher.Fase == PatchFase.ReHashLocalFiles)
                     pak.SaveHeader();
@@ -3001,6 +3051,8 @@ namespace AAEmu.Launcher
             var remotePakFileList = CreateXlFileListFromStream(ms);
 
             System.Threading.Thread.Sleep(250);
+            if (CancelPatching)
+                return;
 
             //--------------------------------------------------------------------------------------
             // Compare local game_pak with downloaded information to check what needs to be updated
@@ -3032,18 +3084,22 @@ namespace AAEmu.Launcher
                 {
                     // We don't have a local copy of this file
                     // Add it to the list
-                    dlPakFileList.Add(remoteFileInfo);
+                    dlPakFileList.Add((remoteFileInfo, "Missing"));
                     totSize += remoteFileInfo.Size;
                 }
-                else
+                else if (l.Size != remoteFileInfo.Size)
                 {
-                    if ((l.Size != remoteFileInfo.Size) || (l.Md5.SequenceEqual(remoteFileInfo.Md5) == false))
-                    {
-                        // Local file-size or Hash is different from remote
-                        // Re-download it
-                        dlPakFileList.Add(remoteFileInfo);
-                        totSize += remoteFileInfo.Size;
-                    }
+                    // Local file-size or Hash is different from remote
+                    // Re-download it
+                    dlPakFileList.Add((remoteFileInfo, "Size"));
+                    totSize += remoteFileInfo.Size;
+                }
+                else if (l.Md5.SequenceEqual(remoteFileInfo.Md5) == false)
+                {
+                    // Local file-size or Hash is different from remote
+                    // Re-download it
+                    dlPakFileList.Add((remoteFileInfo, "MD5"));
+                    totSize += remoteFileInfo.Size;
                 }
 
                 if ((i % 100) == 0)
@@ -3061,6 +3117,8 @@ namespace AAEmu.Launcher
                 aaPatcher.DoneMsg = L.NoFilesToUpdate;
                 return;
             }
+            if (CancelPatching)
+                return;
 
             //-------------------------------------------------
             // Initialize download.patch file (patch pak file)
@@ -3088,6 +3146,9 @@ namespace AAEmu.Launcher
                     return;
                 }
             }
+
+            if (CancelPatching)
+                return;
 
             PatchDownloadPak.OpenPak(aaPatcher.localPatchDirectory + localPatchPakFileName, false);
             if (!PatchDownloadPak.IsOpen)
@@ -3119,20 +3180,22 @@ namespace AAEmu.Launcher
             totSize = 0; // calculate this again on the final list
             for (var i = dlPakFileList.Count - 1; i >= 0; i--)
             {
-                if (PatchDownloadPak.FileExists(dlPakFileList[i].Name))
+                if (PatchDownloadPak.FileExists(dlPakFileList[i].Item1.Name))
                 {
                     dlPakFileList.Remove(dlPakFileList[i]);
                 }
                 else
                 {
-                    totSize += dlPakFileList[i].Size;
-                    sl.Add(dlPakFileList[i].Name);
+                    totSize += dlPakFileList[i].Item1.Size;
+                    sl.Add(dlPakFileList[i].Item2 + " (" + (dlPakFileList[i].Item1.Size / 1024) + "KB) => " + dlPakFileList[i].Item1.Name);
                 }
             }
             aaPatcher.FileDownloadSizeTotal = totSize;
 
             // debug file to check what we'll download
             File.WriteAllLines(aaPatcher.localPatchDirectory + "download.txt", sl);
+            if (CancelPatching)
+                return;
 
             // MessageBox.Show("Need to download " + dlPakFileList.Count.ToString() + " files, "+ (aaPatcher.FileDownloadSizeTotal / 1024 / 1024).ToString() + " MB total");
 
@@ -3147,9 +3210,8 @@ namespace AAEmu.Launcher
             aaPatcher.FileDownloadSizeDownloaded = 0;
             for (var i = dlPakFileList.Count - 1; i >= 0; i--)
             {
-                var pfi = dlPakFileList[i];
-                var fileDlUrl = Setting.ServerGameUpdateURL + pfi.Name;
-                fileDlUrl = fileDlUrl.Replace(" ", "%20").Replace("#", "%23");
+                var pfi = dlPakFileList[i].Item1;
+                var fileDlUrl = MakefileDownloadUrl(pfi.Name);
 
                 try
                 {
@@ -3205,8 +3267,11 @@ namespace AAEmu.Launcher
 
                 var dlProgress = (aaPatcher.FileDownloadSizeDownloaded * 100) / aaPatcher.FileDownloadSizeTotal;
                 bgwPatcher.ReportProgress((int)dlProgress, aaPatcher);
+
+                PatchDownloadPak.SaveHeader();
+                if (CancelPatching)
+                    return;
             }
-            PatchDownloadPak.SaveHeader();
 
             //------------------------------------
             // Check if we need to extract the DB
@@ -3249,6 +3314,9 @@ namespace AAEmu.Launcher
             //---------------------------------------------
             foreach (var pfi in PatchDownloadPak.Files)
             {
+                if (CancelPatching)
+                    return;
+
                 var exportStream = PatchDownloadPak.ExportFileAsStream(pfi);
                 exportStream.Position = 0;
 
@@ -3392,6 +3460,8 @@ namespace AAEmu.Launcher
                 bgwPatcher.ReportProgress((int)patchProgress, aaPatcher);
 
             }
+            if (CancelPatching)
+                return;
 
             //-------------------------------------------
             // Delete all files mentioned in deleted.txt
@@ -3411,6 +3481,7 @@ namespace AAEmu.Launcher
                         slDelFiles.Add(s);
                     }
                 }
+
                 exportStream.Dispose();
 
                 foreach (string s in slDelFiles)
@@ -3420,7 +3491,10 @@ namespace AAEmu.Launcher
                         File.Delete(aaPatcher.localGameFolder + delName);
                 }
             }
-            catch { }
+            catch
+            {
+                //
+            }
 
             System.Threading.Thread.Sleep(250);
 
@@ -3523,7 +3597,7 @@ namespace AAEmu.Launcher
                 {
                     // Save our .ver file again
                     File.WriteAllText(aaPatcher.localPatchDirectory + patchVersionFileName, aaPatcher.remoteVersionString);
-                    // Delete Patch Pak if completed succesfully
+                    // Delete Patch Pak if completed successfully
                     // Keep patch cache file if debugging
                     if (debugModeToolStripMenuItem.Checked == false)
                         File.Delete(aaPatcher.localPatchDirectory + localPatchPakFileName);
