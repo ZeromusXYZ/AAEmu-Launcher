@@ -336,3 +336,5 @@ ASALocalRun/
 # Local History for Visual Studio
 .localhistory/
 AAEmu.Launcher/data/img*.bin
+
+.publish/
