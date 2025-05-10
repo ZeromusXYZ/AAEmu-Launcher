@@ -1351,7 +1351,7 @@ namespace AAEmu.Launcher
 
                                         if (isOk)
                                         {
-                                            res = streamString.Substring(0, folder.Length);
+                                            res = streamString.Replace("\0", "").Substring(0, folder.Length);
                                             return res;
                                         }
                                     }

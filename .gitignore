@@ -338,3 +338,4 @@ ASALocalRun/
 AAEmu.Launcher/data/img*.bin
 
 .publish/
+example-files/shortcuts/aaemu-aafree-localhost.aelcf
