@@ -1430,15 +1430,20 @@ namespace AAEmu.Launcher
 
                     if (debugModeToolStripMenuItem.Checked)
                     {
-                        DebugHelperForm dlg = new DebugHelperForm();
-                        dlg.eArgs.Text = aaLauncher.LaunchArguments;
-                        dlg.eHackShieldArg.Text = aaLauncher.HShieldArgs;
-                        if (dlg.ShowDialog() == DialogResult.OK)
+                        using (var dlg = new DebugHelperForm())
                         {
-                            aaLauncher.LaunchArguments = dlg.eArgs.Text;
-                            aaLauncher.HShieldArgs = dlg.eHackShieldArg.Text;
+                            dlg.eExe.Text = aaLauncher.GameExeFilePath;
+                            dlg.eArgs.Text = aaLauncher.LaunchArguments;
+                            dlg.eHackShieldArg.Text = aaLauncher.HShieldArgs;
+                            dlg.eVerb.Text = aaLauncher.LaunchVerb;
+                            if (dlg.ShowDialog() == DialogResult.OK)
+                            {
+                                aaLauncher.GameExeFilePath = dlg.eExe.Text;
+                                aaLauncher.LaunchArguments = dlg.eArgs.Text;
+                                aaLauncher.HShieldArgs = dlg.eHackShieldArg.Text;
+                                aaLauncher.LaunchVerb = dlg.eVerb.Text;
+                            }
                         }
-                        dlg.Dispose();
                     }
 
                     var startOK = aaLauncher.Launch();
@@ -1890,7 +1895,10 @@ namespace AAEmu.Launcher
         private void UpdateGameSystemConfigFile(string documentsFolderName, bool enableUpdateLocale, string locale, bool enableSkipIntro)
         {
             // C:\ArcheAge\Documents => UserHomeFolder\ArcheAge
-            string configFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), documentsFolderName, archeAgeSystemConfigFileName);
+            var myDocsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            MessageBox.Show($"configFile: Path.Combine \n\"{myDocsFolder}\"\n\"{documentsFolderName}\"\n\"{archeAgeSystemConfigFileName}\"");
+            string configFileName = Path.Combine(myDocsFolder, documentsFolderName, archeAgeSystemConfigFileName);
+            MessageBox.Show($"configFile combined: \"{configFileName}\"");
             const string localeField = "locale = ";
             const string movieField = "login_first_movie = ";
             const string optionSoundField = "option_sound = ";
@@ -1990,7 +1998,7 @@ namespace AAEmu.Launcher
             {
                 MessageBox.Show(string.Format(L.ErrorUpdatingFile, configFileName)+"\n"+x.Message, "UpdateGameSystemConfigFile()");
             }
-
+            MessageBox.Show($"UpdateGameSystemConfigFile finished");
         }
 
         private void aAEmuServerToolStripMenuItem_Click(object sender, EventArgs e)

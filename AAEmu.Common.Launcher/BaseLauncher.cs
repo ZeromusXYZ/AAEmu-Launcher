@@ -25,7 +25,7 @@ namespace AAEmu.Launcher.Basic
         public string LaunchArguments { get; set; }
         public Process RunningProcess { get; protected set; }
         protected string _passwordHash { get; set; }
-        protected string LaunchVerb { get; set; }
+        public string LaunchVerb { get; set; }
 
         protected bool SupportsArcheWorld { get; set; }
 
