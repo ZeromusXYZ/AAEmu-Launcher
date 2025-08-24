@@ -19,7 +19,8 @@
   "serverDiscordURL": "",
   "serverDiscordName": "",
   "userHistory": [
-    "ZeromusXYZ"
+    "ZeromusXYZ",
+    "/"
   ],
   "autoLaunch": true
 }
