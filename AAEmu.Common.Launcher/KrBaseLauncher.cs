@@ -1,9 +1,10 @@
 ﻿using AAEmu.Launcher.Basic;
 
-namespace AAEmu.Launcher.MailRu10
+namespace AAEmu.Launcher.KrBase
 {
-    [AALauncher("mailru_1_0", "Mail.ru", 0, "0.5", "", "20130423")]
-    public class MailRu_1_0_Launcher : AAEmuLauncherBase
+    /*
+    [AALauncher("kr_base", "Korean", 0, "0.0", "", "20120101")]
+    public class KrBase_Launcher: AAEmuLauncherBase
     {
         public override bool InitializeForLaunch()
         {
@@ -11,4 +12,6 @@ namespace AAEmu.Launcher.MailRu10
             return true;
         }
     }
+    */
 }
+

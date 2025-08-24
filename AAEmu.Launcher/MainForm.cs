@@ -1299,79 +1299,39 @@ namespace AAEmu.Launcher
 
         private string GuessDocumentsFolder(string archeAgeExe)
         {
-            var res = "ArcheAge";
-            // Note: AAFree and ArcheRage can actually not be detected in this way because the exe is encrypted (note all lowercase here to compare)
-            var allowedFolders = new List<string>() { "archeage", "archeworld", "aaemu" };
-            var documentConfigFile =
-                Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "documents.folders");
-
+            // Changes made base on suggestion by Giawriav using ChatGPT
+            // Also now just check for a trailing null char for valid strings
+            var defaultFolderName = "ArcheAge";
+            var allowedFolders = new List<string> { "archeage", "archeworld", "aaemu" };
+            var documentConfigFile = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "documents.folders");
             if (File.Exists(documentConfigFile))
-                allowedFolders = File.ReadAllLines(documentConfigFile).ToList();
-
-            var notAllowed = new List<string>() { ".", "-", "_" }; // should catch most things that reference a file instead of a directory
-            var maxFolderSize = res.Length;
-            foreach (var folder in allowedFolders)
-            {
-                if (folder.Length > maxFolderSize)
-                    maxFolderSize = folder.Length;
-            }
-            maxFolderSize += 4; // to check against appended .exe text
-
+                allowedFolders = File.ReadAllLines(documentConfigFile).Select(f => f.ToLower().Trim()).ToList();
+            var maxFolderSize = allowedFolders.Max(f => f.Length) + 4;
             try
             {
                 if (File.Exists(archeAgeExe))
                 {
-                    using (var fs = new FileStream(archeAgeExe, FileMode.Open, FileAccess.Read))
+                    byte[] exeBytes = File.ReadAllBytes(archeAgeExe);
+                    for (int i = 0; i < exeBytes.Length - maxFolderSize; i++)
                     {
-                        using (var ms = new MemoryStream())
+                        string chunk = Encoding.ASCII.GetString(exeBytes, i, maxFolderSize).ToLower();
+                        foreach (var folder in allowedFolders)
                         {
-                            fs.CopyTo(ms);
-                            ms.Seek(0, SeekOrigin.Begin);
-                            var buffer = new byte[maxFolderSize];
-                            foreach (var folder in allowedFolders)
+                            if (chunk.StartsWith(folder+'\0'))
                             {
-                                for (var pos = 0; pos < ms.Length - maxFolderSize; pos++)
-                                {
-                                    ms.Seek(pos, SeekOrigin.Begin);
-                                    var streamBytes = ms.Read(buffer, 0, maxFolderSize);
-
-                                    var streamString = Encoding.ASCII.GetString(buffer, 0, streamBytes);
-                                    var checkString = streamString.ToLower();
-                                    if (checkString.StartsWith(folder))
-                                    {
-                                        var isOk = true;
-                                        foreach (var notString in notAllowed)
-                                        {
-                                            if (checkString.StartsWith(folder + notString))
-                                            {
-                                                isOk = false;
-                                                break;
-                                            }
-                                        }
-
-                                        if (isOk)
-                                        {
-                                            res = streamString.Replace("\0", "").Substring(0, folder.Length);
-                                            return res;
-                                        }
-                                    }
-                                }
-
+                                return folder;
                             }
                         }
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Do Nothing
+                MessageBox.Show($"Error reading exe: {ex.Message}");
             }
 
-            // If no data could be found inside the .exe, then, use then assume the exe's filename as a folder
-            res = Path.GetFileNameWithoutExtension(archeAgeExe);
-
-            // MessageBox.Show($"Could not guess documents folder for {archeAgeExe}, configuration file might not be updated correctly!","Detect Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            return res;
+            // Fallback: use the exe file name
+            return Path.GetFileNameWithoutExtension(archeAgeExe) ?? defaultFolderName;
         }
 
         private void StartGame()

@@ -100,6 +100,7 @@
   <ItemGroup>
     <Compile Include="AAAutoDetectClient.cs" />
     <Compile Include="BaseLauncher.cs" />
+    <Compile Include="KrBaseLauncher.cs" />
     <Compile Include="XLGamesWorld10Launcher.cs" />
     <Compile Include="Kakao80Launcher.cs" />
     <Compile Include="MailRu10Launcher.cs" />

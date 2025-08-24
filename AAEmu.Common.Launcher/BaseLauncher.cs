@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 namespace AAEmu.Launcher.Basic
 {
-    [AALauncher("","Base Launcher","0.0","", "00000000")]
+    [AALauncher("","Base Launcher",0, "0.0","", "00000000")]
     public partial class AAEmuLauncherBase
     {
         public string UserName { get; set; }
@@ -146,6 +146,7 @@ namespace AAEmu.Launcher.Basic
                     nl.MinimumVersion = a.MinimumVersion;
                     nl.MinimumVersionForWorld = a.MinimumVersionForWorld;
                     nl.MinimumWorldDate = a.MinimumWorldDate;
+                    nl.MinimumRevision = a.MinimumRevision;
                     nl.LauncherClass = type;
                     AllLaunchers.Add(nl);
                 }
@@ -163,15 +164,17 @@ namespace AAEmu.Launcher.Basic
         protected string _minimumVersion;
         protected string _minimumVersionForWorld;
         private DateTime _minimumWorldDate;
+        protected ulong _minimumRevision;
 
         public string ConfigName { get => _configName; set => _configName = value; }
         public string DisplayName { get => _displayName; set => _displayName = value; }
         public string MinimumVersion { get => _minimumVersion; set => _minimumVersion = value; }
         public string MinimumVersionForWorld { get => _minimumVersionForWorld; set => _minimumVersionForWorld = value; }
         public DateTime MinimumWorldDate { get => _minimumWorldDate; set => _minimumWorldDate = value; }
+        public ulong MinimumRevision { get => _minimumRevision; set => _minimumRevision = value; }
 
         // The constructor is called when the attribute is set.
-        public AALauncherAttribute(string configName, string displayName, string minimumArcheAgeVersion, string minimumArcheWorldVersion, string minimumDateYYYYMMDD)
+        public AALauncherAttribute(string configName, string displayName, ulong minimumRevision, string minimumArcheAgeVersion, string minimumArcheWorldVersion, string minimumDateYYYYMMDD)
         {
             _configName = configName;
             _displayName = displayName;
@@ -190,6 +193,7 @@ namespace AAEmu.Launcher.Basic
                 dt = DateTime.MinValue;
             }
             _minimumWorldDate = dt;
+            _minimumRevision = minimumRevision;
         }
     }
 
@@ -201,6 +205,7 @@ namespace AAEmu.Launcher.Basic
         public string MinimumVersion;
         public string MinimumVersionForWorld;
         public DateTime MinimumWorldDate;
+        public ulong MinimumRevision;
     }
 
     internal class Win32
