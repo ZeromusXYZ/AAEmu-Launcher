@@ -24,7 +24,29 @@ namespace AAEmu.Launcher.Basic
             var res = string.Empty;
             try
             {
-                // Check by .exe version
+                // Fast check with revisions
+                var revision = DetectRevision(archeAgeExeFile);
+                ulong newestValidRevision = 0;
+                if (revision > 0)
+                {
+                    foreach (var aaLauncherContainer in AAEmuLauncherBase.AllLaunchers)
+                    {
+                        if (revision >= aaLauncherContainer.MinimumRevision)
+                        {
+                            if (aaLauncherContainer.MinimumRevision > newestValidRevision)
+                            {
+                                newestValidRevision = aaLauncherContainer.MinimumRevision;
+                                res = aaLauncherContainer.ConfigName;
+                            }
+                        }
+                    }
+                }
+                if (res != string.Empty)
+                {
+                    return res;
+                }
+
+                // Next Check by .exe version
                 var versionInfo = FileVersionInfo.GetVersionInfo(archeAgeExeFile);
                 string version = string.Join(".",versionInfo.FileVersion.Replace(" ","").Split(',')); // Will typically return "1.0.0.0" in your case
 

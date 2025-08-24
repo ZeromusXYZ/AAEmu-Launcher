@@ -2,8 +2,8 @@
 
 namespace AAEmu.Launcher.MailRu10
 {
-    [AALauncher("mailru_1_0", "Mail.ru 1.0","0.5", "", "20130423")]
-    public class MailRu_1_0_Launcher: AAEmuLauncherBase
+    [AALauncher("mailru_1_0", "Mail.ru", 0, "0.5", "", "20130423")]
+    public class MailRu_1_0_Launcher : AAEmuLauncherBase
     {
         public override bool InitializeForLaunch()
         {
