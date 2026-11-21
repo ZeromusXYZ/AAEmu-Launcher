@@ -1,4 +1,4 @@
-﻿namespace AAEmu.Launcher
+namespace AAEmu.Launcher
 {
     partial class LauncherForm
     {
@@ -50,6 +50,7 @@
             this.eLogin = new System.Windows.Forms.TextBox();
             this.cbLoginList = new System.Windows.Forms.ComboBox();
             this.ePassword = new System.Windows.Forms.TextBox();
+            this.btnShowPassword = new System.Windows.Forms.Label();
             this.wbNews = new System.Windows.Forms.WebBrowser();
             this.lNewsFeed = new System.Windows.Forms.Label();
             this.btnSettings = new System.Windows.Forms.Label();
@@ -173,6 +174,7 @@
             this.panelLoginAndPatch.Controls.Add(this.imgBigNews);
             this.panelLoginAndPatch.Controls.Add(this.eLogin);
             this.panelLoginAndPatch.Controls.Add(this.cbLoginList);
+            this.panelLoginAndPatch.Controls.Add(this.btnShowPassword);
             this.panelLoginAndPatch.Controls.Add(this.ePassword);
             this.panelLoginAndPatch.Controls.Add(this.wbNews);
             this.panelLoginAndPatch.Controls.Add(this.lNewsFeed);
@@ -432,6 +434,21 @@
             this.ePassword.UseSystemPasswordChar = true;
             this.ePassword.WordWrap = false;
             this.ePassword.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtPassword_KeyUp);
+            // 
+            // btnShowPassword
+            // 
+            this.btnShowPassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(45)))), ((int)(((byte)(65)))));
+            this.btnShowPassword.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.btnShowPassword.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnShowPassword.Font = new System.Drawing.Font("Georgia", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnShowPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(210)))), ((int)(((byte)(100)))));
+            this.btnShowPassword.Location = new System.Drawing.Point(534, 396);
+            this.btnShowPassword.Name = "btnShowPassword";
+            this.btnShowPassword.Size = new System.Drawing.Size(52, 22);
+            this.btnShowPassword.TabIndex = 49;
+            this.btnShowPassword.Text = "Show";
+            this.btnShowPassword.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnShowPassword.Click += new System.EventHandler(this.btnShowPassword_Click);
             // 
             // wbNews
             // 
@@ -1422,6 +1439,7 @@
         #endregion
         private System.Windows.Forms.TextBox eLogin;
         private System.Windows.Forms.TextBox ePassword;
+        private System.Windows.Forms.Label btnShowPassword;
         private System.Windows.Forms.ProgressBar pb1;
         private System.Windows.Forms.Timer timerGeneral;
         private System.Windows.Forms.PictureBox btnLauncherLangChange;
