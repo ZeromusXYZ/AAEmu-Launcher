@@ -3,7 +3,7 @@ using System;
 
 namespace AAEmu.Launcher.XLWorld10
 {
-    [AALauncher("xlworld_1_0", "World 1.0","", "1.0", "20220901")]
+    [AALauncher("xlworld_1_0", "World 10.x+", 583563, "", "1.0", "20220901")]
     public class XLWorld_1_0_Launcher: AAEmuLauncherBase
     {
         private const string TestToken = "SNsXRIVRnEqZFisW";
@@ -34,6 +34,12 @@ namespace AAEmu.Launcher.XLWorld10
             LaunchArguments += " -instant_token -region";
 
             return true;
+        }
+
+        public override bool IsFlavorAllowed(string flavor)
+        {
+            // Only allow for AAClassic
+            return flavor.Equals(@"ArcheWorld", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

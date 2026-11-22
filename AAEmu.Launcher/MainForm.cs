@@ -440,13 +440,13 @@ namespace AAEmu.Launcher
         public static string urlLauncherDiscordInvite = "https://discord.gg/GhVfDtK";
         public static string urlWebsite = "https://github.com/AAEmu/AAEmu"; // "https://aaemu.info/";
         public static string dx9downloadURL = "https://www.microsoft.com/en-us/download/confirmation.aspx?id=35";
-        string localPatchFolderName = ".patch" + Path.DirectorySeparatorChar;
-        string URIConfigFileData = "";
-        string URIConfigFileDataHost = "";
-        string launcherOpenedConfigFile = "";
-        string urlLauncherUpdateDownload = "";
-        string LauncherUpdateVersion = "";
-        bool checkedForLauncherUpdates = false;
+        readonly string localPatchFolderName = ".patch" + Path.DirectorySeparatorChar;
+        private string uriConfigFileData = "";
+        private string URIConfigFileDataHost = "";
+        private string launcherOpenedConfigFile = "";
+        private string urlLauncherUpdateDownload = "";
+        private string LauncherUpdateVersion = "";
+        private bool checkedForLauncherUpdates = false;
         public string DefaultGameWorkingDirectory = "";
 
 
@@ -454,8 +454,6 @@ namespace AAEmu.Launcher
         private const string stringMailRu_1_0 = "mailru_1_0";
         private const string stringReturns_10 = "returns_10";
         private const string stringTrino_1_2 = "trino_1_2";
-        private const string stringTrino_3_5 = "trino_3_5";
-        private const string stringTrino_6_0 = "trino_6_0";
 
         // Stuff for dragable form
         private bool formMouseDown;
@@ -463,8 +461,9 @@ namespace AAEmu.Launcher
 
         private ShowPanelType currentPanel = ShowPanelType.Login;
         private int nextServerCheck = -1;
-        enum serverCheck { Offline = 0, Online, Unknown, Update, Updating };
-        private serverCheck serverCheckStatus = serverCheck.Unknown;
+
+        private enum ServerCheck { Offline = 0, Online, Unknown, Update, Updating };
+        private ServerCheck serverCheckStatus = ServerCheck.Unknown;
         private bool checkNews = false;
         AAEmuNewsFeed newsFeed = null;
         private int bigNewsIndex = -1;
@@ -477,7 +476,7 @@ namespace AAEmu.Launcher
         private AAPak pak = null;
         private AAPak PatchDownloadPak = null;
         // (PakFileInfo, Reason to Add)
-        private List<(AAPakFileInfo, string)> dlPakFileList = new List<(AAPakFileInfo, string)>();
+        private readonly List<(AAPakFileInfo, string)> dlPakFileList = new List<(AAPakFileInfo, string)>();
         private LauncherOpenMode AppOpenMode = LauncherOpenMode.DefaultConfigFile;
 
         // Auto Close
@@ -698,9 +697,9 @@ namespace AAEmu.Launcher
             panelSettings.Visible = (panelID == ShowPanelType.Settings);
             panelSettings.Location = new Point(0, 0);
             panelSettings.Size = this.Size;
-            eServerIP.Enabled = (serverCheckStatus != serverCheck.Updating);
+            eServerIP.Enabled = (serverCheckStatus != ServerCheck.Updating);
 
-            if (serverCheckStatus == serverCheck.Updating)
+            if (serverCheckStatus == ServerCheck.Updating)
             {
                 lGamePath.Cursor = Cursors.No;
             }
@@ -1006,7 +1005,7 @@ namespace AAEmu.Launcher
                     var encodedPath = u.AbsolutePath.Substring(1); // remove the first slash /
                     // Check if protocol is aelcf:// and query get parameters are ?v=c (protocol version is configfile)
                     if ((u.Scheme == launcherProtocolSchema) && u.Query.StartsWith("?v=c"))
-                        URIConfigFileData = System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(encodedPath));
+                        uriConfigFileData = System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(encodedPath));
                     URIConfigFileDataHost = u.Host;
 
                     LauncherFileSettings.SetDefaultSettings(Setting);
@@ -1064,7 +1063,7 @@ namespace AAEmu.Launcher
                 }
                 catch
                 {
-                    URIConfigFileData = "";
+                    uriConfigFileData = "";
                     openCommandLineURISettings = "";
                     AppOpenMode = LauncherOpenMode.Error; // Revert to default
                 }
@@ -1320,83 +1319,6 @@ namespace AAEmu.Launcher
             return res;
         }
 
-        private string GuessDocumentsFolder(string archeAgeExe)
-        {
-            var res = "ArcheAge";
-            // Note: AAFree and ArcheRage can actually not be detected in this way because the exe is encrypted (note all lowercase here to compare)
-            var allowedFolders = new List<string>() { "archeage", "archeworld", "aaemu" };
-            var documentConfigFile =
-                Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "documents.folders");
-
-            if (File.Exists(documentConfigFile))
-                allowedFolders = File.ReadAllLines(documentConfigFile).ToList();
-
-            var notAllowed = new List<string>() { ".", "-", "_" }; // should catch most things that reference a file instead of a directory
-            var maxFolderSize = res.Length;
-            foreach (var folder in allowedFolders)
-            {
-                if (folder.Length > maxFolderSize)
-                    maxFolderSize = folder.Length;
-            }
-            maxFolderSize += 4; // to check against appended .exe text
-
-            try
-            {
-                if (File.Exists(archeAgeExe))
-                {
-                    using (var fs = new FileStream(archeAgeExe, FileMode.Open, FileAccess.Read))
-                    {
-                        using (var ms = new MemoryStream())
-                        {
-                            fs.CopyTo(ms);
-                            ms.Seek(0, SeekOrigin.Begin);
-                            var buffer = new byte[maxFolderSize];
-                            foreach (var folder in allowedFolders)
-                            {
-                                for (var pos = 0; pos < ms.Length - maxFolderSize; pos++)
-                                {
-                                    ms.Seek(pos, SeekOrigin.Begin);
-                                    var streamBytes = ms.Read(buffer, 0, maxFolderSize);
-
-                                    var streamString = Encoding.ASCII.GetString(buffer, 0, streamBytes);
-                                    var checkString = streamString.ToLower();
-                                    if (checkString.StartsWith(folder))
-                                    {
-                                        var isOk = true;
-                                        foreach (var notString in notAllowed)
-                                        {
-                                            if (checkString.StartsWith(folder + notString))
-                                            {
-                                                isOk = false;
-                                                break;
-                                            }
-                                        }
-
-                                        if (isOk)
-                                        {
-                                            res = streamString.Substring(0, folder.Length);
-                                            return res;
-                                        }
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                // Do Nothing
-            }
-
-            // If no data could be found inside the .exe, then, use then assume the exe's filename as a folder
-            res = Path.GetFileNameWithoutExtension(archeAgeExe);
-
-            // MessageBox.Show($"Could not guess documents folder for {archeAgeExe}, configuration file might not be updated correctly!","Detect Folder", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            return res;
-        }
-
         private void StartGame()
         {
             if (Setting.PathToGame != "")
@@ -1435,7 +1357,7 @@ namespace AAEmu.Launcher
                         return;
                     }
 
-                    UpdateGameSystemConfigFile(GuessDocumentsFolder(Setting.PathToGame), Setting.UpdateLocale, Setting.Lang, Setting.SkipIntro);
+                    var updatedConfigFileName = UpdateGameSystemConfigFile(AaAutoDetectClient.GuessDocumentsFolder(Setting.PathToGame, Application.ExecutablePath), Setting.UpdateLocale, Setting.Lang, Setting.SkipIntro);
 
                     aaLauncher.UserName = eLogin.Text;
                     aaLauncher.SetPassword(ePassword.Text);
@@ -1453,15 +1375,27 @@ namespace AAEmu.Launcher
 
                     if (debugModeToolStripMenuItem.Checked)
                     {
-                        DebugHelperForm dlg = new DebugHelperForm();
-                        dlg.eArgs.Text = aaLauncher.LaunchArguments;
-                        dlg.eHackShieldArg.Text = aaLauncher.HShieldArgs;
-                        if (dlg.ShowDialog() == DialogResult.OK)
+                        using (var dlg = new DebugHelperForm())
                         {
-                            aaLauncher.LaunchArguments = dlg.eArgs.Text;
-                            aaLauncher.HShieldArgs = dlg.eHackShieldArg.Text;
+                            dlg.eExe.Text = aaLauncher.GameExeFilePath;
+                            dlg.eArgs.Text = aaLauncher.LaunchArguments;
+                            dlg.eHackShieldArg.Text = aaLauncher.HShieldArgs;
+                            dlg.eVerb.Text = aaLauncher.LaunchVerb;
+                            if (!string.IsNullOrWhiteSpace(updatedConfigFileName))
+                                dlg.lUpdatedConfig.Text = updatedConfigFileName;
+                            var dlgRes = dlg.ShowDialog();
+                            if (dlgRes == DialogResult.OK)
+                            {
+                                aaLauncher.GameExeFilePath = dlg.eExe.Text;
+                                aaLauncher.LaunchArguments = dlg.eArgs.Text;
+                                aaLauncher.HShieldArgs = dlg.eHackShieldArg.Text;
+                                aaLauncher.LaunchVerb = dlg.eVerb.Text;
+                            }
+                            else
+                            {
+                                return;
+                            }
                         }
-                        dlg.Dispose();
                     }
 
                     var startOK = aaLauncher.Launch();
@@ -1551,13 +1485,13 @@ namespace AAEmu.Launcher
             {
                 ePassword.UseSystemPasswordChar = false;
                 ePassword.PasswordChar = '\0';
-                btnShowPassword.Text = "Hide";
+                btnShowPassword.Text = "🫣";
             }
             else
             {
                 ePassword.UseSystemPasswordChar = true;
                 ePassword.PasswordChar = '●';
-                btnShowPassword.Text = "Show";
+                btnShowPassword.Text = "🕵";
             }
             ePassword.Focus();
             ePassword.SelectionStart = ePassword.TextLength;
@@ -1702,7 +1636,7 @@ namespace AAEmu.Launcher
         {
             switch (serverCheckStatus)
             {
-                case serverCheck.Update:
+                case ServerCheck.Update:
                     if ((Setting.ServerGameUpdateURL != null) && (Setting.ServerGameUpdateURL != ""))
                     {
                         StartUpdate();
@@ -1710,11 +1644,11 @@ namespace AAEmu.Launcher
                     else
                     {
                         MessageBox.Show(L.NoUpdateURL, "No update URL");
-                        serverCheckStatus = serverCheck.Unknown;
+                        serverCheckStatus = ServerCheck.Unknown;
                         nextServerCheck = 1000;
                     }
                     break;
-                case serverCheck.Updating:
+                case ServerCheck.Updating:
                     // Do nothing with this button while we are updating
                     break;
                 default:
@@ -1768,20 +1702,20 @@ namespace AAEmu.Launcher
         private void lSettingsBack_Click(object sender, EventArgs e)
         {
             SaveSettings();
-            if ((serverCheckStatus == serverCheck.Online) || (serverCheckStatus == serverCheck.Offline) || (serverCheckStatus == serverCheck.Unknown))
+            if ((serverCheckStatus == ServerCheck.Online) || (serverCheckStatus == ServerCheck.Offline) || (serverCheckStatus == ServerCheck.Unknown))
             {
-                serverCheckStatus = serverCheck.Unknown;
+                serverCheckStatus = ServerCheck.Unknown;
                 nextServerCheck = 1000;
                 ShowPanelControls(0);
             }
-            if (serverCheckStatus == serverCheck.Update)
+            if (serverCheckStatus == ServerCheck.Update)
             {
                 // Allow re-checking if settings changed (or not)
-                serverCheckStatus = serverCheck.Unknown;
+                serverCheckStatus = ServerCheck.Unknown;
                 nextServerCheck = 1000;
                 ShowPanelControls(0);
             }
-            if (serverCheckStatus == serverCheck.Updating)
+            if (serverCheckStatus == ServerCheck.Updating)
             {
                 ShowPanelControls(ShowPanelType.UpdatePatch);
             }
@@ -1798,7 +1732,7 @@ namespace AAEmu.Launcher
                 puf.Location = new Point(Location.X + ((Size.Width - puf.Size.Width) / 2), Location.Y + ((Size.Height - puf.Size.Height) / 2));
                 puf.Refresh();
                 var oldType = Setting.ClientLoginType;
-                Setting.ClientLoginType = AAAutoDetectClient.GuessLauncher(Setting.PathToGame);
+                Setting.ClientLoginType = AaAutoDetectClient.GuessLauncher(Setting.PathToGame, Application.ExecutablePath);
                 UpdateGameClientTypeLabel();
                 if (oldType != Setting.ClientLoginType)
                     lGameClientType.ForeColor = Color.Yellow;
@@ -1808,7 +1742,7 @@ namespace AAEmu.Launcher
 
         private void lGamePath_Click(object sender, EventArgs e)
         {
-            if (serverCheckStatus == serverCheck.Updating)
+            if (serverCheckStatus == ServerCheck.Updating)
             {
                 return;
             }
@@ -1912,9 +1846,9 @@ namespace AAEmu.Launcher
         {
             // C:\ArcheAge\Documents => UserHomeFolder\ArcheAge
 
-            var folder = File.Exists(Setting.PathToGame) ? GuessDocumentsFolder(Setting.PathToGame) : "ArcheAge";
+            var folder = File.Exists(Setting.PathToGame) ? AaAutoDetectClient.GuessDocumentsFolder(Setting.PathToGame, Application.ExecutablePath) : "ArcheAge";
 
-            string aaDocumentsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), folder);
+            var aaDocumentsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), folder);
 
             if (MessageBox.Show(L.DeleteShaderCache, L.DeleteShaderCacheTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
                 return;
@@ -1930,10 +1864,13 @@ namespace AAEmu.Launcher
             }
         }
 
-        private void UpdateGameSystemConfigFile(string documentsFolderName, bool enableUpdateLocale, string locale, bool enableSkipIntro)
+        private string UpdateGameSystemConfigFile(string documentsFolderName, bool enableUpdateLocale, string locale, bool enableSkipIntro)
         {
             // C:\ArcheAge\Documents => UserHomeFolder\ArcheAge
-            string configFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), documentsFolderName, archeAgeSystemConfigFileName);
+            var myDocsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            // MessageBox.Show($"configFile: Path.Combine \n\"{myDocsFolder}\"\n\"{documentsFolderName}\"\n\"{archeAgeSystemConfigFileName}\"");
+            var configFileName = Path.Combine(myDocsFolder, documentsFolderName, archeAgeSystemConfigFileName);
+            // MessageBox.Show($"configFile combined: \"{configFileName}\"");
             const string localeField = "locale = ";
             const string movieField = "login_first_movie = ";
             const string optionSoundField = "option_sound = ";
@@ -1947,13 +1884,29 @@ namespace AAEmu.Launcher
             bool hasSoundOptionSetting = false;
             bool hasDXSetting = false;
 
+            var isEncrypted = false;
             if (File.Exists(configFileName) == true)
             {
                 lines = File.ReadAllLines(configFileName).ToList();
 
-                foreach (string line in lines)
+                // Detect if the file is encrypted by checking if there is line starting with the encrypted DXField value of "r_driver = "
+                // TODO: Find a way if we need to write an encrypted NEW file depending on version if there is no system.cfg
+                var cdx = ConfigHandler.ApplyCipher(DXField);
+                foreach (var line in lines)
                 {
-                    if ((enableUpdateLocale == true) && (line.IndexOf(localeField) >= 0))
+                    if (line.StartsWith(cdx))
+                    {
+                        isEncrypted = true;
+                        break;
+                    }
+                }
+
+                foreach (string rawLine in lines)
+                {
+                    // Decrypt if needed
+                    var line = isEncrypted ? ConfigHandler.ApplyCipher(rawLine) : rawLine;
+
+                    if ((enableUpdateLocale) && (line.IndexOf(localeField, StringComparison.InvariantCultureIgnoreCase) >= 0))
                     {
                         // replace here
                         if (updatedLocale == false)
@@ -1963,7 +1916,7 @@ namespace AAEmu.Launcher
                         updatedLocale = true;
                     }
                     else
-                    if ((enableSkipIntro == true) && (line.IndexOf(movieField) >= 0))
+                    if ((enableSkipIntro) && (line.IndexOf(movieField, StringComparison.InvariantCultureIgnoreCase) >= 0))
                     {
                         // replace here
                         if (updatedMovie == false)
@@ -1991,7 +1944,7 @@ namespace AAEmu.Launcher
             // Hack to make sure people can get past the server select on their first run
             // Apperantly missing the option_sound in the system.cfg will make it so the charater
             // select screen crashes
-            if (hasSoundOptionSetting == false)
+            if (!hasSoundOptionSetting)
             {
                 newLines.Add(optionSoundField + "4");
             }
@@ -1999,7 +1952,7 @@ namespace AAEmu.Launcher
             // Default to DX11 (DX10 in settings)
             // DX9 can sometimes give problems that makes you fail to load the character select screen
             // We'll also change to windowed 1280x768, most things should be able to handle this
-            if (hasDXSetting == false)
+            if (!hasDXSetting)
             {
                 newLines.Add(DXField + "\"DX10\"");
                 var x = (Screen.PrimaryScreen.WorkingArea.Width - 1280) / 2;
@@ -2013,11 +1966,11 @@ namespace AAEmu.Launcher
             }
 
             // Add our settings if needed
-            if ((enableSkipIntro == true) && (updatedMovie == false))
+            if (enableSkipIntro && !updatedMovie)
             {
                 newLines.Add(movieField + "1");
             }
-            if ((enableUpdateLocale == true) && (updatedLocale == false))
+            if (enableUpdateLocale && !updatedLocale)
             {
                 newLines.Add(localeField + locale);
             }
@@ -2026,14 +1979,31 @@ namespace AAEmu.Launcher
             {
                 // Create the folder if needed
                 if (!Directory.Exists(Path.GetDirectoryName(configFileName)))
-                    Directory.CreateDirectory(Path.GetDirectoryName(configFileName));
-                File.WriteAllLines(configFileName, newLines);
+                    Directory.CreateDirectory(Path.GetDirectoryName(configFileName) ?? "");
+
+                // Re-encrypt if needed
+                var newLinesRaw = new List<string>();
+                if (isEncrypted)
+                {
+                    foreach (var line in newLines)
+                    {
+                        newLinesRaw.Add(ConfigHandler.ApplyCipher(line));
+                    }
+                }
+                else
+                {
+                    newLinesRaw = newLines;
+                }
+
+                File.WriteAllLines(configFileName, newLinesRaw);
+                return configFileName;
             }
             catch (Exception x)
             {
                 MessageBox.Show(string.Format(L.ErrorUpdatingFile, configFileName)+"\n"+x.Message, "UpdateGameSystemConfigFile()");
             }
-
+            // MessageBox.Show($"UpdateGameSystemConfigFile finished");
+            return string.Empty;
         }
 
         private void aAEmuServerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2048,7 +2018,7 @@ namespace AAEmu.Launcher
 
         private void cbAllowUpdates_Click(object sender, EventArgs e)
         {
-            if ((Setting.ServerGameUpdateURL != null) && (Setting.ServerGameUpdateURL != ""))
+            if (!string.IsNullOrEmpty(Setting.ServerGameUpdateURL))
             {
                 Setting.AllowGameUpdates = ToggleSettingCheckBox(cbAllowUpdates, Setting.AllowGameUpdates);
             }
@@ -2070,11 +2040,11 @@ namespace AAEmu.Launcher
                 return "";
             }
 
-            DirectoryInfo di = new DirectoryInfo(dirName);
+            var di = new DirectoryInfo(dirName);
             foreach (var fileName in fileNames)
             {
                 FileInfo[] files = di.GetFiles(fileName);
-                foreach (FileInfo fi in files)
+                foreach (var fi in files)
                 {
                     if (fi.Name.ToLower() == fileName.ToLower() && (File.Exists(dirName + fi.Name)))
                     {
@@ -2119,9 +2089,9 @@ namespace AAEmu.Launcher
         {
             Application.UseWaitCursor = true;
 
-            string exeFile = "";
+            var exeFile = "";
 
-            if ((Setting.ConfigName != null) && (Setting.ConfigName != ""))
+            if (!string.IsNullOrEmpty(Setting.ConfigName))
             {
                 // If we loaded a named config, try to pick from a saved list first
                 exeFile = TryAutoFindFromLookup();
@@ -2172,30 +2142,30 @@ namespace AAEmu.Launcher
             Application.UseWaitCursor = false;
         }
 
-        private void UpdatePlayButton(serverCheck serverState, bool isMouseOver)
+        private void UpdatePlayButton(ServerCheck serverState, bool isMouseOver)
         {
 
             if (isMouseOver == true)
             {
                 switch (serverState)
                 {
-                    case serverCheck.Offline: // offline
+                    case ServerCheck.Offline: // offline
                         btnPlay.Image = Properties.Resources.btn_red;
                         btnPlay.Text = L.Offline;
                         break;
-                    case serverCheck.Online: // Play
+                    case ServerCheck.Online: // Play
                         btnPlay.Image = Properties.Resources.btn_green_a;
                         btnPlay.Text = L.Play;
                         break;
-                    case serverCheck.Update: // Update
+                    case ServerCheck.Update: // Update
                         btnPlay.Image = Properties.Resources.btn_green;
                         btnPlay.Text = L.Update;
                         break;
-                    case serverCheck.Updating: // Updating
+                    case ServerCheck.Updating: // Updating
                         btnPlay.Image = Properties.Resources.btn_red;
                         btnPlay.Text = L.Updating;
                         break;
-                    case serverCheck.Unknown: // Play
+                    case ServerCheck.Unknown: // Play
                     default:
                         btnPlay.Image = Properties.Resources.btn_green;
                         btnPlay.Text = L.Play;
@@ -2206,30 +2176,30 @@ namespace AAEmu.Launcher
             {
                 switch (serverState)
                 {
-                    case serverCheck.Offline: // offline
+                    case ServerCheck.Offline: // offline
                         btnPlay.Image = Properties.Resources.btn_red;
                         btnPlay.Text = L.Offline;
                         break;
-                    case serverCheck.Online:
+                    case ServerCheck.Online:
                         btnPlay.Image = Properties.Resources.btn_green;
                         btnPlay.Text = L.Play;
                         break;
-                    case serverCheck.Update: // Update
+                    case ServerCheck.Update: // Update
                         btnPlay.Image = Properties.Resources.btn_green_d;
                         btnPlay.Text = L.Update;
                         break;
-                    case serverCheck.Updating: // Updating
+                    case ServerCheck.Updating: // Updating
                         btnPlay.Image = Properties.Resources.btn_red;
                         btnPlay.Text = L.Updating;
                         break;
-                    case serverCheck.Unknown:
+                    case ServerCheck.Unknown:
                     default:
                         btnPlay.Image = Properties.Resources.btn_green_d;
                         btnPlay.Text = L.Play;
                         break;
                 }
 
-                if (serverCheckStatus == serverCheck.Updating)
+                if (serverCheckStatus == ServerCheck.Updating)
                 {
                     btnPlay.Cursor = Cursors.No;
                 }
@@ -2390,7 +2360,7 @@ namespace AAEmu.Launcher
         {
             if ((Setting.ServerIpAddress == null) || (Setting.ServerIpAddress == ""))
             {
-                serverCheckStatus = serverCheck.Unknown;
+                serverCheckStatus = ServerCheck.Unknown;
                 return;
             }
 
@@ -2415,7 +2385,7 @@ namespace AAEmu.Launcher
                 testCon = new TcpClientWithTimeout(serverIP, serverPort, 5000).Connect();
                 if (testCon.Connected)
                 {
-                    serverCheckStatus = serverCheck.Online;
+                    serverCheckStatus = ServerCheck.Online;
                     nextServerCheck = (1000 * 60 * 2); // check every 2 minutes when connected
                     if (DoAutoLaunch)
                     {
@@ -2454,7 +2424,7 @@ namespace AAEmu.Launcher
                 if ((aaPatcher.remoteVersion != "") && (NeedToUpdateFrom(aaPatcher.remoteVersion)))
                 {
                     aaPatcher.Init(Setting.PathToGame); // reset patch info
-                    serverCheckStatus = serverCheck.Update;
+                    serverCheckStatus = ServerCheck.Update;
                     nextServerCheck = -1;
                 }
             }
@@ -2674,7 +2644,7 @@ namespace AAEmu.Launcher
             }
             catch { }
             // force the button to update
-            serverCheckStatus = serverCheck.Update; // Patch
+            serverCheckStatus = ServerCheck.Update; // Patch
             nextServerCheck = -1;
             UpdatePlayButton(serverCheckStatus, false);
             ShowPanelControls(0); // Update Panel (same as login but replaced news)
@@ -2690,7 +2660,7 @@ namespace AAEmu.Launcher
 
         private void StartUpdate()
         {
-            serverCheckStatus = serverCheck.Updating;
+            serverCheckStatus = ServerCheck.Updating;
             ShowPanelControls(ShowPanelType.UpdatePatch); // Swap to download layout
             UpdatePlayButton(serverCheckStatus, false);
             bgwPatcher.RunWorkerAsync(); // start patch process
@@ -3656,7 +3626,7 @@ namespace AAEmu.Launcher
 
             }
 
-            serverCheckStatus = serverCheck.Unknown;
+            serverCheckStatus = ServerCheck.Unknown;
             nextServerCheck = 1000;
             UpdatePlayButton(serverCheckStatus, false);
             ShowPanelControls(0);
@@ -3673,7 +3643,7 @@ namespace AAEmu.Launcher
 
         private void skipPatchToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            serverCheckStatus = serverCheck.Unknown; // Force to unknown mode
+            serverCheckStatus = ServerCheck.Unknown; // Force to unknown mode
             nextServerCheck = -1;
             UpdatePlayButton(serverCheckStatus, false);
             ShowPanelControls(0); // Update Panel
@@ -3706,7 +3676,7 @@ namespace AAEmu.Launcher
                 return;
 
             // C:\ArcheAge\Documents => UserHomeFolder\ArcheAge
-            var folder = File.Exists(Setting.PathToGame) ? GuessDocumentsFolder(Setting.PathToGame) : "ArcheAge";
+            var folder = File.Exists(Setting.PathToGame) ? AaAutoDetectClient.GuessDocumentsFolder(Setting.PathToGame, Application.ExecutablePath) : "ArcheAge";
 
             string systemConfigFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), folder, archeAgeSystemConfigFileName);
             File.Delete(systemConfigFile);

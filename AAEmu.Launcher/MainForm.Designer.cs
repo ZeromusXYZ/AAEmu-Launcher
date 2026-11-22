@@ -49,8 +49,8 @@ namespace AAEmu.Launcher
             this.imgBigNews = new System.Windows.Forms.PictureBox();
             this.eLogin = new System.Windows.Forms.TextBox();
             this.cbLoginList = new System.Windows.Forms.ComboBox();
-            this.ePassword = new System.Windows.Forms.TextBox();
             this.btnShowPassword = new System.Windows.Forms.Label();
+            this.ePassword = new System.Windows.Forms.TextBox();
             this.wbNews = new System.Windows.Forms.WebBrowser();
             this.lNewsFeed = new System.Windows.Forms.Label();
             this.btnSettings = new System.Windows.Forms.Label();
@@ -76,6 +76,7 @@ namespace AAEmu.Launcher
             this.troubleshootLauncherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.forcePatchDownloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.skipPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearPatchCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.generateServerURILinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -139,7 +140,6 @@ namespace AAEmu.Launcher
             this.btnClose = new System.Windows.Forms.PictureBox();
             this.btnMinimize = new System.Windows.Forms.PictureBox();
             this.ttLocale = new System.Windows.Forms.ToolTip(this.components);
-            this.clearPatchCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelLoginAndPatch.SuspendLayout();
             this.pPatchSteps.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pgbFrontTotal)).BeginInit();
@@ -185,7 +185,7 @@ namespace AAEmu.Launcher
             this.panelLoginAndPatch.Controls.Add(this.lLogin);
             this.panelLoginAndPatch.Location = new System.Drawing.Point(17, 63);
             this.panelLoginAndPatch.Name = "panelLoginAndPatch";
-            this.panelLoginAndPatch.Size = new System.Drawing.Size(376, 162);
+            this.panelLoginAndPatch.Size = new System.Drawing.Size(600, 158);
             this.panelLoginAndPatch.TabIndex = 50;
             this.panelLoginAndPatch.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseDown);
             this.panelLoginAndPatch.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);
@@ -419,6 +419,20 @@ namespace AAEmu.Launcher
             this.cbLoginList.SelectedIndexChanged += new System.EventHandler(this.cbLoginList_SelectedIndexChanged);
             this.cbLoginList.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtLogin_KeyUp);
             // 
+            // btnShowPassword
+            // 
+            this.btnShowPassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(45)))), ((int)(((byte)(65)))));
+            this.btnShowPassword.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnShowPassword.Font = new System.Drawing.Font("Georgia", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnShowPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(210)))), ((int)(((byte)(100)))));
+            this.btnShowPassword.Location = new System.Drawing.Point(508, 396);
+            this.btnShowPassword.Name = "btnShowPassword";
+            this.btnShowPassword.Size = new System.Drawing.Size(22, 22);
+            this.btnShowPassword.TabIndex = 49;
+            this.btnShowPassword.Text = "🕵";
+            this.btnShowPassword.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnShowPassword.Click += new System.EventHandler(this.btnShowPassword_Click);
+            // 
             // ePassword
             // 
             this.ePassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(45)))), ((int)(((byte)(65)))));
@@ -428,27 +442,12 @@ namespace AAEmu.Launcher
             this.ePassword.Location = new System.Drawing.Point(303, 396);
             this.ePassword.Name = "ePassword";
             this.ePassword.PasswordChar = '●';
-            this.ePassword.Size = new System.Drawing.Size(227, 22);
+            this.ePassword.Size = new System.Drawing.Size(200, 22);
             this.ePassword.TabIndex = 2;
             this.ePassword.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.ePassword.UseSystemPasswordChar = true;
             this.ePassword.WordWrap = false;
             this.ePassword.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtPassword_KeyUp);
-            // 
-            // btnShowPassword
-            // 
-            this.btnShowPassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(45)))), ((int)(((byte)(65)))));
-            this.btnShowPassword.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.btnShowPassword.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnShowPassword.Font = new System.Drawing.Font("Georgia", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnShowPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(210)))), ((int)(((byte)(100)))));
-            this.btnShowPassword.Location = new System.Drawing.Point(534, 396);
-            this.btnShowPassword.Name = "btnShowPassword";
-            this.btnShowPassword.Size = new System.Drawing.Size(52, 22);
-            this.btnShowPassword.TabIndex = 49;
-            this.btnShowPassword.Text = "Show";
-            this.btnShowPassword.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.btnShowPassword.Click += new System.EventHandler(this.btnShowPassword_Click);
             // 
             // wbNews
             // 
@@ -611,7 +610,7 @@ namespace AAEmu.Launcher
             this.generateServerURILinkToolStripMenuItem,
             this.debugModeToolStripMenuItem});
             this.cmsAAEmuButton.Name = "cmsAAEmuButton";
-            this.cmsAAEmuButton.Size = new System.Drawing.Size(203, 120);
+            this.cmsAAEmuButton.Size = new System.Drawing.Size(203, 98);
             // 
             // troubleshootGameToolStripMenuItem
             // 
@@ -703,6 +702,14 @@ namespace AAEmu.Launcher
             this.skipPatchToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.skipPatchToolStripMenuItem.Text = "Skip Patch";
             this.skipPatchToolStripMenuItem.Click += new System.EventHandler(this.skipPatchToolStripMenuItem_Click);
+            // 
+            // clearPatchCacheToolStripMenuItem
+            // 
+            this.clearPatchCacheToolStripMenuItem.Name = "clearPatchCacheToolStripMenuItem";
+            this.clearPatchCacheToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.clearPatchCacheToolStripMenuItem.Text = "Clear Patch Cache";
+            this.clearPatchCacheToolStripMenuItem.Visible = false;
+            this.clearPatchCacheToolStripMenuItem.Click += new System.EventHandler(this.clearPatchCacheToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
@@ -921,19 +928,19 @@ namespace AAEmu.Launcher
             this.aAEmuLauncherToolStripMenuItem,
             this.aAEmuServerToolStripMenuItem});
             this.cmsGitHub.Name = "cmsGitHub";
-            this.cmsGitHub.Size = new System.Drawing.Size(166, 48);
+            this.cmsGitHub.Size = new System.Drawing.Size(167, 48);
             // 
             // aAEmuLauncherToolStripMenuItem
             // 
             this.aAEmuLauncherToolStripMenuItem.Name = "aAEmuLauncherToolStripMenuItem";
-            this.aAEmuLauncherToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.aAEmuLauncherToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.aAEmuLauncherToolStripMenuItem.Text = "AAEmu Launcher";
             this.aAEmuLauncherToolStripMenuItem.Click += new System.EventHandler(this.aAEmuLauncherToolStripMenuItem_Click);
             // 
             // aAEmuServerToolStripMenuItem
             // 
             this.aAEmuServerToolStripMenuItem.Name = "aAEmuServerToolStripMenuItem";
-            this.aAEmuServerToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.aAEmuServerToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.aAEmuServerToolStripMenuItem.Text = "AAEmu Server";
             this.aAEmuServerToolStripMenuItem.Click += new System.EventHandler(this.aAEmuServerToolStripMenuItem_Click);
             // 
@@ -958,13 +965,13 @@ namespace AAEmu.Launcher
             this.simplifiedChineseToolStripMenuItem1,
             this.svenskaToolStripMenuItem});
             this.cmsLauncherLanguage.Name = "cmsLanguage";
-            this.cmsLauncherLanguage.Size = new System.Drawing.Size(124, 158);
+            this.cmsLauncherLanguage.Size = new System.Drawing.Size(127, 158);
             // 
             // englishToolStripMenuItem
             // 
             this.englishToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_english;
             this.englishToolStripMenuItem.Name = "englishToolStripMenuItem";
-            this.englishToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.englishToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.englishToolStripMenuItem.Tag = "en_us";
             this.englishToolStripMenuItem.Text = "English";
             this.englishToolStripMenuItem.Click += new System.EventHandler(this.swapLanguageToolStripMenuItem_Click);
@@ -973,7 +980,7 @@ namespace AAEmu.Launcher
             // 
             this.russianToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_ru;
             this.russianToolStripMenuItem.Name = "russianToolStripMenuItem";
-            this.russianToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.russianToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.russianToolStripMenuItem.Tag = "ru";
             this.russianToolStripMenuItem.Text = "Русский";
             this.russianToolStripMenuItem.Click += new System.EventHandler(this.swapLanguageToolStripMenuItem_Click);
@@ -982,7 +989,7 @@ namespace AAEmu.Launcher
             // 
             this.germanToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_de;
             this.germanToolStripMenuItem.Name = "germanToolStripMenuItem";
-            this.germanToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.germanToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.germanToolStripMenuItem.Tag = "de";
             this.germanToolStripMenuItem.Text = "Deutsch";
             this.germanToolStripMenuItem.Click += new System.EventHandler(this.swapLanguageToolStripMenuItem_Click);
@@ -991,7 +998,7 @@ namespace AAEmu.Launcher
             // 
             this.frenchToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_fr;
             this.frenchToolStripMenuItem.Name = "frenchToolStripMenuItem";
-            this.frenchToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.frenchToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.frenchToolStripMenuItem.Tag = "fr";
             this.frenchToolStripMenuItem.Text = "Français";
             this.frenchToolStripMenuItem.Click += new System.EventHandler(this.swapLanguageToolStripMenuItem_Click);
@@ -1000,7 +1007,7 @@ namespace AAEmu.Launcher
             // 
             this.traditionalChineseTaiwanToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_traditional_chinese;
             this.traditionalChineseTaiwanToolStripMenuItem.Name = "traditionalChineseTaiwanToolStripMenuItem";
-            this.traditionalChineseTaiwanToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.traditionalChineseTaiwanToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.traditionalChineseTaiwanToolStripMenuItem.Tag = "zh_tw";
             this.traditionalChineseTaiwanToolStripMenuItem.Text = "繁體中文";
             this.traditionalChineseTaiwanToolStripMenuItem.Click += new System.EventHandler(this.swapLanguageToolStripMenuItem_Click);
@@ -1009,7 +1016,7 @@ namespace AAEmu.Launcher
             // 
             this.simplifiedChineseToolStripMenuItem1.Image = global::AAEmu.Launcher.Properties.Resources.flag_cn;
             this.simplifiedChineseToolStripMenuItem1.Name = "simplifiedChineseToolStripMenuItem1";
-            this.simplifiedChineseToolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
+            this.simplifiedChineseToolStripMenuItem1.Size = new System.Drawing.Size(126, 22);
             this.simplifiedChineseToolStripMenuItem1.Tag = "zh_cn";
             this.simplifiedChineseToolStripMenuItem1.Text = "简体中文";
             this.simplifiedChineseToolStripMenuItem1.Click += new System.EventHandler(this.swapLanguageToolStripMenuItem_Click);
@@ -1018,7 +1025,7 @@ namespace AAEmu.Launcher
             // 
             this.svenskaToolStripMenuItem.Image = global::AAEmu.Launcher.Properties.Resources.flag_se_sv;
             this.svenskaToolStripMenuItem.Name = "svenskaToolStripMenuItem";
-            this.svenskaToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.svenskaToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.svenskaToolStripMenuItem.Tag = "se_sv";
             this.svenskaToolStripMenuItem.Text = "Svenska";
             this.svenskaToolStripMenuItem.Click += new System.EventHandler(this.swapLanguageToolStripMenuItem_Click);
@@ -1366,14 +1373,6 @@ namespace AAEmu.Launcher
             this.ttLocale.ShowAlways = true;
             this.ttLocale.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.ttLocale.ToolTipTitle = "Game Locale Setting";
-            // 
-            // clearPatchCacheToolStripMenuItem
-            // 
-            this.clearPatchCacheToolStripMenuItem.Name = "clearPatchCacheToolStripMenuItem";
-            this.clearPatchCacheToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
-            this.clearPatchCacheToolStripMenuItem.Text = "Clear Patch Cache";
-            this.clearPatchCacheToolStripMenuItem.Visible = false;
-            this.clearPatchCacheToolStripMenuItem.Click += new System.EventHandler(this.clearPatchCacheToolStripMenuItem_Click);
             // 
             // LauncherForm
             // 

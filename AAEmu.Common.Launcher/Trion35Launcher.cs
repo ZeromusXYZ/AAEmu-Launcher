@@ -7,7 +7,7 @@ using AAEmu.Launcher.Trion12;
 
 namespace AAEmu.Launcher.Trion35
 {
-    [AALauncher("trino_3_5", "Trion 3.5","3.5", "", "20170525")]
+    [AALauncher("trino_3_5", "Version 3.x+", 318414,"3.5", "", "20170525")]
     public class Trion_3_5_Launcher: AAEmu.Launcher.Trion12.Trion_1_2_Launcher
     {
 
@@ -18,5 +18,10 @@ namespace AAEmu.Launcher.Trion35
             return res;
         }
 
+        public override bool IsFlavorAllowed(string flavor)
+        {
+            // Only allow for AAClassic
+            return flavor.Equals(@"ArcheAge", StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

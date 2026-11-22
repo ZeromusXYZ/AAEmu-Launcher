@@ -6,7 +6,7 @@ using AAEmu.Launcher.Basic;
 
 namespace AAEmu.Launcher.Trion12
 {
-    [AALauncher("trino_1_2","Trion 1.2","1.2", "", "20140708")]
+    [AALauncher("trino_1_2","Version 1.x+",200092, "1.2", "", "20140708")]
     public class Trion_1_2_Launcher: AAEmuLauncherBase
     {
 
@@ -109,7 +109,7 @@ namespace AAEmu.Launcher.Trion12
                 ticketDataString += "<authTicket version = \"1.2\">";
                 ticketDataString += "<storeToken>1</storeToken>";
                 ticketDataString += "<username>" + UserName + "</username>";
-                ticketDataString += "<password>" + _passwordHash + "</password>";
+                ticketDataString += "<password>" + PasswordHash + "</password>";
                 ticketDataString += "</authTicket>";
             }
 
@@ -235,6 +235,12 @@ namespace AAEmu.Launcher.Trion12
             }
             HandleID1FileMap = 0;
             HandleID2Event = 0;
+        }
+
+        public override bool IsFlavorAllowed(string flavor)
+        {
+            // Only allow for AAClassic
+            return flavor.Equals(@"ArcheAge", StringComparison.OrdinalIgnoreCase) || flavor.Equals(@"AAEmu", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

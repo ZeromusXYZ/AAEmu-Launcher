@@ -13,7 +13,7 @@ namespace AAEmu.Launcher.Returns10
     ///   -t -strUserToken=... -StrUserName=... -PASSPORTSVRIP=... -sIp=... -sPort=...
     ///   -serverId=... -selectedServerId=...
     /// </summary>
-    [AALauncher("returns_10", "Returns 10.0", "10.0", "", "20240601")]
+    [AALauncher("returns_10", "Returns 10.x+", 575, "10.0", "", "20240601")]
     public class Returns10Launcher : AAEmuLauncherBase
     {
         public int ServerId { get; set; } = 1;
@@ -24,7 +24,7 @@ namespace AAEmu.Launcher.Returns10
             {
                 var data = Encoding.UTF8.GetBytes(userPassword ?? string.Empty);
                 var hash = SHA256.Create().ComputeHash(data);
-                _passwordHash = Convert.ToBase64String(hash);
+                PasswordHash = Convert.ToBase64String(hash);
             }
             catch
             {
@@ -43,13 +43,19 @@ namespace AAEmu.Launcher.Returns10
             var sid = ServerId <= 0 ? 1 : ServerId;
             LaunchArguments = string.Format(
                 "-t -strUserToken={0} -StrUserName={1} -PASSPORTSVRIP={2} -sIp={2} -sPort={3} -serverId={4} -selectedServerId={4}",
-                _passwordHash,
+                PasswordHash,
                 UserName,
                 host,
                 port,
                 sid);
 
             return true;
+        }
+
+        public override bool IsFlavorAllowed(string flavor)
+        {
+            // Only allow for AAClassic
+            return flavor.Equals(@"ArcheAge", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

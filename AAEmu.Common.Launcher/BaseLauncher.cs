@@ -9,13 +9,13 @@ using System.Diagnostics;
 
 namespace AAEmu.Launcher.Basic
 {
-    [AALauncher("","Base Launcher","0.0","", "00000000")]
+    [AALauncher("","Base Launcher",0, "0.0","", "00000000")]
     public partial class AAEmuLauncherBase
     {
         public string UserName { get; set; }
         public string GameExeFilePath { get; set; }
         public string LoginServerAdress { get; set; }
-        public UInt16 LoginServerPort { get; set; }
+        public ushort LoginServerPort { get; set; }
         public string Locale { get; set; }
         public string HShieldArgs { get; set; }
         public string ExtraArguments { get; set; }
@@ -24,17 +24,17 @@ namespace AAEmu.Launcher.Basic
         /// </summary>
         public string LaunchArguments { get; set; }
         public Process RunningProcess { get; protected set; }
-        protected string _passwordHash { get; set; }
-        protected string LaunchVerb { get; set; }
+        protected string PasswordHash { get; set; }
+        public string LaunchVerb { get; set; }
 
         protected bool SupportsArcheWorld { get; set; }
 
-        static public List<AALauncherContainer> AllLaunchers = new List<AALauncherContainer>();
+        public static List<AALauncherContainer> AllLaunchers = new List<AALauncherContainer>();
 
         public AAEmuLauncherBase()
         {
             UserName = string.Empty;
-            _passwordHash = string.Empty;
+            PasswordHash = string.Empty;
             GameExeFilePath = @"C:\ArcheAge\Working\Bin32\ArcheAge.exe";
             LaunchArguments = string.Empty;
             ExtraArguments = string.Empty;
@@ -66,13 +66,25 @@ namespace AAEmu.Launcher.Basic
             {
                 byte[] data = Encoding.Default.GetBytes(userPassword);
                 var passwordHashData = new SHA256Managed().ComputeHash(data);
-                _passwordHash = BitConverter.ToString(passwordHashData).Replace("-", "").ToLower();
+                PasswordHash = BitConverter.ToString(passwordHashData).Replace("-", "").ToLower();
             }
             catch
             {
                 return false;
             }
             return true;
+        }
+
+        /// <summary>
+        /// This function gets called by the launcher to determine if this launcher supports the given flavor.
+        /// If it returns false, the launcher will not be used for that flavor.
+        /// The flavor argument will be what the launcher detects from the ArcheAge.exe file.
+        /// </summary>
+        /// <param name="flavor"></param>
+        /// <returns></returns>
+        public virtual bool IsFlavorAllowed(string flavor)
+        {
+            return false;
         }
 
         /// <summary>
@@ -98,22 +110,24 @@ namespace AAEmu.Launcher.Basic
                 fullArgs += " " + ExtraArguments;
             if (HShieldArgs != "")
                 fullArgs += " " + HShieldArgs;
-            GameClientProcessInfo = new ProcessStartInfo(GameExeFilePath, fullArgs);
-            GameClientProcessInfo.UseShellExecute = true;
-            GameClientProcessInfo.Verb = LaunchVerb;
-            bool startOK = false;
+            GameClientProcessInfo = new ProcessStartInfo(GameExeFilePath, fullArgs)
+            {
+                UseShellExecute = true,
+                Verb = LaunchVerb
+            };
+            var startOk = false;
             try
             {
                 RunningProcess = Process.Start(GameClientProcessInfo);
-                startOK = true;
+                startOk = true;
             }
             catch
             {
                 RunningProcess = null;
-                startOK = false;
+                startOk = false;
             }
 
-            return startOK;
+            return startOk;
         }
 
         /// <summary>
@@ -126,27 +140,30 @@ namespace AAEmu.Launcher.Basic
             return true;
         }
 
-        static public void RegisterLaunchers()
+        public static void RegisterLaunchers()
         {
             var types = from t in AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes())
-                        where t.GetCustomAttributes(typeof(AALauncherAttribute), false).Count() > 0
-                        select t;
+                where t.GetCustomAttributes(typeof(AALauncherAttribute), false).Count() > 0
+                select t;
 
             AllLaunchers.Clear();
 
             // process each type to force initialise it
             foreach (var type in types)
             {
-                var attribs = type.GetCustomAttributes(typeof(AALauncherAttribute), false);
-                foreach (AALauncherAttribute a in attribs)
+                var attributes = type.GetCustomAttributes(typeof(AALauncherAttribute), false);
+                foreach (AALauncherAttribute a in attributes)
                 {
-                    var nl = new AALauncherContainer();
-                    nl.ConfigName = a.ConfigName;
-                    nl.DisplayName = a.DisplayName;
-                    nl.MinimumVersion = a.MinimumVersion;
-                    nl.MinimumVersionForWorld = a.MinimumVersionForWorld;
-                    nl.MinimumWorldDate = a.MinimumWorldDate;
-                    nl.LauncherClass = type;
+                    var nl = new AALauncherContainer
+                    {
+                        ConfigName = a.ConfigName,
+                        DisplayName = a.DisplayName,
+                        MinimumVersion = a.MinimumVersion,
+                        MinimumVersionForWorld = a.MinimumVersionForWorld,
+                        MinimumWorldDate = a.MinimumWorldDate,
+                        MinimumRevision = a.MinimumRevision,
+                        LauncherClass = type
+                    };
                     AllLaunchers.Add(nl);
                 }
             }
@@ -163,15 +180,17 @@ namespace AAEmu.Launcher.Basic
         protected string _minimumVersion;
         protected string _minimumVersionForWorld;
         private DateTime _minimumWorldDate;
+        protected ulong _minimumRevision;
 
         public string ConfigName { get => _configName; set => _configName = value; }
         public string DisplayName { get => _displayName; set => _displayName = value; }
         public string MinimumVersion { get => _minimumVersion; set => _minimumVersion = value; }
         public string MinimumVersionForWorld { get => _minimumVersionForWorld; set => _minimumVersionForWorld = value; }
         public DateTime MinimumWorldDate { get => _minimumWorldDate; set => _minimumWorldDate = value; }
-
+        public ulong MinimumRevision { get => _minimumRevision; set => _minimumRevision = value; }
+        
         // The constructor is called when the attribute is set.
-        public AALauncherAttribute(string configName, string displayName, string minimumArcheAgeVersion, string minimumArcheWorldVersion, string minimumDateYYYYMMDD)
+        public AALauncherAttribute(string configName, string displayName, ulong minimumRevision, string minimumArcheAgeVersion, string minimumArcheWorldVersion, string minimumDateYYYYMMDD)
         {
             _configName = configName;
             _displayName = displayName;
@@ -190,6 +209,7 @@ namespace AAEmu.Launcher.Basic
                 dt = DateTime.MinValue;
             }
             _minimumWorldDate = dt;
+            _minimumRevision = minimumRevision;
         }
     }
 
@@ -201,6 +221,7 @@ namespace AAEmu.Launcher.Basic
         public string MinimumVersion;
         public string MinimumVersionForWorld;
         public DateTime MinimumWorldDate;
+        public ulong MinimumRevision;
     }
 
     internal class Win32
@@ -403,8 +424,8 @@ namespace AAEmu.Launcher.Basic
         private static byte[] EncryptInitalize(byte[] key)
         {
             byte[] s = Enumerable.Range(0, 256)
-              .Select(i => (byte)i)
-              .ToArray();
+                .Select(i => (byte)i)
+                .ToArray();
 
             for (int i = 0, j = 0; i < 256; i++)
             {
@@ -436,10 +457,7 @@ namespace AAEmu.Launcher.Basic
 
         private static void Swap(byte[] s, int i, int j)
         {
-            byte c = s[i];
-
-            s[i] = s[j];
-            s[j] = c;
+            (s[i], s[j]) = (s[j], s[i]);
         }
     }
 }
