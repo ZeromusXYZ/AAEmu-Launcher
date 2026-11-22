@@ -1331,12 +1331,12 @@ namespace AAEmu.Launcher
             this.cmsAuthType.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.stAuthAuto});
             this.cmsAuthType.Name = "cmsAuthType";
-            this.cmsAuthType.Size = new System.Drawing.Size(101, 26);
+            this.cmsAuthType.Size = new System.Drawing.Size(181, 48);
             // 
             // stAuthAuto
             // 
             this.stAuthAuto.Name = "stAuthAuto";
-            this.stAuthAuto.Size = new System.Drawing.Size(100, 22);
+            this.stAuthAuto.Size = new System.Drawing.Size(180, 22);
             this.stAuthAuto.Text = "Auto";
             this.stAuthAuto.Click += new System.EventHandler(this.stAuthAuto_Click);
             // 

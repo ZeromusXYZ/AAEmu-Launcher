@@ -955,10 +955,24 @@ namespace AAEmu.Launcher
 
             // Register All Launchers
             AAEmuLauncherBase.RegisterLaunchers();
-            // Add them to the popup menu for launcher types
+
+            // Get a sorted list of launchers by display name
+            var sortedAuth = new List<string>();
             foreach (var l in AAEmuLauncherBase.AllLaunchers)
                 if (l.ConfigName != string.Empty)
-                    cmsAuthType.Items.Add(l.DisplayName, null, stAuthAuto_Click);
+                    sortedAuth.Add(l.DisplayName);
+            sortedAuth.Sort(StringComparer.InvariantCultureIgnoreCase);
+            
+            // Add them to the popup menu for launcher types (sorted by name)
+            foreach (var sortedName in sortedAuth)
+            {
+                foreach (var l in AAEmuLauncherBase.AllLaunchers)
+                    if (l.DisplayName == sortedName)
+                    {
+                        cmsAuthType.Items.Add(l.DisplayName, null, stAuthAuto_Click);
+                        break;
+                    }
+            }
 
             // Load application settings
             LauncherFileSettings.SetDefaultSettings(Setting);
