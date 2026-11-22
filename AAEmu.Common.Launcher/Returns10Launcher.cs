@@ -13,7 +13,7 @@ namespace AAEmu.Launcher.Returns10
     ///   -t -strUserToken=... -StrUserName=... -PASSPORTSVRIP=... -sIp=... -sPort=...
     ///   -serverId=... -selectedServerId=...
     /// </summary>
-    [AALauncher("returns_10", "Returns 10.0", "10.0", "", "20240601")]
+    [AALauncher("returns_10", "Returns 10.x+", 575, "10.0", "", "20240601")]
     public class Returns10Launcher : AAEmuLauncherBase
     {
         public int ServerId { get; set; } = 1;
