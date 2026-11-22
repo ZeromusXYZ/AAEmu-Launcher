@@ -1516,13 +1516,13 @@ namespace AAEmu.Launcher
             {
                 ePassword.UseSystemPasswordChar = false;
                 ePassword.PasswordChar = '\0';
-                btnShowPassword.Text = "Hide";
+                btnShowPassword.Text = "🫣";
             }
             else
             {
                 ePassword.UseSystemPasswordChar = true;
                 ePassword.PasswordChar = '●';
-                btnShowPassword.Text = "Show";
+                btnShowPassword.Text = "🕵";
             }
             ePassword.Focus();
             ePassword.SelectionStart = ePassword.TextLength;
