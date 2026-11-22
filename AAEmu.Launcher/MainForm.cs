@@ -76,7 +76,7 @@ namespace AAEmu.Launcher
             public string LastLoginPass { get; set; } = string.Empty;
 
             [JsonProperty("loginType", NullValueHandling = NullValueHandling.Ignore)]
-            public string ClientLoginType { get; set; } = stringTrino_1_2;
+            public string ClientLoginType { get; set; } = stringReturns_10;
 
             [JsonProperty("updateLocale", NullValueHandling = NullValueHandling.Ignore)]
             public bool UpdateLocale { get; set; } = true;
@@ -126,7 +126,7 @@ namespace AAEmu.Launcher
                 setting.HideSplashLogo = false;
                 setting.LastLoginUser = "";
                 setting.LastLoginPass = "";
-                setting.ClientLoginType = stringTrino_1_2;
+                setting.ClientLoginType = stringReturns_10;
                 setting.UpdateLocale = true;
                 setting.AllowGameUpdates = false;
                 setting.ServerGameUpdateURL = "";
@@ -452,6 +452,7 @@ namespace AAEmu.Launcher
 
         // launcher protocol indentifiers
         private const string stringMailRu_1_0 = "mailru_1_0";
+        private const string stringReturns_10 = "returns_10";
         private const string stringTrino_1_2 = "trino_1_2";
         private const string stringTrino_3_5 = "trino_3_5";
         private const string stringTrino_6_0 = "trino_6_0";
@@ -680,6 +681,7 @@ namespace AAEmu.Launcher
             panelLoginAndPatch.Size = this.Size;
             eLogin.Visible = (panelID == ShowPanelType.Login);
             ePassword.Visible = (panelID == ShowPanelType.Login);
+            btnShowPassword.Visible = (panelID == ShowPanelType.Login);
             lLogin.Visible = (panelID == ShowPanelType.Login);
             lPassword.Visible = (panelID == ShowPanelType.Login);
             lNewsFeed.Visible = ((panelID == ShowPanelType.Login) || (panelID == ShowPanelType.UpdatePatch));
@@ -1091,6 +1093,27 @@ namespace AAEmu.Launcher
             if (AppOpenMode == LauncherOpenMode.Error)
             {
                 LauncherFileSettings.SetDefaultSettings(Setting);
+            }
+
+            // Resolve relative pathToGame against launcher folder / client root (portable client pack).
+            if (!string.IsNullOrWhiteSpace(Setting.PathToGame) && !File.Exists(Setting.PathToGame))
+            {
+                var exeDir = Path.GetDirectoryName(Application.ExecutablePath) ?? "";
+                var clientRoot = Directory.GetParent(exeDir)?.FullName ?? exeDir;
+                foreach (var cand in new[]
+                {
+                    Path.GetFullPath(Path.Combine(exeDir, Setting.PathToGame)),
+                    Path.GetFullPath(Path.Combine(clientRoot, Setting.PathToGame)),
+                    Path.Combine(clientRoot, "Bin64_clean", "archeage.exe"),
+                    Path.Combine(clientRoot, "Bin64", "archeage.exe"),
+                })
+                {
+                    if (File.Exists(cand))
+                    {
+                        Setting.PathToGame = cand;
+                        break;
+                    }
+                }
             }
 
             if ((Setting.PathToGame == null) || (Setting.PathToGame == "") || !File.Exists(Setting.PathToGame))
@@ -1518,6 +1541,26 @@ namespace AAEmu.Launcher
                 //eLogin.Hide();
                 //cbLoginList.Hide();
             }
+        }
+
+        private void btnShowPassword_Click(object sender, EventArgs e)
+        {
+            // Toggle mask: system password char and/or bullet => plain text, and back.
+            var masked = ePassword.UseSystemPasswordChar || ePassword.PasswordChar != '\0';
+            if (masked)
+            {
+                ePassword.UseSystemPasswordChar = false;
+                ePassword.PasswordChar = '\0';
+                btnShowPassword.Text = "Hide";
+            }
+            else
+            {
+                ePassword.UseSystemPasswordChar = true;
+                ePassword.PasswordChar = '●';
+                btnShowPassword.Text = "Show";
+            }
+            ePassword.Focus();
+            ePassword.SelectionStart = ePassword.TextLength;
         }
 
         private void txtPassword_KeyUp(object sender, KeyEventArgs e)
@@ -3977,3 +4020,4 @@ namespace AAEmu.Launcher
         }
     }
 }
+
