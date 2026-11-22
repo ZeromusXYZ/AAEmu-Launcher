@@ -185,7 +185,7 @@ namespace AAEmu.Launcher
             this.panelLoginAndPatch.Controls.Add(this.lLogin);
             this.panelLoginAndPatch.Location = new System.Drawing.Point(17, 63);
             this.panelLoginAndPatch.Name = "panelLoginAndPatch";
-            this.panelLoginAndPatch.Size = new System.Drawing.Size(754, 440);
+            this.panelLoginAndPatch.Size = new System.Drawing.Size(600, 158);
             this.panelLoginAndPatch.TabIndex = 50;
             this.panelLoginAndPatch.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseDown);
             this.panelLoginAndPatch.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LauncherForm_MouseMove);

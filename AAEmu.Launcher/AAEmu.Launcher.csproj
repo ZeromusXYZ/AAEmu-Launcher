@@ -134,6 +134,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigHandler.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="InfoPopupForm.cs">
       <SubType>Form</SubType>

@@ -476,7 +476,7 @@ namespace AAEmu.Launcher
         private AAPak pak = null;
         private AAPak PatchDownloadPak = null;
         // (PakFileInfo, Reason to Add)
-        private List<(AAPakFileInfo, string)> dlPakFileList = new List<(AAPakFileInfo, string)>();
+        private readonly List<(AAPakFileInfo, string)> dlPakFileList = new List<(AAPakFileInfo, string)>();
         private LauncherOpenMode AppOpenMode = LauncherOpenMode.DefaultConfigFile;
 
         // Auto Close
@@ -1357,7 +1357,7 @@ namespace AAEmu.Launcher
                         return;
                     }
 
-                    UpdateGameSystemConfigFile(AaAutoDetectClient.GuessDocumentsFolder(Setting.PathToGame, Application.ExecutablePath), Setting.UpdateLocale, Setting.Lang, Setting.SkipIntro);
+                    var updatedConfigFileName = UpdateGameSystemConfigFile(AaAutoDetectClient.GuessDocumentsFolder(Setting.PathToGame, Application.ExecutablePath), Setting.UpdateLocale, Setting.Lang, Setting.SkipIntro);
 
                     aaLauncher.UserName = eLogin.Text;
                     aaLauncher.SetPassword(ePassword.Text);
@@ -1381,12 +1381,19 @@ namespace AAEmu.Launcher
                             dlg.eArgs.Text = aaLauncher.LaunchArguments;
                             dlg.eHackShieldArg.Text = aaLauncher.HShieldArgs;
                             dlg.eVerb.Text = aaLauncher.LaunchVerb;
-                            if (dlg.ShowDialog() == DialogResult.OK)
+                            if (!string.IsNullOrWhiteSpace(updatedConfigFileName))
+                                dlg.lUpdatedConfig.Text = updatedConfigFileName;
+                            var dlgRes = dlg.ShowDialog();
+                            if (dlgRes == DialogResult.OK)
                             {
                                 aaLauncher.GameExeFilePath = dlg.eExe.Text;
                                 aaLauncher.LaunchArguments = dlg.eArgs.Text;
                                 aaLauncher.HShieldArgs = dlg.eHackShieldArg.Text;
                                 aaLauncher.LaunchVerb = dlg.eVerb.Text;
+                            }
+                            else
+                            {
+                                return;
                             }
                         }
                     }
@@ -1857,13 +1864,13 @@ namespace AAEmu.Launcher
             }
         }
 
-        private void UpdateGameSystemConfigFile(string documentsFolderName, bool enableUpdateLocale, string locale, bool enableSkipIntro)
+        private string UpdateGameSystemConfigFile(string documentsFolderName, bool enableUpdateLocale, string locale, bool enableSkipIntro)
         {
             // C:\ArcheAge\Documents => UserHomeFolder\ArcheAge
             var myDocsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            MessageBox.Show($"configFile: Path.Combine \n\"{myDocsFolder}\"\n\"{documentsFolderName}\"\n\"{archeAgeSystemConfigFileName}\"");
-            string configFileName = Path.Combine(myDocsFolder, documentsFolderName, archeAgeSystemConfigFileName);
-            MessageBox.Show($"configFile combined: \"{configFileName}\"");
+            // MessageBox.Show($"configFile: Path.Combine \n\"{myDocsFolder}\"\n\"{documentsFolderName}\"\n\"{archeAgeSystemConfigFileName}\"");
+            var configFileName = Path.Combine(myDocsFolder, documentsFolderName, archeAgeSystemConfigFileName);
+            // MessageBox.Show($"configFile combined: \"{configFileName}\"");
             const string localeField = "locale = ";
             const string movieField = "login_first_movie = ";
             const string optionSoundField = "option_sound = ";
@@ -1877,13 +1884,29 @@ namespace AAEmu.Launcher
             bool hasSoundOptionSetting = false;
             bool hasDXSetting = false;
 
+            var isEncrypted = false;
             if (File.Exists(configFileName) == true)
             {
                 lines = File.ReadAllLines(configFileName).ToList();
 
-                foreach (string line in lines)
+                // Detect if the file is encrypted by checking if there is line starting with the encrypted DXField value of "r_driver = "
+                // TODO: Find a way if we need to write an encrypted NEW file depending on version if there is no system.cfg
+                var cdx = ConfigHandler.ApplyCipher(DXField);
+                foreach (var line in lines)
                 {
-                    if ((enableUpdateLocale == true) && (line.IndexOf(localeField) >= 0))
+                    if (line.StartsWith(cdx))
+                    {
+                        isEncrypted = true;
+                        break;
+                    }
+                }
+
+                foreach (string rawLine in lines)
+                {
+                    // Decrypt if needed
+                    var line = isEncrypted ? ConfigHandler.ApplyCipher(rawLine) : rawLine;
+
+                    if ((enableUpdateLocale) && (line.IndexOf(localeField, StringComparison.InvariantCultureIgnoreCase) >= 0))
                     {
                         // replace here
                         if (updatedLocale == false)
@@ -1893,7 +1916,7 @@ namespace AAEmu.Launcher
                         updatedLocale = true;
                     }
                     else
-                    if ((enableSkipIntro == true) && (line.IndexOf(movieField) >= 0))
+                    if ((enableSkipIntro) && (line.IndexOf(movieField, StringComparison.InvariantCultureIgnoreCase) >= 0))
                     {
                         // replace here
                         if (updatedMovie == false)
@@ -1921,7 +1944,7 @@ namespace AAEmu.Launcher
             // Hack to make sure people can get past the server select on their first run
             // Apperantly missing the option_sound in the system.cfg will make it so the charater
             // select screen crashes
-            if (hasSoundOptionSetting == false)
+            if (!hasSoundOptionSetting)
             {
                 newLines.Add(optionSoundField + "4");
             }
@@ -1929,7 +1952,7 @@ namespace AAEmu.Launcher
             // Default to DX11 (DX10 in settings)
             // DX9 can sometimes give problems that makes you fail to load the character select screen
             // We'll also change to windowed 1280x768, most things should be able to handle this
-            if (hasDXSetting == false)
+            if (!hasDXSetting)
             {
                 newLines.Add(DXField + "\"DX10\"");
                 var x = (Screen.PrimaryScreen.WorkingArea.Width - 1280) / 2;
@@ -1943,11 +1966,11 @@ namespace AAEmu.Launcher
             }
 
             // Add our settings if needed
-            if ((enableSkipIntro == true) && (updatedMovie == false))
+            if (enableSkipIntro && !updatedMovie)
             {
                 newLines.Add(movieField + "1");
             }
-            if ((enableUpdateLocale == true) && (updatedLocale == false))
+            if (enableUpdateLocale && !updatedLocale)
             {
                 newLines.Add(localeField + locale);
             }
@@ -1956,14 +1979,31 @@ namespace AAEmu.Launcher
             {
                 // Create the folder if needed
                 if (!Directory.Exists(Path.GetDirectoryName(configFileName)))
-                    Directory.CreateDirectory(Path.GetDirectoryName(configFileName));
-                File.WriteAllLines(configFileName, newLines);
+                    Directory.CreateDirectory(Path.GetDirectoryName(configFileName) ?? "");
+
+                // Re-encrypt if needed
+                var newLinesRaw = new List<string>();
+                if (isEncrypted)
+                {
+                    foreach (var line in newLines)
+                    {
+                        newLinesRaw.Add(ConfigHandler.ApplyCipher(line));
+                    }
+                }
+                else
+                {
+                    newLinesRaw = newLines;
+                }
+
+                File.WriteAllLines(configFileName, newLinesRaw);
+                return configFileName;
             }
             catch (Exception x)
             {
                 MessageBox.Show(string.Format(L.ErrorUpdatingFile, configFileName)+"\n"+x.Message, "UpdateGameSystemConfigFile()");
             }
-            MessageBox.Show($"UpdateGameSystemConfigFile finished");
+            // MessageBox.Show($"UpdateGameSystemConfigFile finished");
+            return string.Empty;
         }
 
         private void aAEmuServerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1978,7 +2018,7 @@ namespace AAEmu.Launcher
 
         private void cbAllowUpdates_Click(object sender, EventArgs e)
         {
-            if ((Setting.ServerGameUpdateURL != null) && (Setting.ServerGameUpdateURL != ""))
+            if (!string.IsNullOrEmpty(Setting.ServerGameUpdateURL))
             {
                 Setting.AllowGameUpdates = ToggleSettingCheckBox(cbAllowUpdates, Setting.AllowGameUpdates);
             }
@@ -2000,11 +2040,11 @@ namespace AAEmu.Launcher
                 return "";
             }
 
-            DirectoryInfo di = new DirectoryInfo(dirName);
+            var di = new DirectoryInfo(dirName);
             foreach (var fileName in fileNames)
             {
                 FileInfo[] files = di.GetFiles(fileName);
-                foreach (FileInfo fi in files)
+                foreach (var fi in files)
                 {
                     if (fi.Name.ToLower() == fileName.ToLower() && (File.Exists(dirName + fi.Name)))
                     {
@@ -2049,9 +2089,9 @@ namespace AAEmu.Launcher
         {
             Application.UseWaitCursor = true;
 
-            string exeFile = "";
+            var exeFile = "";
 
-            if ((Setting.ConfigName != null) && (Setting.ConfigName != ""))
+            if (!string.IsNullOrEmpty(Setting.ConfigName))
             {
                 // If we loaded a named config, try to pick from a saved list first
                 exeFile = TryAutoFindFromLookup();
