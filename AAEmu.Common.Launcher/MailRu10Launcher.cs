@@ -1,4 +1,5 @@
 ﻿using AAEmu.Launcher.Basic;
+using System;
 
 namespace AAEmu.Launcher.MailRu10
 {
@@ -7,8 +8,15 @@ namespace AAEmu.Launcher.MailRu10
     {
         public override bool InitializeForLaunch()
         {
-            LaunchArguments = "-r +auth_ip " + LoginServerAdress + ":" + LoginServerPort.ToString() + " -uid " + UserName + " -token " + _passwordHash;
+            LaunchArguments = "-r +auth_ip " + LoginServerAdress + ":" + LoginServerPort.ToString() + " -uid " + UserName + " -token " + PasswordHash;
             return true;
+        }
+
+        public override bool IsFlavorAllowed(string flavor)
+        {
+            return flavor.Equals(@"ArcheAge", StringComparison.OrdinalIgnoreCase) ||
+                   flavor.Equals(@"ArcheRage", StringComparison.OrdinalIgnoreCase) ||
+                   flavor.Equals(@"AAFree", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

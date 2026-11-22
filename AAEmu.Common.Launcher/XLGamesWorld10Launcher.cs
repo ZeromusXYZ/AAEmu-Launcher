@@ -35,5 +35,11 @@ namespace AAEmu.Launcher.XLWorld10
 
             return true;
         }
+
+        public override bool IsFlavorAllowed(string flavor)
+        {
+            // Only allow for AAClassic
+            return flavor.Equals(@"ArcheWorld", StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

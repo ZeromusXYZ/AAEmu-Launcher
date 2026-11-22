@@ -101,10 +101,11 @@
     <Compile Include="AAAutoDetectClient.cs" />
     <Compile Include="BaseLauncher.cs" />
     <Compile Include="KrBaseLauncher.cs" />
+    <Compile Include="MailRu10Launcher.cs" />
     <Compile Include="XLGamesWorld10Launcher.cs" />
     <Compile Include="Returns10Launcher.cs" />
     <Compile Include="Kakao80Launcher.cs" />
-    <Compile Include="MailRu10Launcher.cs" />
+    <Compile Include="Classic30Launcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SubStream.cs" />
     <Compile Include="Trion12Launcher.cs" />

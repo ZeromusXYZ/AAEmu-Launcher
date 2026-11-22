@@ -18,5 +18,10 @@ namespace AAEmu.Launcher.Trion35
             return res;
         }
 
+        public override bool IsFlavorAllowed(string flavor)
+        {
+            // Only allow for AAClassic
+            return flavor.Equals(@"ArcheAge", StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

@@ -32,5 +32,11 @@ namespace AAEmu.Launcher.Kakao80
 
             return true;
         }
+
+        public override bool IsFlavorAllowed(string flavor)
+        {
+            // Only allow for AAClassic
+            return flavor.Equals(@"ArcheAge", StringComparison.OrdinalIgnoreCase);
+        }
     }
 }
